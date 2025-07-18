@@ -7,6 +7,8 @@ let selectedRating = null;
 let userToReset = null;
 let users = [];
 let admins = [];
+let viewHistory = [];
+let featuredScrollInterval;
 
 const saveUsers = () => {
     localStorage.setItem('users', JSON.stringify(users));
@@ -184,7 +186,7 @@ function playStream(streamUrl) {
         streamModal.classList.remove('hidden');
          setTimeout(() => streamModal.querySelector('.transform').classList.remove('scale-95'), 10);
     } else {
-        alert('Stream URL is not available.');
+        showNotification('Stream URL is not available.');
     }
 }
 
@@ -212,7 +214,7 @@ function playTrailer(trailerUrl) {
         }
     } catch (e) {
         console.error("Invalid Trailer URL:", trailerUrl);
-        alert('Could not process the trailer link.');
+        showNotification('Could not process the trailer link.');
         return;
     }
 
@@ -222,7 +224,7 @@ function playTrailer(trailerUrl) {
         trailerModal.classList.remove('hidden');
          setTimeout(() => trailerModal.querySelector('.transform').classList.remove('scale-95'), 10);
     } else {
-        alert('Invalid YouTube trailer URL.');
+        showNotification('Invalid YouTube trailer URL.');
     }
 }
 
@@ -237,16 +239,20 @@ function showMovieDetails(movieId) {
     const comments = movie.comments || [];
     const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString() : movie.release_year;
 
+    const detailsHtml = `
+        <div class="mt-4 space-y-2 text-sm movie-details-info">
+            <p><strong>Director:</strong> ${movie.director || 'N/A'}</p>
+            <p><strong>Running Time:</strong> ${movie.runningTime || 'N/A'}</p>
+            <p><strong>Budget:</strong> ${movie.budget || 'N/A'}</p>
+            <p><strong>Cast:</strong> ${movie.cast || 'N/A'}</p>
+        </div>
+    `;
+
     modalContentWrapper.innerHTML = `
         <div class="flex flex-col md:flex-row gap-8 p-8">
             <div class="md:w-1/3 flex-shrink-0">
                 <img src="${posterUrl}" alt="${movie.title}" class="w-full rounded-lg shadow-lg">
-                <div class="mt-4 space-y-2 text-sm">
-                    <p><strong>Director:</strong> ${movie.director || 'N/A'}</p>
-                    <p><strong>Running Time:</strong> ${movie.runningTime || 'N/A'}</p>
-                    <p><strong>Budget:</strong> ${movie.budget || 'N/A'}</p>
-                    <p><strong>Cast:</strong> ${movie.cast || 'N/A'}</p>
-                </div>
+                <div class="hidden md:block">${detailsHtml}</div>
             </div>
             <div class="md:w-2/3">
                 <div class="flex justify-between items-start">
@@ -265,6 +271,8 @@ function showMovieDetails(movieId) {
                 <h3 class="text-lg font-semibold mb-2">Overview</h3>
                 <p class="leading-relaxed text-sm">${movie.overview}</p>
                 
+                <div class="block md:hidden">${detailsHtml}</div>
+
                 <div class="mt-6 flex gap-2">
                     ${movie.stream_url ? `
                     <button onclick="playStream('${movie.stream_url}')" class="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
@@ -299,7 +307,7 @@ function showMovieDetails(movieId) {
                     </div>
                 </div>
                 
-                ${localStorage.getItem('currentUser') === 'rpranta' ? `
+                ${admins.includes(localStorage.getItem('currentUser')) ? `
                 <div class="mt-4">
                     <button onclick="openEditMovieModal(${movie.id})" class="w-full bg-yellow-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
                         Edit Details
@@ -319,7 +327,7 @@ function showMovieDetails(movieId) {
                             <p class="text-sm text-gray-400">${comment.date}</p>
                             <p class="mt-2">${comment.text}</p>
                         </div>
-                        ${localStorage.getItem('currentUser') === 'rpranta' ? `<button onclick="deleteComment(${movie.id}, ${index})" class="text-red-500 hover:text-red-400 text-xs">Delete</button>` : ''}
+                        ${admins.includes(localStorage.getItem('currentUser')) ? `<button onclick="deleteComment(${movie.id}, ${index})" class="text-red-500 hover:text-red-400 text-xs">Delete</button>` : ''}
                     </div>
                 `).join('') : '<p class="text-gray-400">No comments yet. Be the first to comment!</p>'}
             </div>
@@ -375,7 +383,7 @@ function shareMovie(platform, title, movieId) {
                 .then(() => console.log('Successful share'))
                 .catch((error) => console.log('Error sharing', error));
             } else {
-                alert('Web Share API is not supported in your browser.');
+                showNotification('Web Share API is not supported in your browser.');
             }
             return; // Return early for native share
     }
@@ -413,17 +421,18 @@ function handleAddComment(event) {
 }
 
 function deleteComment(movieId, commentIndex) {
-    if (!confirm('Are you sure you want to delete this comment?')) return;
-
-     for (const category in mockApiData.movies) {
-        const movie = mockApiData.movies[category].find(m => m.id === movieId);
-        if (movie && movie.comments) {
-            movie.comments.splice(commentIndex, 1);
-            break;
+    if (!admins.includes(localStorage.getItem('currentUser'))) return;
+    if (confirm('Are you sure you want to delete this comment?')) {
+         for (const category in mockApiData.movies) {
+            const movie = mockApiData.movies[category].find(m => m.id === movieId);
+            if (movie && movie.comments) {
+                movie.comments.splice(commentIndex, 1);
+                break;
+            }
         }
+        localStorage.setItem('movieDatabase', JSON.stringify(mockApiData));
+        showMovieDetails(movieId); // Refresh the modal
     }
-    localStorage.setItem('movieDatabase', JSON.stringify(mockApiData));
-    showMovieDetails(movieId); // Refresh the modal
 }
 
 function addDownloadLinkField() {
@@ -442,13 +451,13 @@ function addDownloadLinkField() {
 
 function openEditMovieModal(movieId) {
     if (!admins.includes(localStorage.getItem('currentUser'))) {
-        alert('You are not authorized to edit content.');
+        showNotification('You are not authorized to edit content.');
         return;
     }
     const movie = findMovieById(movieId);
     if (!movie) {
         console.error(`Error: Movie with ID ${movieId} not found.`);
-        alert(`An error occurred: Could not find movie details.`);
+        showNotification(`An error occurred: Could not find movie details.`);
         return;
     }
 
@@ -535,7 +544,7 @@ function initializeLoginPage(){
     }
 
     const handleLogin = () => {
-        const name = document.getElementById('name').value;
+        const name = document.getElementById('name').value.trim().toLowerCase();
         const pass = document.getElementById('pass').value;
         
         if (!name || !pass) {
@@ -544,11 +553,11 @@ function initializeLoginPage(){
             return;
         }
 
-        const user = users.find(u => u.name.toLowerCase() === name.toLowerCase() && u.pass === pass);
+        const user = users.find(u => u.name.toLowerCase() === name && u.pass === pass);
 
         if (user) {
             loginError.classList.add('hidden');
-            localStorage.setItem('currentUser', user.name.toLowerCase());
+            localStorage.setItem('currentUser', user.name);
             loginSection.classList.add('hidden');
             mainAppSection.classList.remove('hidden');
             initializeMainApp();
@@ -580,7 +589,7 @@ function initializeLoginPage(){
     document.getElementById('signup-btn').addEventListener('click', function(event) {
         event.preventDefault();
         const fullName = document.getElementById('new-fullname').value.trim();
-        const newName = document.getElementById('new-name').value.trim();
+        const newName = document.getElementById('new-name').value.trim().toLowerCase();
         const newPass = document.getElementById('new-pass').value;
         const confirmPass = document.getElementById('confirm-pass').value;
         const signupError = document.getElementById('signup-error');
@@ -613,7 +622,7 @@ function initializeLoginPage(){
             signupError.classList.remove('hidden');
             isValid = false;
         }
-        if (users.find(u => u.name.toLowerCase() === newName.toLowerCase())) {
+        if (users.find(u => u.name.toLowerCase() === newName)) {
             signupError.textContent = 'Username already exists. Please choose another.';
             signupError.classList.remove('hidden');
             isValid = false;
@@ -624,7 +633,7 @@ function initializeLoginPage(){
         users.push({ name: newName, pass: newPass, fullName: fullName });
         saveUsers();
 
-        alert(`Account for "${newName}" created successfully! You can now log in.`);
+        showNotification(`Account for "${newName}" created successfully! You can now log in.`);
         signupForm.classList.add('hidden');
         loginFormContainer.classList.remove('hidden');
         if (totalUsersLoginSpan) {
@@ -642,9 +651,9 @@ function initializeLoginPage(){
 
     verifyUserBtn.addEventListener('click', () => {
         const resetFullName = document.querySelector('input[name="resetFullName"]').value.trim();
-        const resetUsername = document.querySelector('input[name="resetUsername"]').value.trim();
+        const resetUsername = document.querySelector('input[name="resetUsername"]').value.trim().toLowerCase();
         const resetError = document.getElementById('reset-error');
-        const user = users.find(u => u.fullName.toLowerCase() === resetFullName.toLowerCase() && u.name.toLowerCase() === resetUsername.toLowerCase());
+        const user = users.find(u => u.fullName.toLowerCase() === resetFullName.toLowerCase() && u.name.toLowerCase() === resetUsername);
 
         if (user) {
             userToReset = user;
@@ -679,7 +688,7 @@ function initializeLoginPage(){
             const userIndex = users.findIndex(u => u.name === userToReset.name);
             users[userIndex].pass = newPassword;
             saveUsers();
-            alert('Password has been reset successfully. You can now log in with your new password.');
+            showNotification('Password has been reset successfully. You can now log in with your new password.');
             closeModal('password-reset-modal');
             passwordResetForm.reset();
             document.getElementById('reset-step-2').classList.add('hidden');
@@ -756,6 +765,10 @@ function initializeMainApp() {
     const manageAdminsModalCloseBtn = document.getElementById('manage-admins-modal-close-btn');
     const addAdminForm = document.getElementById('add-admin-form');
     const adminListContainer = document.getElementById('admin-list');
+    const backBtn = document.getElementById('back-btn');
+    const notificationModal = document.getElementById('notification-modal');
+    const notificationMessage = document.getElementById('notification-message');
+    const notificationCloseBtn = document.getElementById('notification-close-btn');
 
     if (totalUsersSpan) {
         totalUsersSpan.textContent = users.length.toLocaleString();
@@ -763,6 +776,30 @@ function initializeMainApp() {
 
 
     // --- FUNCTIONS ---
+    function updateHistory(state) {
+        viewHistory.push(state);
+        backBtn.classList.toggle('hidden', viewHistory.length <= 1);
+    }
+
+    function goBack() {
+        if (viewHistory.length > 1) {
+            viewHistory.pop(); // Remove current view
+            const previousState = viewHistory[viewHistory.length - 1]; // Get previous
+            renderState(previousState);
+            backBtn.classList.toggle('hidden', viewHistory.length <= 1);
+        }
+    }
+
+    function renderState(state) {
+        if (state.type === 'homepage') {
+            displayHomepageByCategory(false);
+        } else if (state.type === 'category') {
+            showFullCategory(state.categoryKey, false);
+        } else if (state.type === 'filter') {
+            applyFilters(false);
+        }
+    }
+
     function buildAndBindMobileMenu() {
         const categories = mockApiData.categories;
         const menuStructure = {
@@ -886,13 +923,16 @@ function initializeMainApp() {
         }
     }
 
-    function showFullCategory(categoryKey) {
+    function showFullCategory(categoryKey, saveToHistory = true) {
         categoryView.classList.add('hidden');
         filteredView.classList.remove('hidden');
         displayMovies(mockApiData.movies[categoryKey] || []);
+        if (saveToHistory) {
+            updateHistory({ type: 'category', categoryKey: categoryKey });
+        }
     }
     
-    function displayHomepageByCategory() {
+    function displayHomepageByCategory(saveToHistory = true) {
         filteredView.classList.add('hidden');
         categoryView.classList.remove('hidden');
         categoryView.innerHTML = '';
@@ -926,6 +966,11 @@ function initializeMainApp() {
                 showFullCategory(categoryKey);
             });
         });
+
+        if (saveToHistory) {
+            viewHistory = [{ type: 'homepage' }];
+            backBtn.classList.add('hidden');
+        }
     }
     
     function buildNavMenu() {
@@ -1068,7 +1113,7 @@ function initializeMainApp() {
         });
     }
 
-    function applyFilters() {
+    function applyFilters(saveToHistory = true) {
         categoryView.classList.add('hidden');
         filteredView.classList.remove('hidden');
 
@@ -1106,6 +1151,9 @@ function initializeMainApp() {
         }
 
         displayMovies(filteredMovies);
+        if (saveToHistory) {
+            updateHistory({ type: 'filter' });
+        }
     }
     
     function handleSearch() {
@@ -1175,7 +1223,7 @@ function initializeMainApp() {
                 console.error("Could not find movie to edit!");
                 return;
             }
-            alert('Content updated successfully!');
+            showNotification('Content updated successfully!');
 
         } else { // 'add' mode
             const newMovie = {
@@ -1189,7 +1237,7 @@ function initializeMainApp() {
             } else {
                 mockApiData.movies[category] = [newMovie];
             }
-            alert('Content added successfully!');
+            showNotification('Content added successfully!');
         }
         
         localStorage.setItem('movieDatabase', JSON.stringify(mockApiData));
@@ -1218,7 +1266,7 @@ function initializeMainApp() {
         requests.push(movieRequest);
         localStorage.setItem('movieRequests', JSON.stringify(requests));
 
-        alert('Your request has been submitted to the admin!');
+        showNotification('Your request has been submitted to the admin!');
         requestMovieForm.reset();
         closeModal('request-movie-modal');
     }
@@ -1297,7 +1345,7 @@ function initializeMainApp() {
         displaySocialIcons('social-icons-container');
         displaySocialIcons('floating-socials-container');
         closeModal('edit-socials-modal');
-        alert('Social links updated!');
+        showNotification('Social links updated!');
     }
 
     function handleUpdateAds(event) {
@@ -1325,7 +1373,7 @@ function initializeMainApp() {
         localStorage.setItem('movieDatabase', JSON.stringify(mockApiData));
         displayAds();
         closeModal('edit-ads-modal');
-        alert('Ad codes updated successfully!');
+        showNotification('Ad codes updated successfully!');
     }
     
     function displayFeaturedMovies() {
@@ -1345,6 +1393,21 @@ function initializeMainApp() {
                 </div>
             `;
         }).join('');
+        
+        startFeaturedSlider();
+    }
+
+    function startFeaturedSlider() {
+        clearInterval(featuredScrollInterval);
+        featuredScrollInterval = setInterval(() => {
+            const scrollWidth = featuredSlider.scrollWidth;
+            const clientWidth = featuredSlider.clientWidth;
+            if (featuredSlider.scrollLeft + clientWidth >= scrollWidth) {
+                featuredSlider.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                featuredSlider.scrollBy({ left: clientWidth, behavior: 'smooth' });
+            }
+        }, 3000);
     }
 
     function renderCurrentFeaturedList() {
@@ -1412,12 +1475,12 @@ function initializeMainApp() {
         renderAdminList();
         addAdminForm.reset();
         errorP.classList.add('hidden');
-        alert(`User "${username}" has been promoted to admin.`);
+        showNotification(`User "${username}" has been promoted to admin.`);
     }
 
     window.removeAdmin = function(username) {
         if (username === 'rpranta') {
-            alert('The primary admin cannot be removed.');
+            showNotification('The primary admin cannot be removed.');
             return;
         }
         if (confirm(`Are you sure you want to remove "${username}" as an admin?`)) {
@@ -1427,12 +1490,32 @@ function initializeMainApp() {
         }
     }
 
+    function showNotification(message) {
+        notificationMessage.textContent = message;
+        notificationModal.classList.remove('hidden');
+        setTimeout(() => notificationModal.querySelector('.transform').classList.remove('scale-95'), 10);
+    }
+    
+    function togglePasswordVisibility(inputId) {
+        const input = document.getElementById(inputId);
+        const button = input.nextElementSibling;
+        const icon = button.querySelector('svg');
+        if (input.type === "password") {
+            input.type = "text";
+            icon.innerHTML = `<path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />`;
+        } else {
+            input.type = "password";
+            icon.innerHTML = `<path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" />`;
+        }
+    }
+    window.togglePasswordVisibility = togglePasswordVisibility;
+
 
     // --- EVENT LISTENERS ---
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
         activeUserContainer.classList.remove('hidden');
-        activeUserSpan.textContent = `Welcome, ${currentUser}`;
+        activeUserSpan.innerHTML = `<span class="welcome-text">Welcome,</span> ${currentUser}`;
     }
 
     if (admins.includes(currentUser)) {
@@ -1454,17 +1537,12 @@ function initializeMainApp() {
     displayHomepageByCategory();
     
     const resetHomepage = () => {
-        selectedGenre = null;
-        selectedYear = null;
-        selectedLetter = null;
-        selectedRating = null;
-        searchBar.value = '';
-        document.querySelectorAll('.genre-btn.active-btn, .year-btn.active-btn, .alphabet-btn.active-btn, .rating-btn.active-btn').forEach(btn => btn.classList.remove('active-btn'));
         displayHomepageByCategory();
     };
 
     clearFiltersBtn.addEventListener('click', resetHomepage);
     headerTitle.addEventListener('click', resetHomepage);
+    backBtn.addEventListener('click', goBack);
     
     document.getElementById('log-out').addEventListener('click', () => {
         localStorage.removeItem('currentUser');
@@ -1682,6 +1760,9 @@ function initializeMainApp() {
         leftSidebar.classList.toggle('hidden');
     });
     
+    featuredSlider.addEventListener('mouseenter', () => clearInterval(featuredScrollInterval));
+    featuredSlider.addEventListener('mouseleave', startFeaturedSlider);
+
     featuredPrevBtn.addEventListener('click', () => {
         featuredSlider.scrollBy({ left: -featuredSlider.clientWidth, behavior: 'smooth' });
     });
@@ -1702,6 +1783,10 @@ function initializeMainApp() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
+    notificationCloseBtn.addEventListener('click', () => {
+        closeModal('notification-modal');
+    });
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             if (!detailsModal.classList.contains('hidden')) closeModal('movie-details-modal');
@@ -1715,6 +1800,7 @@ function initializeMainApp() {
             if (!document.getElementById('trailer-modal').classList.contains('hidden')) closeModal('trailer-modal');
             if (!document.getElementById('stream-modal').classList.contains('hidden')) closeModal('stream-modal');
             if (!passwordResetModal.classList.contains('hidden')) closeModal('password-reset-modal');
+            if (!notificationModal.classList.contains('hidden')) closeModal('notification-modal');
             if (!mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden');
             if(!leftSidebar.classList.contains('hidden')) leftSidebar.classList.add('hidden');
         }
