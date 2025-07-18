@@ -4,6 +4,7 @@ let selectedGenre = null;
 let selectedYear = null;
 let selectedLetter = null;
 let selectedRating = null;
+let selectedCast = null;
 let userToReset = null;
 let users = [];
 let admins = [];
@@ -706,6 +707,7 @@ function initializeMainApp() {
     const genreContainer = document.getElementById('genre-container');
     const alphabetContainer = document.getElementById('alphabet-container');
     const ratingContainer = document.getElementById('rating-container');
+    const castContainer = document.getElementById('cast-container');
     const moviesGrid = document.getElementById('movies-grid');
     const mainContentArea = document.getElementById('main-content-area');
     const categoryView = document.getElementById('category-view');
@@ -1113,6 +1115,33 @@ function initializeMainApp() {
         });
     }
 
+    function displayCastFilter() {
+        const castContainer = document.getElementById('cast-container');
+        const allMovies = Object.values(mockApiData.movies).flat();
+        const allCast = new Set();
+        allMovies.forEach(movie => {
+            if (movie.cast) {
+                movie.cast.split(',').forEach(actor => allCast.add(actor.trim()));
+            }
+        });
+
+        const sortedCast = Array.from(allCast).sort();
+        castContainer.innerHTML = sortedCast.map(actor => `
+            <button class="cast-btn w-full text-left px-3 py-2 rounded-md transition-colors hover:bg-gray-200 dark:hover:bg-neutral-700 text-sm" data-cast="${actor}">
+                ${actor}
+            </button>
+        `).join('');
+
+        document.querySelectorAll('#cast-container .cast-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('#cast-container .cast-btn').forEach(btn => btn.classList.remove('active-btn'));
+                button.classList.add('active-btn');
+                selectedCast = button.dataset.cast;
+                applyFilters();
+            });
+        });
+    }
+
     function applyFilters(saveToHistory = true) {
         categoryView.classList.add('hidden');
         filteredView.classList.remove('hidden');
@@ -1125,17 +1154,17 @@ function initializeMainApp() {
         if (selectedGenre) {
             filteredMovies = filteredMovies.filter(movie => movie.genres && movie.genres.includes(selectedGenre));
         }
-
         if (selectedYear) {
             filteredMovies = filteredMovies.filter(movie => movie.release_year === selectedYear);
         }
-
         if (selectedLetter) {
             filteredMovies = filteredMovies.filter(movie => movie.title.toLowerCase().startsWith(selectedLetter.toLowerCase()));
         }
-
         if (selectedRating) {
             filteredMovies = filteredMovies.filter(movie => movie.vote_average >= selectedRating);
+        }
+        if (selectedCast) {
+            filteredMovies = filteredMovies.filter(movie => movie.cast && movie.cast.toLowerCase().includes(selectedCast.toLowerCase()));
         }
 
         if (searchTerm) {
@@ -1146,7 +1175,7 @@ function initializeMainApp() {
         }
         
         // When any filter is applied, clear the top nav active state
-        if (selectedGenre || selectedYear || selectedLetter || selectedRating) {
+        if (selectedGenre || selectedYear || selectedLetter || selectedRating || selectedCast) {
             document.querySelectorAll('.nav-link, #main-nav button').forEach(btn => btn.classList.remove('active-btn'));
         }
 
@@ -1250,6 +1279,7 @@ function initializeMainApp() {
         
         // Refresh the view
         displayHomepageByCategory();
+        displayCastFilter();
     }
 
     function handleMovieRequest(event) {
@@ -1498,6 +1528,7 @@ function initializeMainApp() {
     
     function togglePasswordVisibility(inputId) {
         const input = document.getElementById(inputId);
+        if (!input) return;
         const button = input.nextElementSibling;
         const icon = button.querySelector('svg');
         if (input.type === "password") {
@@ -1530,6 +1561,7 @@ function initializeMainApp() {
     displayGenres();
     displayAlphabetFilter();
     displayRatingFilter();
+    displayCastFilter();
     displayFeaturedMovies();
     displaySocialIcons('floating-social-bar');
     displayAds();
@@ -1729,13 +1761,7 @@ function initializeMainApp() {
     editSocialsModal.addEventListener('click', (e) => {
         if (e.target === editSocialsModal) closeModal('edit-socials-modal');
     });
-    editSocialsForm.addEventListener('submit', handleUpdateSocials);
-
-    editAdsModalCloseBtn.addEventListener('click', () => closeModal('edit-ads-modal'));
-    editAdsModal.addEventListener('click', (e) => {
-        if (e.target === editAdsModal) closeModal('edit-ads-modal');
-    });
-    editAdsForm.addEventListener('submit', handleUpdateAds);
+    editSocialsForm.addEventListener('submit', handleUpdateAds);
     
     manageAdminsModalCloseBtn.addEventListener('click', () => closeModal('manage-admins-modal'));
     addAdminForm.addEventListener('submit', addAdmin);
