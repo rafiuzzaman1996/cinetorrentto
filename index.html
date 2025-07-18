@@ -53,9 +53,14 @@
                         <!-- Login Form -->
                         <div id="login-form-container">
                             <h2 class="text-xl font-bold text-center mb-6 text-orange-300">Login</h2>
-                            <fieldset class="fieldset w-full pb-4">
-                                <input id="name" type="text" class="input bg-neutral-800 border-neutral-700 w-full mb-3 p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Username" />
-                                <input id="pass" type="password" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Password" />
+                            <fieldset class="fieldset w-full pb-4 space-y-3">
+                                <input id="name" type="text" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Username" />
+                                <div class="relative">
+                                    <input id="pass" type="password" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500 pr-10" placeholder="Password" />
+                                    <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('pass')">
+                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                </div>
                                 <p id="login-error" class="text-red-400 text-sm mt-2 hidden">Invalid username or password.</p>
                             </fieldset>
                             <button id="login-btn" class="w-full bg-red-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-red-700 transition-colors duration-300">Login</button>
@@ -73,8 +78,18 @@
                             <fieldset class="fieldset w-full pb-4 space-y-3">
                                 <input id="new-fullname" type="text" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Full Name" />
                                 <input id="new-name" type="text" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Choose Username" />
-                                <input id="new-pass" type="password" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Create Password" />
-                                <input id="confirm-pass" type="password" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Confirm Password" />
+                                <div class="relative">
+                                    <input id="new-pass" type="password" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500 pr-10" placeholder="Create Password" />
+                                    <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('new-pass')">
+                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <input id="confirm-pass" type="password" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500 pr-10" placeholder="Confirm Password" />
+                                     <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('confirm-pass')">
+                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                </div>
                             </fieldset>
                             <button id="signup-btn" class="w-full bg-red-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-red-700 transition-colors duration-300">Create Account</button>
                             <div class="mt-2 text-left">
@@ -135,6 +150,11 @@
             <div class="w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-20">
                     <div class="flex items-center gap-2">
+                        <button id="back-btn" class="p-2 rounded-md focus:outline-none hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                        </button>
                         <button id="filter-toggle-btn" class="p-2 rounded-md focus:outline-none">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L16 11.414V16a1 1 0 01-.293.707l-2 2A1 1 0 0113 18v-6.586l-3.707-3.707A1 1 0 019 7V4a1 1 0 01-1-1H4a1 1 0 01-1-1z" />
@@ -583,8 +603,18 @@
                 </div>
                 <div id="reset-step-2" class="hidden space-y-4">
                     <p class="text-sm text-gray-400">Verification successful. Enter your new password.</p>
-                    <input name="newPassword" type="password" placeholder="New Password" class="form-input w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" required>
-                    <input name="confirmNewPassword" type="password" placeholder="Confirm New Password" class="form-input w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" required>
+                    <div class="relative">
+                        <input name="newPassword" id="newPassword" type="password" placeholder="New Password" class="form-input w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500 pr-10" required>
+                        <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('newPassword')">
+                           <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <input name="confirmNewPassword" id="confirmNewPassword" type="password" placeholder="Confirm New Password" class="form-input w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500 pr-10" required>
+                         <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('confirmNewPassword')">
+                           <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
+                        </button>
+                    </div>
                     <p id="reset-password-error" class="text-red-400 text-sm mt-2 hidden"></p>
                     <button type="submit" class="w-full bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">Reset Password</button>
                 </div>
@@ -642,6 +672,16 @@
                     </form>
                     <p id="add-admin-error" class="text-red-400 text-sm mt-2 hidden"></p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notification-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+        <div class="modal-content rounded-lg shadow-2xl w-full max-w-sm transform scale-95 transition-transform duration-300">
+            <div class="p-8 text-center">
+                <p id="notification-message" class="mb-6"></p>
+                <button id="notification-close-btn" class="bg-red-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-red-700 transition-colors">OK</button>
             </div>
         </div>
     </div>
