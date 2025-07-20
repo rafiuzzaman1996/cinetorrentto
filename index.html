@@ -13,138 +13,9 @@
 </head>
 <body class="flex flex-col min-h-screen">
     <div id="ad-popunder"></div>
-    <!-- Login Section -->
-    <main id="login-section" class="flex-grow flex flex-col relative">
-         <!-- Social Icons -->
-        <div class="absolute top-4 right-4 flex items-center gap-4 z-10">
-            <div id="social-icons-container" class="flex items-center gap-3">
-                 <!-- Icons will be injected by JS -->
-            </div>
-        </div>
-
-        <section class="flex-grow flex items-center justify-center hero-bg w-full">
-            <div class="w-11/12 max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10 py-20">
-
-                <div class="md:w-1/2 text-center md:text-left">
-                     <h1 id="login-title" class="site-title text-5xl" style="color: #e8a265;">CineTorrentto</h1>
-                    <p class="w-full text-base my-6 text-gray-300">Your ultimate gateway to the world of cinema. Discover, track, and explore thousands of movies, from timeless classics to the latest blockbusters.</p>
-                    
-                    <!-- Counters -->
-                    <div class="my-6 flex flex-col md:flex-row items-center justify-center md:justify-start gap-x-6 gap-y-3 text-orange-300">
-                        <div class="flex items-center gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a3.002 3.002 0 014.288 0M12 14a4 4 0 100-8 4 4 0 000 8z" />
-                            </svg>
-                            <p>
-                                <span id="visitor-count" class="font-bold text-base">0</span> Visitors This Month
-                            </p>
-                        </div>
-                        <div id="total-users-login-container" class="flex items-center gap-3">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197M15 21a6 6 0 006-6v-1a6 6 0 00-6-6h-1m-4 16a6 6 0 01-2-11.657" /></svg>
-                             <p>
-                                <span id="total-users-count-login" class="font-bold text-base">0</span> Total Users
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Login/Signup Container -->
-                    <div class="w-full max-w-sm mx-auto md:mx-0 bg-neutral-900/50 backdrop-blur-sm p-8 rounded-lg">
-                        
-                        <!-- Login Form -->
-                        <div id="login-form-container">
-                            <h2 class="text-xl font-bold text-center mb-6 text-orange-300">Login</h2>
-                            <fieldset class="fieldset w-full pb-4 space-y-3">
-                                <input id="name" type="text" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Username" />
-                                <div class="relative">
-                                    <input id="pass" type="password" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500 pr-10" placeholder="Password" />
-                                    <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('pass')">
-                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
-                                    </button>
-                                </div>
-                                <p id="login-error" class="text-red-400 text-sm mt-2 hidden">Invalid username or password.</p>
-                            </fieldset>
-                            <button id="login-btn" class="w-full bg-red-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-red-700 transition-colors duration-300">Login</button>
-                             <div class="text-right mt-2">
-                                <a href="#" id="forgot-password-link" class="text-sm text-red-400 hover:underline">Forgot Password?</a>
-                            </div>
-                            <p class="text-center mt-4 text-sm text-gray-400">
-                                Don't have an account? <a href="#" id="show-signup" class="text-red-400 hover:underline">Sign Up</a>
-                            </p>
-                        </div>
-
-                        <!-- Signup Form -->
-                        <div id="signup-form" class="hidden">
-                            <h2 class="text-xl font-bold text-center mb-6 text-orange-300">Create Account</h2>
-                            <fieldset class="fieldset w-full pb-4 space-y-3">
-                                <input id="new-fullname" type="text" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Full Name" />
-                                <input id="new-name" type="text" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500" placeholder="Choose Username" />
-                                <div class="relative">
-                                    <input id="new-pass" type="password" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500 pr-10" placeholder="Create Password" />
-                                    <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('new-pass')">
-                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
-                                    </button>
-                                </div>
-                                <div class="relative">
-                                    <input id="confirm-pass" type="password" class="input bg-neutral-800 border-neutral-700 w-full p-3 rounded-md focus:ring-red-500 focus:border-red-500 pr-10" placeholder="Confirm Password" />
-                                     <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('confirm-pass')">
-                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
-                                    </button>
-                                </div>
-                            </fieldset>
-                            <button id="signup-btn" class="w-full bg-red-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-red-700 transition-colors duration-300">Create Account</button>
-                            <div class="mt-2 text-left">
-                                <p id="signup-username-error" class="text-red-400 text-xs mt-1 hidden"></p>
-                                <p id="signup-password-error" class="text-red-400 text-xs mt-1 hidden"></p>
-                                <p id="signup-error" class="text-red-400 text-sm mt-2 hidden"></p>
-                            </div>
-                            <p class="text-center mt-4 text-sm text-gray-400">
-                                Already have an account? <a href="#" id="show-login" class="text-red-400 hover:underline">Login</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="md:w-1/2 flex justify-center opacity-50">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-orange-300/50">
-                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line>
-                    </svg>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Download Info Section -->
-        <section class="py-12 download-section text-center">
-            <div class="container mx-auto px-4">
-                <p class="text-base">Please let us know in the comments if you have any problems downloading. We will resolve the issue quickly.</p>
-                <p class="text-base text-gray-400 mb-6 bengali">(ডাউনলোড করতে সমস্যা হলে অবশ্যই কমেন্টে করে জানাবেন। আমরা সমস্যার দ্রুত সমাধান করব।)</p>
-                
-                <p class="text-base">To download, you must have one of the following 4 apps installed. If not, please install it using the links below.</p>
-                <p class="text-base text-gray-400 mb-10 bengali">(ডাউনলোড করার জন্য নিচের ৪টি অ্যাপ এর মধ্যে যেকোনো একটি ইন্সটল থাকতে হবে। না থাকলে অনুগ্রহ করে নিচের লিঙ্কগুলো থেকে ইন্সটল করে নিন।)</p>
-
-                <div class="grid md:grid-cols-2 gap-12">
-                    <div>
-                        <h3 class="text-xl font-bold mb-4">Android User</h3>
-                        <div class="flex justify-center gap-4 flex-wrap">
-                            <a href="https://play.google.com/store/apps/details?id=org.freedownloadmanager.fdm&hl=en&referrer=utm_source%3Dgoogle%26utm_medium%3Dorganic%26utm_term%3Dfdm&pcampaignid=APPU_1_XB7LZ_HnK63H4-EP8PnbgQw" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">FDM</a>
-                            <a href="https://play.google.com/store/apps/details?id=com.dv.adm&hl=en&referrer=utm_source%3Dgoogle%26utm_medium%3Dorganic%26utm_term%3Dadm&pcampaignid=APPU_1_IJLMZ9iVB-nG4-EPlr-RuQM" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">ADM</a>
-                            <a href="https://play.google.com/store/apps/details?id=com.utorrent.client&hl=en&referrer=utm_source%3Dgoogle%26utm_medium%3Dorganic%26utm_term%3Dutorrent&pcampaignid=APPU_1_B5LMZ-W0IM6XjuMP1I3T0Q4" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">µTorrent</a>
-                            <a href="https://play.google.com/store/apps/details?id=com.bittorrent.client&hl=en&referrer=utm_source%3Dgoogle%26utm_medium%3Dorganic%26utm_term%3Dbittorrent&pcampaignid=APPU_1_2pHMZ7LTG9Oq4-EP3qnzsQQ" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">BitTorrent</a>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-4">PC User</h3>
-                        <div class="flex justify-center gap-4 flex-wrap">
-                            <a href="https://files2.freedownloadmanager.org/6/latest/fdm_x64_setup.exe" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">FDM</a>
-                            <a href="https://www.utorrent.com/web/downloads/complete/track/stable/os/win/" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">µTorrent</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Main App Section (Initially Hidden) -->
-    <div id="main-app" class="hidden w-full h-full">
+    
+    <!-- Main App Section -->
+    <div id="main-app" class="hidden w-full h-full flex flex-col flex-grow">
         <!-- Header -->
         <header class="main-header backdrop-blur-sm sticky top-0 z-40 shadow-lg shadow-black/20">
             <div class="w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -191,12 +62,13 @@
                                 <svg id="theme-icon-light" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                                 <svg id="theme-icon-dark" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                              </button>
+                             <button id="login-btn-header" class="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors font-semibold">Login</button>
                              <button id="admin-panel-btn" class="relative px-4 py-2 text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition-colors font-semibold hidden">
                                 Admin Panel
                                 <span id="admin-panel-notification-badge" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-xs flex items-center justify-center hidden"></span>
                              </button>
                              <button id="request-movie-btn" class="px-4 py-2 text-white bg-sky-600 rounded-full hover:bg-sky-700 transition-colors font-semibold hidden">Request a Movie</button>
-                             <button id="log-out" class="px-4 py-2 border rounded-full transition-colors">Logout</button>
+                             <button id="log-out" class="px-4 py-2 border rounded-full transition-colors hidden">Logout</button>
                         </div>
                         <div class="lg:hidden">
                             <button id="mobile-menu-btn" class="p-2 rounded-md focus:outline-none">
@@ -276,8 +148,8 @@
             </aside>
 
             <!-- Main Content -->
-            <div class="flex-grow min-w-0">
-                <main id="main-content-area" class="p-4 sm:p-6 lg:p-8">
+            <div class="flex-grow min-w-0 flex flex-col">
+                <main id="main-content-area" class="p-4 sm:p-6 lg:p-8 flex-grow">
                      <div id="category-view" class="space-y-8">
                         <!-- Category sections will be injected here -->
                     </div>
@@ -291,10 +163,58 @@
                             <p>Try a different search term or category.</p>
                         </div>
                     </div>
+                     <!-- Download Info Section -->
+                    <section class="py-12 download-section text-center mt-8">
+                        <div class="container mx-auto px-4">
+                            <p class="text-base">Please let us know in the comments if you have any problems downloading. We will resolve the issue quickly.</p>
+                            <p class="text-base text-gray-400 mb-6 bengali">(ডাউনলোড করতে সমস্যা হলে অবশ্যই কমেন্টে করে জানাবেন। আমরা সমস্যার দ্রুত সমাধান করব।)</p>
+                            
+                            <p class="text-base">To download, you must have one of the following 4 apps installed. If not, please install it using the links below.</p>
+                            <p class="text-base text-gray-400 mb-10 bengali">(ডাউনলোড করার জন্য নিচের ৪টি অ্যাপ এর মধ্যে যেকোনো একটি ইন্সটল থাকতে হবে। না থাকলে অনুগ্রহ করে নিচের লিঙ্কগুলো থেকে ইন্সটল করে নিন।)</p>
+
+                            <div class="grid md:grid-cols-2 gap-12">
+                                <div>
+                                    <h3 class="text-xl font-bold mb-4">Android User</h3>
+                                    <div class="flex justify-center gap-4 flex-wrap">
+                                        <a href="https://play.google.com/store/apps/details?id=org.freedownloadmanager.fdm&hl=en&referrer=utm_source%3Dgoogle%26utm_medium%3Dorganic%26utm_term%3Dfdm&pcampaignid=APPU_1_XB7LZ_HnK63H4-EP8PnbgQw" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">FDM</a>
+                                        <a href="https://play.google.com/store/apps/details?id=com.dv.adm&hl=en&referrer=utm_source%3Dgoogle%26utm_medium%3Dorganic%26utm_term%3Dadm&pcampaignid=APPU_1_IJLMZ9iVB-nG4-EPlr-RuQM" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">ADM</a>
+                                        <a href="https://play.google.com/store/apps/details?id=com.utorrent.client&hl=en&referrer=utm_source%3Dgoogle%26utm_medium%3Dorganic%26utm_term%3Dutorrent&pcampaignid=APPU_1_B5LMZ-W0IM6XjuMP1I3T0Q4" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">µTorrent</a>
+                                        <a href="https://play.google.com/store/apps/details?id=com.bittorrent.client&hl=en&referrer=utm_source%3Dgoogle%26utm_medium%3Dorganic%26utm_term%3Dbittorrent&pcampaignid=APPU_1_2pHMZ7LTG9Oq4-EP3qnzsQQ" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">BitTorrent</a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold mb-4">PC User</h3>
+                                    <div class="flex justify-center gap-4 flex-wrap">
+                                        <a href="https://files2.freedownloadmanager.org/6/latest/fdm_x64_setup.exe" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">FDM</a>
+                                        <a href="https://www.utorrent.com/web/downloads/complete/track/stable/os/win/" target="_blank" class="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-neutral-700 transition-colors">µTorrent</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </main>
                 <footer class="p-6 text-center">
                     <div id="ad-footer-728x90" class="ad-placeholder mx-auto mb-4" style="width: 728px; height: 90px; max-width: 100%;">Adsterra 728x90</div>
-                    <h2 class="site-title text-4xl mb-4" style="color: var(--brand-orange);">CineTorrentto</h2>
+                    <h2 id="footer-title" class="site-title text-4xl mb-4 cursor-pointer" style="color: var(--brand-orange);">CineTorrentto</h2>
+                    
+                    <!-- Counters -->
+                    <div class="my-6 flex flex-col md:flex-row items-center justify-center gap-x-6 gap-y-3 text-sm">
+                        <div class="flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a3.002 3.002 0 014.288 0M12 14a4 4 0 100-8 4 4 0 000 8z" />
+                            </svg>
+                            <p>
+                                <span id="visitor-count-footer" class="font-bold">0</span> Visitors This Month
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197M15 21a6 6 0 006-6v-1a6 6 0 00-6-6h-1m-4 16a6 6 0 01-2-11.657" /></svg>
+                             <p>
+                                <span id="total-users-count-footer" class="font-bold">0</span> Total Users
+                            </p>
+                        </div>
+                    </div>
+
                     <p class="text-xs text-gray-500">Copyright &copy; 2024 CineTorrentto. All Rights Reserved.</p>
                     <p class="text-xs text-gray-500 mt-2">Disclaimer: This site does not store any files on its server. All contents are provided by non-affiliated third parties.</p>
                 </footer>
@@ -321,6 +241,71 @@
         
         <div id="floating-social-bar" class="fixed top-1/2 right-0 transform -translate-y-1/2 z-50 flex flex-col gap-2 p-2 bg-black bg-opacity-50 rounded-l-lg">
              <!-- Floating social icons will be injected here -->
+        </div>
+    </div>
+
+    <!-- Login/Signup Modal -->
+    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+        <div class="modal-content rounded-lg shadow-2xl w-full max-w-md transform scale-95 transition-transform duration-300">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Login or Sign Up</h2>
+                    <button type="button" id="login-modal-close-btn" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                <!-- Login Form -->
+                <div id="login-form-container">
+                    <fieldset class="fieldset w-full pb-4 space-y-4">
+                        <input id="name" type="text" class="form-input w-full p-3 rounded-md" placeholder="Username" required />
+                        <div class="relative">
+                            <input id="pass" type="password" class="form-input w-full p-3 rounded-md pr-10" placeholder="Password" required />
+                            <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('pass')">
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </div>
+                        <p id="login-error" class="text-red-400 text-sm mt-2 hidden">Invalid username or password.</p>
+                    </fieldset>
+                    <button id="login-btn" class="w-full bg-red-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-red-700 transition-colors duration-300">Login</button>
+                     <div class="text-right mt-2">
+                        <a href="#" id="forgot-password-link" class="text-sm text-red-400 hover:underline">Forgot Password?</a>
+                    </div>
+                    <p class="text-center mt-4 text-sm text-gray-400">
+                        Don't have an account? <a href="#" id="show-signup" class="text-red-400 hover:underline">Sign Up</a>
+                    </p>
+                </div>
+
+                <!-- Signup Form -->
+                <div id="signup-form" class="hidden">
+                    <h2 class="text-xl font-bold text-center mb-6 text-orange-300">Create Account</h2>
+                    <fieldset class="fieldset w-full pb-4 space-y-4">
+                        <input id="new-fullname" type="text" class="form-input w-full p-3 rounded-md" placeholder="Full Name" required />
+                        <input id="new-name" type="text" class="form-input w-full p-3 rounded-md" placeholder="Choose Username" required />
+                        <div class="relative">
+                            <input id="new-pass" type="password" class="form-input w-full p-3 rounded-md pr-10" placeholder="Create Password" required />
+                            <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('new-pass')">
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <input id="confirm-pass" type="password" class="form-input w-full p-3 rounded-md pr-10" placeholder="Confirm Password" required />
+                             <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white" onclick="togglePasswordVisibility('confirm-pass')">
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2 2 0 012.828 2.828l1.515 1.515A4 4 0 0014 10a4 4 0 10-5.93 3.93l-1.515-1.515a2 2 0 01-2.828-2.828zM10 17a9.958 9.958 0 01-4.512-1.074l-1.78-1.781a1 1 0 01-1.414-1.414l14-14a1 1 0 011.414 1.414l-1.473 1.473A10.014 10.014 0 01.458 10C1.732 14.057 5.522 17 10 17z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </div>
+                    </fieldset>
+                    <button id="signup-btn" class="w-full bg-red-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-red-700 transition-colors duration-300">Create Account</button>
+                    <div class="mt-2 text-left">
+                        <p id="signup-username-error" class="text-red-400 text-xs mt-1 hidden"></p>
+                        <p id="signup-password-error" class="text-red-400 text-xs mt-1 hidden"></p>
+                        <p id="signup-error" class="text-red-400 text-sm mt-2 hidden"></p>
+                        <p id="signup-success-message" class="text-green-400 text-sm mt-2 hidden"></p>
+                    </div>
+                    <p class="text-center mt-4 text-sm text-gray-400">
+                        Already have an account? <a href="#" id="show-login" class="text-red-400 hover:underline">Login</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 

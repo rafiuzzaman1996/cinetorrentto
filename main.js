@@ -1,3 +1,4 @@
+// --- MAIN.JS ---
 // --- GLOBAL DATA & UTILITY FUNCTIONS ---
 let mockApiData = {};
 let selectedGenre = null;
@@ -29,9 +30,9 @@ function loadDatabase() {
     users = JSON.parse(localStorage.getItem('users')) || [];
     admins = JSON.parse(localStorage.getItem('admins')) || ['rpranta'];
 
-    // Ensure admin user exists
+    // Ensure admin user exists but hide the password
     if (!users.find(user => user.name === 'rpranta')) {
-        users.push({ name: 'rpranta', pass: '123456', fullName: 'R Pranta' });
+        users.push({ name: 'rpranta', pass: '12345678', fullName: 'R Pranta' });
         saveUsers();
     }
 }
@@ -400,8 +401,14 @@ function handleAddComment(event) {
     
     if (!commentText) return;
 
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
+        showNotification('You must be logged in to comment.');
+        return;
+    }
+
     const newComment = {
-        username: localStorage.getItem('currentUser'),
+        username: currentUser,
         text: commentText,
         date: new Date().toLocaleString()
     };
@@ -525,9 +532,8 @@ function openEditMovieModal(movieId) {
      setTimeout(() => document.getElementById('add-movie-modal').querySelector('.transform').classList.remove('scale-95'), 10);
 }
 
-function initializeLoginPage(){
-    const loginSection = document.getElementById('login-section');
-    const mainAppSection = document.getElementById('main-app');
+function initializeLoginModal() {
+    const loginModal = document.getElementById('login-modal');
     const loginFormContainer = document.getElementById('login-form-container');
     const signupForm = document.getElementById('signup-form');
     const showSignupBtn = document.getElementById('show-signup');
@@ -538,11 +544,6 @@ function initializeLoginPage(){
     const passwordResetModalCloseBtn = document.getElementById('password-reset-modal-close-btn');
     const passwordResetForm = document.getElementById('password-reset-form');
     const verifyUserBtn = document.getElementById('verify-user-btn');
-    const totalUsersLoginSpan = document.getElementById('total-users-count-login');
-
-    if (totalUsersLoginSpan) {
-        totalUsersLoginSpan.textContent = users.length.toLocaleString();
-    }
 
     const handleLogin = () => {
         const name = document.getElementById('name').value.trim().toLowerCase();
@@ -559,9 +560,8 @@ function initializeLoginPage(){
         if (user) {
             loginError.classList.add('hidden');
             localStorage.setItem('currentUser', user.name);
-            loginSection.classList.add('hidden');
-            mainAppSection.classList.remove('hidden');
-            initializeMainApp();
+            closeModal('login-modal');
+            updateHeaderState();
         } else {
             loginError.textContent = 'Invalid username or password.';
             loginError.classList.remove('hidden');
@@ -596,11 +596,13 @@ function initializeLoginPage(){
         const signupError = document.getElementById('signup-error');
         const usernameError = document.getElementById('signup-username-error');
         const passwordError = document.getElementById('signup-password-error');
+        const successMsg = document.getElementById('signup-success-message');
 
         // Reset errors
         signupError.classList.add('hidden');
         usernameError.classList.add('hidden');
         passwordError.classList.add('hidden');
+        successMsg.classList.add('hidden');
         let isValid = true;
 
         if (!fullName) {
@@ -633,13 +635,18 @@ function initializeLoginPage(){
         
         users.push({ name: newName, pass: newPass, fullName: fullName });
         saveUsers();
+        updateUserCount();
 
-        showNotification(`Account for "${newName}" created successfully! You can now log in.`);
-        signupForm.classList.add('hidden');
-        loginFormContainer.classList.remove('hidden');
-        if (totalUsersLoginSpan) {
-            totalUsersLoginSpan.textContent = users.length.toLocaleString();
-        }
+        successMsg.textContent = `Account for "${newName}" created successfully! You can now log in.`;
+        successMsg.classList.remove('hidden');
+        
+        document.getElementById('signup-form').reset();
+
+        setTimeout(() => {
+            successMsg.classList.add('hidden');
+            signupForm.classList.add('hidden');
+            loginFormContainer.classList.remove('hidden');
+        }, 3000);
     });
 
     forgotPasswordLink.addEventListener('click', (e) => {
@@ -697,6 +704,45 @@ function initializeLoginPage(){
             userToReset = null;
         }
     });
+}
+
+function updateHeaderState() {
+    const currentUser = localStorage.getItem('currentUser');
+    const loginBtn = document.getElementById('login-btn-header');
+    const logoutBtn = document.getElementById('log-out');
+    const requestMovieBtn = document.getElementById('request-movie-btn');
+    const adminPanelBtn = document.getElementById('admin-panel-btn');
+    const activeUserContainer = document.getElementById('active-user-container');
+    const activeUserSpan = document.getElementById('active-user');
+
+    if (currentUser) {
+        loginBtn.classList.add('hidden');
+        logoutBtn.classList.remove('hidden');
+        activeUserContainer.classList.remove('hidden');
+        activeUserSpan.innerHTML = `<span class="welcome-text">Welcome,</span> ${currentUser}`;
+        
+        if (admins.includes(currentUser)) {
+            adminPanelBtn.classList.remove('hidden');
+            requestMovieBtn.classList.add('hidden');
+            checkForMovieRequests();
+        } else {
+            adminPanelBtn.classList.add('hidden');
+            requestMovieBtn.classList.remove('hidden');
+        }
+    } else {
+        loginBtn.classList.remove('hidden');
+        logoutBtn.classList.add('hidden');
+        activeUserContainer.classList.add('hidden');
+        requestMovieBtn.classList.add('hidden');
+        adminPanelBtn.classList.add('hidden');
+    }
+}
+
+function updateUserCount() {
+    const totalUsersSpan = document.getElementById('total-users-count-footer');
+    if(totalUsersSpan) {
+        totalUsersSpan.textContent = users.length.toLocaleString();
+    }
 }
 
 // --- MAIN APP SCRIPT ---
@@ -760,9 +806,6 @@ function initializeMainApp() {
     const editFeaturedModal = document.getElementById('edit-featured-modal');
     const editFeaturedModalCloseBtn = document.getElementById('edit-featured-modal-close-btn');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
-    const activeUserContainer = document.getElementById('active-user-container');
-    const activeUserSpan = document.getElementById('active-user');
-    const totalUsersSpan = document.getElementById('total-users-count');
     const manageAdminsModal = document.getElementById('manage-admins-modal');
     const manageAdminsModalCloseBtn = document.getElementById('manage-admins-modal-close-btn');
     const addAdminForm = document.getElementById('add-admin-form');
@@ -771,11 +814,10 @@ function initializeMainApp() {
     const notificationModal = document.getElementById('notification-modal');
     const notificationMessage = document.getElementById('notification-message');
     const notificationCloseBtn = document.getElementById('notification-close-btn');
-
-    if (totalUsersSpan) {
-        totalUsersSpan.textContent = users.length.toLocaleString();
-    }
-
+    const loginBtnHeader = document.getElementById('login-btn-header');
+    const loginModal = document.getElementById('login-modal');
+    const loginModalCloseBtn = document.getElementById('login-modal-close-btn');
+    const footerTitle = document.getElementById('footer-title');
 
     // --- FUNCTIONS ---
     function updateHistory(state) {
@@ -1284,12 +1326,18 @@ function initializeMainApp() {
 
     function handleMovieRequest(event) {
         event.preventDefault();
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) {
+            showNotification('You must be logged in to make a request.');
+            return;
+        }
+
         const formData = new FormData(requestMovieForm);
         const movieRequest = {
             name: formData.get('movieName'),
             year: formData.get('movieYear'),
             description: formData.get('movieDescription'),
-            requester: localStorage.getItem('currentUser')
+            requester: currentUser
         };
 
         let requests = JSON.parse(localStorage.getItem('movieRequests')) || [];
@@ -1543,19 +1591,7 @@ function initializeMainApp() {
 
 
     // --- EVENT LISTENERS ---
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-        activeUserContainer.classList.remove('hidden');
-        activeUserSpan.innerHTML = `<span class="welcome-text">Welcome,</span> ${currentUser}`;
-    }
-
-    if (admins.includes(currentUser)) {
-        adminPanelBtn.classList.remove('hidden');
-        checkForMovieRequests();
-    } else {
-        requestMovieBtn.classList.remove('hidden');
-    }
-
+    updateHeaderState();
     buildNavMenu();
     displayYears();
     displayGenres();
@@ -1565,8 +1601,8 @@ function initializeMainApp() {
     displayFeaturedMovies();
     displaySocialIcons('floating-social-bar');
     displayAds();
-    
     displayHomepageByCategory();
+    initializeLoginModal();
     
     const resetHomepage = () => {
         displayHomepageByCategory();
@@ -1574,14 +1610,19 @@ function initializeMainApp() {
 
     clearFiltersBtn.addEventListener('click', resetHomepage);
     headerTitle.addEventListener('click', resetHomepage);
+    footerTitle.addEventListener('click', resetHomepage);
     backBtn.addEventListener('click', goBack);
     
     document.getElementById('log-out').addEventListener('click', () => {
         localStorage.removeItem('currentUser');
-        document.getElementById('login-section').classList.remove('hidden');
-        document.getElementById('main-app').classList.add('hidden');
-        location.reload();
+        updateHeaderState();
     });
+
+    loginBtnHeader.addEventListener('click', () => {
+        loginModal.classList.remove('hidden');
+        setTimeout(() => loginModal.querySelector('.transform').classList.remove('scale-95'), 10);
+    });
+    loginModalCloseBtn.addEventListener('click', () => closeModal('login-modal'));
 
     searchBar.addEventListener('input', handleSearch);
 
@@ -1686,28 +1727,6 @@ function initializeMainApp() {
     
     document.getElementById('modal-edit-ads-btn').addEventListener('click', () => {
         closeModal('admin-panel-modal');
-        const editAdsModal = document.getElementById('edit-ads-modal');
-        const editAdsForm = document.getElementById('edit-ads-form');
-        const adCodes = mockApiData.ads || {};
-        
-        editAdsForm.querySelector('[name="adLeft1"]').value = adCodes.adLeft1 || '';
-        editAdsForm.querySelector('[name="adLeftImg1"]').value = adCodes.adLeftImg1 || '';
-        editAdsForm.querySelector('[name="adLeftImg2"]').value = adCodes.adLeftImg2 || '';
-        editAdsForm.querySelector('[name="adLeftImg3"]').value = adCodes.adLeftImg3 || '';
-        editAdsForm.querySelector('[name="adLeftImg4"]').value = adCodes.adLeftImg4 || '';
-        editAdsForm.querySelector('[name="sidebarVideo"]').value = adCodes.sidebarVideo || '';
-        editAdsForm.querySelector('[name="right1"]').value = adCodes.right1 || '';
-        editAdsForm.querySelector('[name="right2"]').value = adCodes.right2 || '';
-        editAdsForm.querySelector('[name="rightNative"]').value = adCodes.rightNative || '';
-        editAdsForm.querySelector('[name="rightImg1"]').value = adCodes.rightImg1 || '';
-        editAdsForm.querySelector('[name="rightImg2"]').value = adCodes.rightImg2 || '';
-        editAdsForm.querySelector('[name="rightImg3"]').value = adCodes.rightImg3 || '';
-        editAdsForm.querySelector('[name="right468x60"]').value = adCodes.right468x60 || '';
-        editAdsForm.querySelector('[name="right320x50"]').value = adCodes.right320x50 || '';
-        editAdsForm.querySelector('[name="adSocialBar"]').value = adCodes.adSocialBar || '';
-        editAdsForm.querySelector('[name="adPopunder"]').value = adCodes.adPopunder || '';
-        editAdsForm.querySelector('[name="adFooter728x90"]').value = adCodes.adFooter728x90 || '';
-
         editAdsModal.classList.remove('hidden');
         setTimeout(() => editAdsModal.querySelector('.transform').classList.remove('scale-95'), 10);
     });
@@ -1762,6 +1781,8 @@ function initializeMainApp() {
         if (e.target === editSocialsModal) closeModal('edit-socials-modal');
     });
     editSocialsForm.addEventListener('submit', handleUpdateAds);
+    editAdsModalCloseBtn.addEventListener('click', () => closeModal('edit-ads-modal'));
+    editAdsForm.addEventListener('submit', handleUpdateAds);
     
     manageAdminsModalCloseBtn.addEventListener('click', () => closeModal('manage-admins-modal'));
     addAdminForm.addEventListener('submit', addAdmin);
@@ -1823,6 +1844,7 @@ function initializeMainApp() {
             if (!editAdsModal.classList.contains('hidden')) closeModal('edit-ads-modal');
             if (!editFeaturedModal.classList.contains('hidden')) closeModal('edit-featured-modal');
             if (!manageAdminsModal.classList.contains('hidden')) closeModal('manage-admins-modal');
+            if (!adminPanelModal.classList.contains('hidden')) closeModal('admin-panel-modal');
             if (!document.getElementById('trailer-modal').classList.contains('hidden')) closeModal('trailer-modal');
             if (!document.getElementById('stream-modal').classList.contains('hidden')) closeModal('stream-modal');
             if (!passwordResetModal.classList.contains('hidden')) closeModal('password-reset-modal');
@@ -1838,21 +1860,14 @@ function initializeMainApp() {
 
 }
 
-// Auto-login if user is already saved
 document.addEventListener('DOMContentLoaded', () => {
     loadDatabase();
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-        document.getElementById('login-section').classList.add('hidden');
-        document.getElementById('main-app').classList.remove('hidden');
-        initializeMainApp();
-    } else {
-        initializeLoginPage();
-    }
+    document.getElementById('main-app').classList.remove('hidden');
+    initializeMainApp();
 
-    // Visitor Counter Logic - runs on every load
+    // Visitor Counter Logic
     displaySocialIcons('social-icons-container');
-    const visitorCountSpan = document.getElementById('visitor-count');
+    const visitorCountSpan = document.getElementById('visitor-count-footer');
     let visitorData = JSON.parse(localStorage.getItem('visitorData')) || {};
     const today = new Date();
     const currentMonth = `${today.getFullYear()}-${today.getMonth()}`;
@@ -1866,7 +1881,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     visitorData.count++;
     localStorage.setItem('visitorData', JSON.stringify(visitorData));
-    visitorCountSpan.textContent = visitorData.count.toLocaleString();
+    if(visitorCountSpan) {
+        visitorCountSpan.textContent = visitorData.count.toLocaleString();
+    }
     
-    document.getElementById('login-title').addEventListener('click', () => location.reload());
+    updateUserCount();
 });

@@ -34,7 +34,7 @@ body {
 .dark .modal-content { background-color: #262626; }
 .dark .form-input { background-color: #404040; border-color: #525252; color: #f9fafb; }
 .dark .category-btn, .dark .genre-btn, .dark .year-btn, .dark .alphabet-btn, .dark .rating-btn, .dark .cast-btn { color: #a3a3a3; }
-.dark .category-btn:hover, .dark .genre-btn:hover, .dark .year-btn:hover, .dark .alphabet-btn:hover, .dark .rating-btn:hover, .dark .cast-btn:hover { 
+.dark .category-btn:hover, .dark .genre-btn:hover, .dark .year-btn:hover, .dark .alphabet-btn:hover, .dark .rating-btn:hover, .dark .cast-btn:hover {
     background-color: #404040;
     color: var(--brand-orange);
 }
@@ -70,7 +70,7 @@ body {
 .light .modal-content { background-color: #ffffff; }
 .light .form-input { background-color: #e5e5e5; border-color: #d4d4d4; color: #1a1a1a; }
 .light .category-btn, .light .genre-btn, .light .year-btn, .light .alphabet-btn, .light .rating-btn, .light .cast-btn { color: #525252; }
-.light .category-btn:hover, .light .genre-btn:hover, .light .year-btn:hover, .light .alphabet-btn:hover, .light .rating-btn:hover, .light .cast-btn:hover { 
+.light .category-btn:hover, .light .genre-btn:hover, .light .year-btn:hover, .light .alphabet-btn:hover, .light .rating-btn:hover, .light .cast-btn:hover {
     background-color: #e5e5e5;
     color: var(--brand-red);
 }
@@ -228,4 +228,15 @@ details[open] > summary::after {
 
 .modal-content h3 {
     color: var(--brand-orange);
+}
+
+/* Login Modal Styles */
+#login-modal {
+    /* Picture-in-picture like appearance */
+    resize: both;
+    overflow: auto;
+}
+
+#login-modal-header {
+    cursor: grab;
 }
