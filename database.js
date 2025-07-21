@@ -3,16 +3,17 @@ const initialData = {
     "featuredIds": [653346, 823464, 278, 155, 27205], // Default featured movies
     "ads": {
         "adLeft1": "", "adLeftImg1": "", "adLeftImg2": "", "adLeftImg3": "", "adLeftImg4": "", 
-        "sidebarVideo": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "sidebarVideo": "https://youtu.be/2N53rKrNIig?si=gIsgDYYQpbPucn2q",
         "right1": "", "right2": "", "rightNative": "", 
         "rightImg1": "", "rightImg2": "", "rightImg3": "",
         "right468x60": "", "right320x50": "", "adSocialBar": "", "adPopunder": "", "adFooter728x90": ""
     },
     "socialLinks": {
-        "facebook": "https://facebook.com",
-        "telegram": "https://telegram.org",
-        "youtube": "https://youtube.com",
-        "whatsapp": "https://whatsapp.com"
+        "facebook": "https://www.facebook.com/cinetorrentto",
+        "telegram": "https://t.me/cinetorrentto",
+        "youtube": "https://www.youtube.com/@panchaanukabyoofficial",
+        "whatsapp": "https://api.whatsapp.com/send/?phone=8801531936670&text&type=phone_number&app_absent=0",
+        "tiktok": "https://www.tiktok.com/@cinetorrentto"
     },
     "genres": {
         "action": "Action", "adventure": "Adventure", "animation": "Animation", "comedy": "Comedy", "crime": "Crime",
