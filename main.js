@@ -236,7 +236,15 @@ function showMovieDetails(movieId) {
 
     const modalContentWrapper = document.getElementById('modal-content-wrapper');
     const detailsModal = document.getElementById('movie-details-modal');
-    const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://placehold.co/500x750/1f2937/374151?text=No+Image';
+    let posterUrl = 'https://placehold.co/500x750/1f2937/374151?text=No+Image';
+    if (movie.poster_path) {
+        if (movie.poster_path.includes('drive.google.com')) {
+            const fileId = movie.poster_path.match(/d\/(.+?)\//)[1];
+            posterUrl = `https://lh3.googleusercontent.com/d/${fileId}=w500`;
+        } else {
+            posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        }
+    }
     const downloadLinks = movie.download_links || [];
     const comments = movie.comments || [];
     const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString() : movie.release_year;
@@ -939,33 +947,45 @@ function initializeMainApp() {
         }
     }
     
-    function createMovieCard(movie) {
-        const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://placehold.co/500x750/1f2937/374151?text=No+Image';
-        return `
-            <div class="movie-card rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="showMovieDetails(${movie.id})">
-                <img loading="lazy" src="${posterUrl}" alt="${movie.title}" class="w-full h-auto object-cover" onerror="this.onerror=null;this.src='https://placehold.co/500x750/1f2937/374151?text=No+Image';">
-                <div class="p-3">
-                    <h3 class="font-bold text-sm truncate">${movie.title}</h3>
-                    <p class="text-xs truncate mt-1">${movie.genres ? movie.genres.join(', ') : ''}</p>
-                    <div class="flex justify-between items-center mt-1">
-                        <p class="text-xs">${movie.release_year}</p>
-                        <p class="text-xs text-amber-400 font-semibold">★ ${movie.vote_average.toFixed(1)}</p>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-    
-    function displayMovies(movies) {
-        movies.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
-        moviesGrid.innerHTML = '';
-        if (!movies || movies.length === 0) {
-            noResultsDiv.style.display = 'flex';
+function createMovieCard(movie) {
+        let posterUrl = 'https://placehold.co/500x750/1f2937/374151?text=No+Image';
+    if (movie.poster_path) {
+        if (movie.poster_path.includes('drive.google.com')) {
+            const fileId = movie.poster_path.match(/d\/(.+?)\//)[1];
+            posterUrl = `https://lh3.googleusercontent.com/d/${fileId}=w500`;
         } else {
-            noResultsDiv.style.display = 'none';
-            moviesGrid.innerHTML = movies.map(createMovieCard).join('');
+            posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
         }
     }
+    
+    return `
+        <div class="movie-card rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-all duration-300 cursor-pointer" data-movie-id="${movie.id}" onclick="showMovieDetails(${movie.id})">
+            <img loading="lazy" src="${posterUrl}" alt="${movie.title}" class="w-full h-auto object-cover" onerror="this.onerror=null;this.src='https://placehold.co/500x750/1f2937/374151?text=No+Image';">
+            <div class="p-3">
+                <h3 class="font-bold text-sm truncate">${movie.title}</h3>
+                <p class="text-xs truncate mt-1">${movie.genres ? movie.genres.join(', ') : ''}</p>
+                <div class="flex justify-between items-center mt-1">
+                    <p class="text-xs">${movie.release_year}</p>
+                    <p class="text-xs text-amber-400 font-semibold">★ ${movie.vote_average?.toFixed(1) || 'N/A'}</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+    
+function displayMovies(movies) {
+    const moviesGrid = document.getElementById('movies-grid');
+    const noResultsDiv = document.getElementById('no-results');
+    movies.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
+    
+    if (!movies || movies.length === 0) {
+        moviesGrid.innerHTML = '';
+        noResultsDiv.style.display = 'flex';
+    } else {
+        noResultsDiv.style.display = 'none';
+        moviesGrid.innerHTML = movies.map(createMovieCard).join('');
+    }
+}
 
     function showFullCategory(categoryKey, saveToHistory = true) {
         categoryView.classList.add('hidden');
