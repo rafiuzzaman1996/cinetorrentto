@@ -240,3 +240,25 @@ details[open] > summary::after {
 #login-modal-header {
     cursor: grab;
 }
+/* NEW STYLES FOR 9:16 POSTER RATIO */
+.poster-aspect-ratio-wrapper {
+    position: relative;
+    padding-top: 177.77%; /* This creates the 9:16 aspect ratio (16 / 9 * 100) */
+    background-color: #262626; /* Fallback color for dark theme */
+}
+
+.light .poster-aspect-ratio-wrapper {
+    background-color: #e5e5e5; /* Fallback color for light theme */
+}
+
+
+/* NEW STYLES FOR 2:3 DETAILS POSTER RATIO */
+.details-poster-wrapper {
+    position: relative;
+    padding-top: 150%; /* 3 / 2 * 100 */
+    background-color: #262626; /* Fallback color for dark theme */
+}
+
+.light .details-poster-wrapper {
+    background-color: #e5e5e5; /* Fallback color for light theme */
+}

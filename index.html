@@ -49,7 +49,7 @@
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <div id="active-user-container" class="hidden lg:flex items-center gap-2">
+                        <div id="active-user-container" class="hidden items-center gap-2">
                            <div class="flex items-center gap-1 text-sm text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                 <span id="current-users-count">0</span>
@@ -96,7 +96,7 @@
         </section>
         
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden fixed inset-0 bg-gray-900 bg-opacity-95 z-50 p-6 overflow-y-auto">
+        <div id="mobile-menu" class="hidden fixed inset-0 bg-gray-900 bg-opacity-95 z-50 p-6 overflow-y-auto text-white">
             <div class="flex justify-between items-center mb-8">
                 <span class="site-title text-3xl" style="color: #e8a265;">CineTorrentto</span>
                 <button id="mobile-menu-close-btn" class="p-2 text-3xl">&times;</button>
@@ -676,6 +676,27 @@
             </div>
         </div>
     </div>
+
+        <!-- About Us Modal -->
+    <div id="about-us-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+        <div class="modal-content rounded-lg shadow-2xl w-full max-w-lg transform scale-95 transition-transform duration-300">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">About CineTorrentto</h2>
+                    <button type="button" id="about-us-modal-close-btn" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                <div class="space-y-4 text-sm text-gray-300">
+                    <p>Welcome to CineTorrentto, your ultimate destination for a vast collection of movies, TV series, games, and more. Our mission is to provide a user-friendly platform where entertainment enthusiasts can discover, access, and enjoy a wide range of digital content.</p>
+                    <p>We are dedicated to constantly updating our library with the latest releases and timeless classics. Whether you're looking for a blockbuster movie, a binge-worthy TV show, or the latest game, CineTorrentto has you covered.</p>
+                    <p>Please note that this site does not store any files on its server. All contents are provided by non-affiliated third parties. We encourage our users to support the creators by purchasing their content through official channels.</p>
+                    <p>Thank you for being a part of our community!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div id="ad-social-bar"></div>
 

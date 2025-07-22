@@ -1,6 +1,7 @@
 // --- MAIN.JS ---
 // --- GLOBAL DATA & UTILITY FUNCTIONS ---
 let mockApiData = {};
+let selectedCategory = null;
 let selectedGenre = null;
 let selectedYear = null;
 let selectedLetter = null;
@@ -261,7 +262,9 @@ function showMovieDetails(movieId) {
     modalContentWrapper.innerHTML = `
         <div class="flex flex-col md:flex-row gap-8 p-8">
             <div class="md:w-1/3 flex-shrink-0">
-                <img src="${posterUrl}" alt="${movie.title}" class="w-full rounded-lg shadow-lg">
+                <div class="details-poster-wrapper rounded-lg shadow-lg overflow-hidden">
+                    <img src="${posterUrl}" alt="${movie.title}" class="absolute top-0 left-0 w-full h-full object-cover">
+                </div>
                 <div class="hidden md:block">${detailsHtml}</div>
             </div>
             <div class="md:w-2/3">
@@ -826,6 +829,8 @@ function initializeMainApp() {
     const loginModal = document.getElementById('login-modal');
     const loginModalCloseBtn = document.getElementById('login-modal-close-btn');
     const footerTitle = document.getElementById('footer-title');
+    const aboutUsModal = document.getElementById('about-us-modal');
+    const aboutUsModalCloseBtn = document.getElementById('about-us-modal-close-btn');
 
     // --- FUNCTIONS ---
     function updateHistory(state) {
@@ -948,7 +953,7 @@ function initializeMainApp() {
     }
     
 function createMovieCard(movie) {
-        let posterUrl = 'https://placehold.co/500x750/1f2937/374151?text=No+Image';
+    let posterUrl = 'https://placehold.co/500x750/1f2937/374151?text=No+Image';
     if (movie.poster_path) {
         if (movie.poster_path.includes('drive.google.com')) {
             const fileId = movie.poster_path.match(/d\/(.+?)\//)[1];
@@ -960,7 +965,9 @@ function createMovieCard(movie) {
     
     return `
         <div class="movie-card rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-all duration-300 cursor-pointer" data-movie-id="${movie.id}" onclick="showMovieDetails(${movie.id})">
-            <img loading="lazy" src="${posterUrl}" alt="${movie.title}" class="w-full h-auto object-cover" onerror="this.onerror=null;this.src='https://placehold.co/500x750/1f2937/374151?text=No+Image';">
+            <div class="poster-aspect-ratio-wrapper">
+                <img loading="lazy" src="${posterUrl}" alt="${movie.title}" class="absolute top-0 left-0 w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/500x750/1f2937/374151?text=No+Image';">
+            </div>
             <div class="p-3">
                 <h3 class="font-bold text-sm truncate">${movie.title}</h3>
                 <p class="text-xs truncate mt-1">${movie.genres ? movie.genres.join(', ') : ''}</p>
@@ -1007,7 +1014,7 @@ function displayMovies(movies) {
             const movies = mockApiData.movies[catKey] || [];
             if (movies.length > 0) {
                 const sortedMovies = [...movies].sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
-                const top12Movies = sortedMovies.slice(0, 12);
+                const top8Movies = sortedMovies.slice(0, 8);
 
                 const section = document.createElement('section');
                 section.innerHTML = `
@@ -1016,7 +1023,7 @@ function displayMovies(movies) {
                         <button class="see-more-link bg-red-600 text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-red-700 transition-colors" data-category="${catKey}">SEE ALL</button>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
-                        ${top12Movies.map(createMovieCard).join('')}
+                        ${top8Movies.map(createMovieCard).join('')}
                     </div>
                 `;
                 categoryView.appendChild(section);
@@ -1086,8 +1093,8 @@ function displayMovies(movies) {
                     e.preventDefault();
                     document.querySelectorAll('.nav-link, #main-nav button').forEach(btn => btn.classList.remove('active-btn'));
                     group.querySelector('button').classList.add('active-btn');
-                    const category = e.target.dataset.category;
-                    showFullCategory(category);
+                    selectedCategory = e.target.dataset.category; // Set the selected category state
+                    applyFilters();
                     menu.classList.add('hidden');
                 }
             });
@@ -1208,8 +1215,16 @@ function displayMovies(movies) {
         categoryView.classList.add('hidden');
         filteredView.classList.remove('hidden');
 
-        let allMovies = Object.values(mockApiData.movies).flat();
-        let uniqueMovies = Array.from(new Map(allMovies.map(m => [m.id, m])).values());
+        let moviesToFilter;
+        if (selectedCategory) {
+            // If a main category is selected, start with its movies
+            moviesToFilter = mockApiData.movies[selectedCategory] || [];
+        } else {
+            // Otherwise, start with all movies
+            moviesToFilter = Object.values(mockApiData.movies).flat();
+        }
+
+        let uniqueMovies = Array.from(new Map(moviesToFilter.map(m => [m.id, m])).values());
         let filteredMovies = uniqueMovies;
         const searchTerm = searchBar.value.toLowerCase().trim();
 
@@ -1479,7 +1494,15 @@ function displayMovies(movies) {
         const featuredMovies = featuredIds.map(id => findMovieById(id)).filter(Boolean); // Get movie objects and remove nulls
         
         featuredSlider.innerHTML = featuredMovies.map(movie => {
-             const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w780${movie.poster_path}` : 'https://placehold.co/780x439/1f2937/374151?text=No+Image';
+        let posterUrl = 'https://placehold.co/500x750/1f2937/374151?text=No+Image';
+        if (movie.poster_path) {
+            if (movie.poster_path.includes('drive.google.com')) {
+                const fileId = movie.poster_path.match(/d\/(.+?)\//)[1];
+                posterUrl = `https://lh3.googleusercontent.com/d/${fileId}=w500`;
+            } else {
+                posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+            }
+        }
             return `
                 <div class="snap-center flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
                     <div class="featured-movie-card" style="background-image: url('${posterUrl}')" onclick="showMovieDetails(${movie.id})">
@@ -1625,6 +1648,23 @@ function displayMovies(movies) {
     initializeLoginModal();
     
     const resetHomepage = () => {
+        // Reset all filter state variables
+        selectedCategory = null;
+        selectedGenre = null;
+        selectedYear = null;
+        selectedLetter = null;
+        selectedRating = null;
+        selectedCast = null;
+
+        // Remove the 'active-btn' class from all filter buttons in the sidebar
+        document.querySelectorAll('#left-sidebar .active-btn').forEach(btn => {
+            btn.classList.remove('active-btn');
+        });
+
+        // Add this line to clear the main navigation menu's active state
+        document.querySelectorAll('#main-nav .active-btn').forEach(btn => btn.classList.remove('active-btn'));
+        
+        // Restore the homepage view
         displayHomepageByCategory();
     };
 
@@ -1635,7 +1675,7 @@ function displayMovies(movies) {
     
     document.getElementById('log-out').addEventListener('click', () => {
         localStorage.removeItem('currentUser');
-        updateHeaderState();
+        updateHeaderState(); // <-- Add this line
     });
 
     loginBtnHeader.addEventListener('click', () => {
@@ -1854,6 +1894,17 @@ function displayMovies(movies) {
         closeModal('notification-modal');
     });
 
+    footerTitle.addEventListener('click', () => {
+        aboutUsModal.classList.remove('hidden');
+        setTimeout(() => aboutUsModal.querySelector('.transform').classList.remove('scale-95'), 10);
+    });
+
+    aboutUsModalCloseBtn.addEventListener('click', () => closeModal('about-us-modal'));
+
+    aboutUsModal.addEventListener('click', (e) => {
+        if (e.target === aboutUsModal) closeModal('about-us-modal');
+    });
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             if (!detailsModal.classList.contains('hidden')) closeModal('movie-details-modal');
@@ -1871,6 +1922,7 @@ function displayMovies(movies) {
             if (!notificationModal.classList.contains('hidden')) closeModal('notification-modal');
             if (!mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden');
             if(!leftSidebar.classList.contains('hidden')) leftSidebar.classList.add('hidden');
+            if (!aboutUsModal.classList.contains('hidden')) closeModal('about-us-modal');
         }
     });
     
