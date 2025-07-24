@@ -105,6 +105,46 @@ const initialData = {
     "cast": "Mason Thames, Nico Parker, Gerard Butler, Nick Frost , Julian Dennison, Gabriel Howell, Bronwyn James, Harry Trevaldwyn, Ruth Codd, Peter Serafinowicz, Murray McArthur"  
 },
 {
+    "id": 20250131250723,
+    "title": "Valiant One",
+    "release_year": 2025,
+    "release_date": "2025-01-31",
+    "poster_path": "https://drive.google.com/file/d/1TW5iNTEaOSU1c-bf2Zol9pZoDn5vDJ9x/view?usp=drive_link",
+    "vote_average": 5.1,
+    "overview": "A U.S. Army helicopter crashes in North Korean territory, forcing Captain Edward Brockman (Chase Stokes) and a team of tech specialists to navigate hostile terrain and escort a critical civilian across the Demilitarized Zone to safety.",
+    "genres": [
+        "War",
+        "Action",
+        "Thriller"
+    ],
+    "trailer_url": "https://youtu.be/YqOdTsbftl4?si=nJCvlc-cwvzhuHsp",
+    "stream_url": "https://uflix.cc/play/tt21442114",
+    "download_links": [
+        {
+            "name": "1080p.WEBRip",
+            "url": "magnet:?xt=urn:btih:F54D23663C321B4CFB716DDE312456D509B245F1&dn=Valiant.One.2025.1080p.WEBRip.10Bit.DDP5.1.x265-Asiimov.mkv&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2Fexplodie.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Ftracker.tiny-vps.com%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.dler.org%3A6969%2Fannounce&tr=http%3A%2F%2Ftracker.bt4g.com%3A2095%2Fannounce&tr=udp%3A%2F%2Fopentracker.io%3A6969%2Fannounce&tr=udp%3A%2F%2Fttk2.nbaonlineservice.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce",
+            "size": "1.3 GB",
+            "clicks": 0
+        },
+        {
+            "name": "2160p.WEB-DL",
+            "url": "magnet:?xt=urn:btih:9BCF214996A6077618FF69B5F96A6AFAD19F5527&dn=Valiant.One.2025.2160p.WEB-DL.DDP5.1.SDR.H265-AOC&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.cyberia.is%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexplodie.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.birkenwald.de%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.moeking.me%3A6969%2Fannounce&tr=udp%3A%2F%2Fipv4.tracker.harry.lu%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.tiny-vps.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce",
+            "size": "9.6 GB",
+            "clicks": 0
+        },
+        {
+            "name": "1080p WEB-DL",
+            "url": "magnet:?xt=urn:btih:5BCF7BB54AF32E2D49760F900D0F87A82D31DBCB&dn=Valiant+One+2025+1080p+AMZN+WEB-DL+DUAL+DDP5.1+H.264-TBMovies&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.anirena.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce&tr=http%3A%2F%2Ftorrent.hificode.in%3A6969%2Fannounce&tr=udp%3A%2F%2Fec2-18-191-163-220.us-east-2.compute.amazonaws.com%3A6969%2Fannounce&tr=https%3A%2F%2Ftracker.bjut.jp%3A443%2Fannounce&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=https%3A%2F%2Ftracker.moeking.me%3A443%2Fannounce&tr=http%3A%2F%2Ftracker.renfei.net%3A8080%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.privateseedbox.xyz%3A2710%2Fannounce&tr=https%3A%2F%2Ftracker.lilithraws.org%3A443%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce",
+            "size": "5.1 GB",
+            "clicks": 0
+        }
+    ],
+    "director": "Steve Barnett",
+    "runningTime": "86 min",
+    "budget": "$1.2 million",
+    "cast": "Chase Stokes, Lana Condor, Desmin Borges, Callan Mulvey, Jonathan Whitesell, Daniel Jun"
+},
+{
     "id": 20250815250722,
     "title": "Cleaner",
     "release_year": 2025,
