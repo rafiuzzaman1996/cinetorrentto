@@ -237,6 +237,17 @@ function showMovieDetails(movieId) {
 
     const modalContentWrapper = document.getElementById('modal-content-wrapper');
     const detailsModal = document.getElementById('movie-details-modal');
+    const isMobile = window.innerWidth < 768; // md breakpoint
+
+    // Adjust modal size based on screen
+    if (isMobile) {
+        modalContentWrapper.classList.remove('max-w-4xl');
+        modalContentWrapper.classList.add('max-w-lg');
+    } else {
+        modalContentWrapper.classList.remove('max-w-lg');
+        modalContentWrapper.classList.add('max-w-4xl');
+    }
+
     let posterUrl = 'https://placehold.co/500x750/1f2937/374151?text=No+Image';
     if (movie.poster_path) {
         if (movie.poster_path.includes('drive.google.com')) {
@@ -250,43 +261,86 @@ function showMovieDetails(movieId) {
     const comments = movie.comments || [];
     const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString() : movie.release_year;
 
-    const detailsHtml = `
-        <div class="mt-4 space-y-2 text-sm movie-details-info">
-            <p><strong>Director:</strong> ${movie.director || 'N/A'}</p>
-            <p><strong>Running Time:</strong> ${movie.runningTime || 'N/A'}</p>
-            <p><strong>Budget:</strong> ${movie.budget || 'N/A'}</p>
-            <p><strong>Cast:</strong> ${movie.cast || 'N/A'}</p>
-        </div>
-    `;
+    let topSectionHTML = '';
 
-    modalContentWrapper.innerHTML = `
-        <div class="flex flex-col md:flex-row gap-8 p-8">
-            <div class="md:w-1/3 flex-shrink-0">
-                <div class="details-poster-wrapper rounded-lg shadow-lg overflow-hidden">
-                    <img src="${posterUrl}" alt="${movie.title}" class="absolute top-0 left-0 w-full h-full object-cover">
-                </div>
-                <div class="hidden md:block">${detailsHtml}</div>
-            </div>
-            <div class="md:w-2/3">
-                <div class="flex justify-between items-start">
-                     <h2 class="text-3xl font-bold mb-2">${movie.title} <span class="text-2xl font-normal text-gray-400">(${movie.release_year})</span></h2>
-                     <button onclick="closeModal('movie-details-modal')" class="text-gray-400 hover:text-white transition-colors">
+    if (isMobile) {
+        topSectionHTML = `
+            <div class="p-4">
+                <div class="flex justify-end">
+                     <button onclick="closeModal('movie-details-modal')" class="text-gray-400 hover:text-white transition-colors -mt-2 -mr-2">
                         <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                      </button>
                 </div>
-                <div class="flex items-center gap-4 mb-4 text-gray-400">
-                    <span>Rating: <span class="font-bold text-lg text-amber-400">★ ${movie.vote_average.toFixed(1)}</span> / 10</span>
-                    <span class="text-sm">Release: ${releaseDate}</span>
+                <div class="flex flex-row gap-4 mb-4">
+                    <div class="w-2/5 flex-shrink-0">
+                        <div class="details-poster-wrapper rounded-lg shadow-lg overflow-hidden">
+                            <img src="${posterUrl}" alt="${movie.title}" class="absolute top-0 left-0 w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <div class="w-3/5 flex flex-col justify-start">
+                         <h2 class="text-xl font-bold">${movie.title} <span class="text-lg font-normal text-gray-400">(${movie.release_year})</span></h2>
+                        <div class="text-sm text-gray-400 mt-1">
+                           <p>Rating: <span class="font-bold text-amber-400">★ ${movie.vote_average.toFixed(1)}</span> / 10</p>
+                           <p>Release: ${releaseDate}</p>
+                        </div>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                           ${movie.genres ? movie.genres.map(genre => `<span class="bg-neutral-700 text-gray-300 text-xs font-semibold mr-1 px-2 py-0.5 rounded-full">${genre}</span>`).join('') : ''}
+                        </div>
+                    </div>
                 </div>
-                <div class="flex flex-wrap gap-2 mb-4">
-                    ${movie.genres ? movie.genres.map(genre => `<span class="bg-neutral-700 text-gray-300 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">${genre}</span>`).join('') : ''}
+                <div class="space-y-1 text-sm movie-details-info">
+                    <p><strong>Director:</strong> ${movie.director || 'N/A'}</p>
+                    <p><strong>Running Time:</strong> ${movie.runningTime || 'N/A'}</p>
+                    <p><strong>Budget:</strong> ${movie.budget || 'N/A'}</p>
+                    <p><strong>Cast:</strong> ${movie.cast || 'N/A'}</p>
                 </div>
-                <h3 class="text-lg font-semibold mb-2">Overview</h3>
+                 <h3 class="text-lg font-semibold mt-4 mb-2">Overview</h3>
                 <p class="leading-relaxed text-sm">${movie.overview}</p>
-                
-                <div class="block md:hidden">${detailsHtml}</div>
+            </div>
+        `;
+    } else {
+        // Desktop Layout
+        topSectionHTML = `
+            <div class="flex flex-col md:flex-row gap-8 p-8">
+                <div class="md:w-1/3 flex-shrink-0">
+                    <div class="details-poster-wrapper rounded-lg shadow-lg overflow-hidden">
+                        <img src="${posterUrl}" alt="${movie.title}" class="absolute top-0 left-0 w-full h-full object-cover">
+                    </div>
+                    <div class="hidden md:block mt-4 space-y-2 text-sm movie-details-info">
+                        <p><strong>Director:</strong> ${movie.director || 'N/A'}</p>
+                        <p><strong>Running Time:</strong> ${movie.runningTime || 'N/A'}</p>
+                        <p><strong>Budget:</strong> ${movie.budget || 'N/A'}</p>
+                        <p><strong>Cast:</strong> ${movie.cast || 'N/A'}</p>
+                    </div>
+                </div>
+                <div class="md:w-2/3">
+                    <div class="flex justify-between items-start">
+                         <h2 class="text-3xl font-bold mb-2">${movie.title} <span class="text-2xl font-normal text-gray-400">(${movie.release_year})</span></h2>
+                         <button onclick="closeModal('movie-details-modal')" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                         </button>
+                    </div>
+                    <div class="flex items-center gap-4 mb-4 text-gray-400">
+                        <span>Rating: <span class="font-bold text-lg text-amber-400">★ ${movie.vote_average.toFixed(1)}</span> / 10</span>
+                        <span class="text-sm">Release: ${releaseDate}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${movie.genres ? movie.genres.map(genre => `<span class="bg-neutral-700 text-gray-300 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">${genre}</span>`).join('') : ''}
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Overview</h3>
+                    <p class="leading-relaxed text-sm">${movie.overview}</p>
+                    <div class="block md:hidden mt-4 space-y-2 text-sm movie-details-info">
+                        <p><strong>Director:</strong> ${movie.director || 'N/A'}</p>
+                        <p><strong>Running Time:</strong> ${movie.runningTime || 'N/A'}</p>
+                        <p><strong>Budget:</strong> ${movie.budget || 'N/A'}</p>
+                        <p><strong>Cast:</strong> ${movie.cast || 'N/A'}</p>
+                    </div>
+        `;
+    }
 
-                <div class="mt-6 flex gap-2">
+    // Common bottom section for both mobile and desktop
+    const bottomSectionHTML = `
+                <div class="mt-6 flex gap-2 px-4 sm:px-0">
                     ${movie.stream_url ? `
                     <button onclick="playStream('${movie.stream_url}')" class="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -301,7 +355,7 @@ function showMovieDetails(movieId) {
                     ` : ''}
                 </div>
 
-                <div class="mt-8">
+                <div class="mt-8 px-4 sm:px-0">
                     <h3 class="text-lg font-semibold mb-3">Download Options</h3>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         ${downloadLinks.map(link => `
@@ -313,7 +367,7 @@ function showMovieDetails(movieId) {
                     </div>
                 </div>
                 
-                <div class="mt-8">
+                <div class="mt-8 px-4 sm:px-0">
                     <h3 class="text-lg font-semibold mb-3">Share this Movie</h3>
                     <div class="flex gap-2" id="share-buttons">
                         <!-- Share buttons will be injected here -->
@@ -321,16 +375,14 @@ function showMovieDetails(movieId) {
                 </div>
                 
                 ${admins.includes(localStorage.getItem('currentUser')) ? `
-                <div class="mt-4">
+                <div class="mt-4 px-4 sm:px-0">
                     <button onclick="openEditMovieModal(${movie.id})" class="w-full bg-yellow-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
                         Edit Details
                     </button>
                 </div>
                 ` : ''}
-
-            </div>
-        </div>
-        <div class="px-8 pb-8 border-t border-neutral-700">
+            ${isMobile ? '' : '</div></div>'}
+        <div class="px-4 sm:px-8 pb-8 border-t border-neutral-700 mt-8">
             <h3 class="text-xl font-bold mt-6 mb-4">Comments</h3>
             <div id="comment-list" class="space-y-4 max-h-64 overflow-y-auto pr-2">
                 ${comments.length > 0 ? comments.map((comment, index) => `
@@ -350,6 +402,8 @@ function showMovieDetails(movieId) {
             </form>
         </div>
     `;
+
+    modalContentWrapper.innerHTML = topSectionHTML + bottomSectionHTML;
     
     const shareButtonsContainer = document.getElementById('share-buttons');
     if(shareButtonsContainer) {
@@ -725,11 +779,17 @@ function updateHeaderState() {
     const adminPanelBtn = document.getElementById('admin-panel-btn');
     const activeUserContainer = document.getElementById('active-user-container');
     const activeUserSpan = document.getElementById('active-user');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    // Only manipulate activeUserContainer if the mobile menu is NOT open
+    const isMobileMenuOpen = !mobileMenu.classList.contains('hidden');
 
     if (currentUser) {
         loginBtn.classList.add('hidden');
         logoutBtn.classList.remove('hidden');
-        activeUserContainer.classList.remove('hidden');
+        if (!isMobileMenuOpen) {
+            activeUserContainer.classList.remove('hidden');
+        }
         activeUserSpan.innerHTML = `<span class="welcome-text">Welcome,</span> ${currentUser}`;
         
         if (admins.includes(currentUser)) {
@@ -746,6 +806,10 @@ function updateHeaderState() {
         activeUserContainer.classList.add('hidden');
         requestMovieBtn.classList.add('hidden');
         adminPanelBtn.classList.add('hidden');
+    }
+    
+    if (isMobileMenuOpen) {
+        buildAndBindMobileMenu();
     }
 }
 
@@ -770,6 +834,10 @@ function initializeMainApp() {
     const categoryView = document.getElementById('category-view');
     const filteredView = document.getElementById('filtered-view');
     const searchBar = document.getElementById('search-bar');
+    const mainSearchWrapper = document.getElementById('main-search-wrapper');
+    const mobileSearchIconBtn = document.getElementById('mobile-search-icon-btn');
+    const mobileSearchContainer = document.getElementById('mobile-search-container');
+    const mobileSearchInput = document.getElementById('mobile-search-input');
     const noResultsDiv = document.getElementById('no-results');
     const detailsModal = document.getElementById('movie-details-modal');
     const modalContentWrapper = document.getElementById('modal-content-wrapper');
@@ -804,8 +872,6 @@ function initializeMainApp() {
     const backToTopBtn = document.getElementById('back-to-top');
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
-    const mobileNavContent = document.getElementById('mobile-nav-content');
-    const mobileMenuCloseBtn = document.getElementById('mobile-menu-close-btn');
     const leftSidebar = document.getElementById('left-sidebar');
     const filterToggleBtn = document.getElementById('filter-toggle-btn');
     const featuredSlider = document.getElementById('featured-slider');
@@ -831,8 +897,38 @@ function initializeMainApp() {
     const footerTitle = document.getElementById('footer-title');
     const aboutUsModal = document.getElementById('about-us-modal');
     const aboutUsModalCloseBtn = document.getElementById('about-us-modal-close-btn');
+    const activeUserContainer = document.getElementById('active-user-container');
 
     // --- FUNCTIONS ---
+
+    // Function to handle responsive UI changes
+    function handleResize() {
+        const isMobile = window.innerWidth < 1024; // Tailwind's lg breakpoint
+        const isMenuOpen = !mobileMenu.classList.contains('hidden');
+
+        if (isMobile) {
+            mainSearchWrapper.classList.add('hidden');
+            if (!isMenuOpen) {
+                 mobileSearchIconBtn.classList.remove('hidden');
+            }
+        } else {
+            // Desktop view
+            mainSearchWrapper.classList.remove('hidden');
+            mobileSearchIconBtn.classList.add('hidden');
+            mobileSearchContainer.classList.add('hidden'); 
+            if (isMenuOpen) {
+                mobileMenu.classList.add('hidden');
+                updateHeaderState(); 
+            }
+        }
+        
+        // New logic to close menu if window gets too wide
+        if (isMenuOpen && window.innerWidth > (window.screen.width * 0.4) && window.innerWidth >= 1024) {
+            mobileMenu.classList.add('hidden');
+            updateHeaderState();
+        }
+    }
+
     function updateHistory(state) {
         viewHistory.push(state);
         backBtn.classList.toggle('hidden', viewHistory.length <= 1);
@@ -858,6 +954,8 @@ function initializeMainApp() {
     }
 
     function buildAndBindMobileMenu() {
+        mobileMenu.innerHTML = ''; // Clear previous content
+        const currentUser = localStorage.getItem('currentUser');
         const categories = mockApiData.categories;
         const menuStructure = {
             "Movies": ['english_movies', 'hindi_movies', 'south_indian_movies', 'south_hindi_dubbed', 'bangla_movies', 'kolkata_bangla_movies', 'foreign_language_movies', 'animated_movies'],
@@ -866,65 +964,123 @@ function initializeMainApp() {
             "More": ['documentary_cat', 'award_shows', 'wrestling', 'software', 'tutorials']
         };
 
+        // 1. Main Header
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'flex justify-between items-center mb-4';
+        headerDiv.innerHTML = `
+            <span class="site-title text-3xl" style="color: #e8a265;">CineTorrentto</span>
+            <button id="mobile-menu-close-btn" class="p-2 text-3xl">&times;</button>
+        `;
+        mobileMenu.appendChild(headerDiv);
+
+        // 2. Buttons Row (User/Login & Theme)
+        const buttonsDiv = document.createElement('div');
+        buttonsDiv.className = 'flex justify-between items-center gap-2 mb-4 px-1';
+        
+        let userSectionHTML = '';
+        if (currentUser) {
+            userSectionHTML = `
+                <div id="mobile-user-info" class="flex items-center gap-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <div>
+                        <div class="font-bold text-sm">${currentUser}</div>
+                        <button id="mobile-logout-btn" class="text-xs text-red-400 hover:underline">Logout</button>
+                    </div>
+                </div>
+            `;
+        } else {
+            userSectionHTML = `
+                <button id="mobile-login-btn" class="flex items-center gap-2 bg-red-600 text-white font-semibold px-3 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                    <span>Login / Sign Up</span>
+                </button>
+            `;
+        }
+
+        const themeSectionHTML = `
+            <button id="mobile-theme-toggle-btn" class="p-2 rounded-full">
+                <svg id="mobile-theme-icon-light" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                <svg id="mobile-theme-icon-dark" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+            </button>
+        `;
+
+        buttonsDiv.innerHTML = userSectionHTML + themeSectionHTML;
+        mobileMenu.appendChild(buttonsDiv);
+        
+        // 3. Navigation Content
+        const navContentDiv = document.createElement('div');
+        navContentDiv.className = 'flex flex-col gap-0 border-t border-neutral-700 pt-2';
+        
         let navHtml = '';
-        // Create simple links for categories
         for (const menuTitle in menuStructure) {
-            navHtml += `<h3 class="text-gray-500 text-sm font-bold uppercase tracking-wider mt-4 mb-2">${menuTitle}</h3>`;
+            navHtml += `<h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider mt-3 mb-1 px-2">${menuTitle}</h3>`;
             menuStructure[menuTitle].forEach(catKey => {
                 if (categories[catKey]) {
-                    navHtml += `<a href="#" class="block py-2 text-lg mobile-nav-link" data-category="${catKey}">${categories[catKey]}</a>`;
+                    navHtml += `<a href="#" class="block py-1.5 px-2 text-base mobile-nav-link rounded-md transition-colors" data-category="${catKey}">${categories[catKey]}</a>`;
                 }
             });
         }
+        navContentDiv.innerHTML = navHtml;
+        mobileMenu.appendChild(navContentDiv);
 
-        navHtml += `<div class="border-t border-gray-700 my-4"></div>`;
-
-        // Add action buttons based on visibility in the header
-        if (admins.includes(localStorage.getItem('currentUser'))) {
-            navHtml += `<button id="mobile-admin-panel-btn" class="w-full text-left py-2 text-lg text-white hover:bg-neutral-700 rounded-md px-2">Admin Panel</button>`;
-        }
-        if (!requestMovieBtn.classList.contains('hidden')) {
-            navHtml += `<button id="mobile-request-movie-btn" class="w-full text-left py-2 text-lg text-white hover:bg-neutral-700 rounded-md px-2">Request a Movie</button>`;
-        }
-        navHtml += `<button id="mobile-log-out" class="w-full text-left py-2 text-lg text-white hover:bg-neutral-700 rounded-md px-2">Logout</button>`;
-        
-        navHtml += `<div class="border-t border-gray-700 my-4"></div>`;
-        
-        // Add theme toggle
-        navHtml += `
-            <div class="flex items-center justify-between px-2">
-                <span class="text-lg text-white">Theme</span>
-                <button id="mobile-theme-toggle-btn" class="p-2 rounded-full text-gray-400">
-                    <svg id="mobile-theme-icon-light" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                    <svg id="mobile-theme-icon-dark" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                </button>
-            </div>
+        // 4. Ads Section
+        const adsDiv = document.createElement('div');
+        adsDiv.id = 'mobile-menu-ads';
+        adsDiv.className = 'mt-6 border-t border-neutral-700 pt-4 space-y-4';
+        adsDiv.innerHTML = `
+            <div id="mobile-ad-right-1" class="ad-placeholder mx-auto" style="width: 320px; height: 250px; max-width: 100%;"></div>
+            <div id="mobile-ad-right-2" class="ad-placeholder mx-auto" style="width: 160px; height: 600px; max-width: 100%;"></div>
+            <div id="mobile-ad-right-native" class="ad-placeholder mx-auto" style="width: 100%; min-height: 100px;"></div>
+            <div id="mobile-ad-right-img-1" class="ad-placeholder mx-auto" style="width: 180px; height: 320px; max-width: 100%;"></div>
+            <div id="mobile-ad-right-img-2" class="ad-placeholder mx-auto" style="width: 180px; height: 320px; max-width: 100%;"></div>
+            <div id="mobile-ad-right-img-3" class="ad-placeholder mx-auto" style="width: 180px; height: 320px; max-width: 100%;"></div>
+            <div id="mobile-ad-right-468x60" class="ad-placeholder mx-auto" style="width: 468px; height: 60px; max-width: 100%;"></div>
+            <div id="mobile-ad-right-320x50" class="ad-placeholder mx-auto" style="width: 320px; height: 50px; max-width: 100%;"></div>
         `;
+        mobileMenu.appendChild(adsDiv);
+        
+        // Populate ads
+        const adCodes = mockApiData.ads || {};
+        renderAdContent(document.getElementById('mobile-ad-right-1'), adCodes.right1, 'Adsterra 320x250');
+        renderAdContent(document.getElementById('mobile-ad-right-2'), adCodes.right2, 'Adsterra 160x600');
+        renderAdContent(document.getElementById('mobile-ad-right-native'), adCodes.rightNative, 'Adsterra Native');
+        renderAdContent(document.getElementById('mobile-ad-right-img-1'), adCodes.rightImg1, 'Image Ad 180x320');
+        renderAdContent(document.getElementById('mobile-ad-right-img-2'), adCodes.rightImg2, 'Image Ad 180x320');
+        renderAdContent(document.getElementById('mobile-ad-right-img-3'), adCodes.rightImg3, 'Image Ad 180x320');
+        renderAdContent(document.getElementById('mobile-ad-right-468x60'), adCodes.right468x60, 'Adsterra 468x60');
+        renderAdContent(document.getElementById('mobile-ad-right-320x50'), adCodes.right320x50, 'Adsterra 320x50');
 
-
-        mobileNavContent.innerHTML = navHtml;
 
         // --- BIND EVENTS FOR MOBILE MENU ---
-        
+        document.getElementById('mobile-menu-close-btn').addEventListener('click', () => {
+             mobileMenu.classList.add('hidden');
+             mobileSearchContainer.classList.add('hidden'); // Also close search box if open
+             updateHeaderState(); // Restore header state
+        });
+
         // Navigation links
-        mobileNavContent.querySelectorAll('.mobile-nav-link').forEach(link => {
+        mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const category = e.target.dataset.category;
                 showFullCategory(category);
                 mobileMenu.classList.add('hidden');
+                updateHeaderState(); // Restore header state on navigation
             });
         });
 
         // Action buttons
-        const mobileAdminPanelBtn = document.getElementById('mobile-admin-panel-btn');
-        if (mobileAdminPanelBtn) mobileAdminPanelBtn.addEventListener('click', () => { adminPanelBtn.click(); mobileMenu.classList.add('hidden'); });
+        const mobileLoginBtn = document.getElementById('mobile-login-btn');
+        if (mobileLoginBtn) mobileLoginBtn.addEventListener('click', () => { 
+            loginBtnHeader.click(); 
+            mobileMenu.classList.add('hidden'); 
+        });
 
-        const mobileRequestMovieBtn = document.getElementById('mobile-request-movie-btn');
-        if (mobileRequestMovieBtn) mobileRequestMovieBtn.addEventListener('click', () => { requestMovieBtn.click(); mobileMenu.classList.add('hidden'); });
-        
-        const mobileLogoutBtn = document.getElementById('mobile-log-out');
-        if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', () => { document.getElementById('log-out').click(); });
+        const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+        if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', () => { 
+            localStorage.removeItem('currentUser');
+            updateHeaderState(); // This updates the main header and rebuilds the menu
+        });
 
         // Theme toggle
         const mobileThemeToggleBtn = document.getElementById('mobile-theme-toggle-btn');
@@ -933,7 +1089,6 @@ function initializeMainApp() {
             const mobileIconDark = document.getElementById('mobile-theme-icon-dark');
             
             const updateMobileIcons = () => {
-                const currentTheme = localStorage.getItem('theme') || 'dark';
                  if (document.documentElement.classList.contains('dark')) {
                     mobileIconLight.classList.add('hidden');
                     mobileIconDark.classList.remove('hidden');
@@ -945,7 +1100,7 @@ function initializeMainApp() {
             
             mobileThemeToggleBtn.addEventListener('click', () => {
                 themeToggleBtn.click(); // Trigger the main theme toggle
-                updateMobileIcons();
+                setTimeout(updateMobileIcons, 50); // Give it a moment for the class to apply
             });
             
             updateMobileIcons(); // Set initial state
@@ -1022,7 +1177,7 @@ function displayMovies(movies) {
                         <h2 class="text-2xl font-bold">${mockApiData.categories[catKey]}</h2>
                         <button class="see-more-link bg-red-600 text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-red-700 transition-colors" data-category="${catKey}">SEE ALL</button>
                     </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+                    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2 sm:gap-4">
                         ${top8Movies.map(createMovieCard).join('')}
                     </div>
                 `;
@@ -1226,7 +1381,7 @@ function displayMovies(movies) {
 
         let uniqueMovies = Array.from(new Map(moviesToFilter.map(m => [m.id, m])).values());
         let filteredMovies = uniqueMovies;
-        const searchTerm = searchBar.value.toLowerCase().trim();
+        const searchTerm = searchBar.value.toLowerCase().trim() || mobileSearchInput.value.toLowerCase().trim();
 
         if (selectedGenre) {
             filteredMovies = filteredMovies.filter(movie => movie.genres && movie.genres.includes(selectedGenre));
@@ -1504,7 +1659,7 @@ function displayMovies(movies) {
             }
         }
             return `
-                <div class="snap-center flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
+                <div class="flex-shrink-0 w-1/3 sm:w-1/2 md:w-1/3 lg:w-1/4 p-1 sm:p-2 snap-center">
                     <div class="featured-movie-card" style="background-image: url('${posterUrl}')" onclick="showMovieDetails(${movie.id})">
                          <div class="content">
                             <h3 class="text-white font-bold text-lg truncate">${movie.title}</h3>
@@ -1634,6 +1789,8 @@ function displayMovies(movies) {
 
 
     // --- EVENT LISTENERS ---
+    
+    // Initial Setup
     updateHeaderState();
     buildNavMenu();
     displayYears();
@@ -1646,6 +1803,10 @@ function displayMovies(movies) {
     displayAds();
     displayHomepageByCategory();
     initializeLoginModal();
+    handleResize(); // Set initial search icon visibility
+
+    // Listen for window resize to toggle search icons
+    window.addEventListener('resize', handleResize);
     
     const resetHomepage = () => {
         // Reset all filter state variables
@@ -1675,7 +1836,7 @@ function displayMovies(movies) {
     
     document.getElementById('log-out').addEventListener('click', () => {
         localStorage.removeItem('currentUser');
-        updateHeaderState(); // <-- Add this line
+        updateHeaderState();
     });
 
     loginBtnHeader.addEventListener('click', () => {
@@ -1685,6 +1846,8 @@ function displayMovies(movies) {
     loginModalCloseBtn.addEventListener('click', () => closeModal('login-modal'));
 
     searchBar.addEventListener('input', handleSearch);
+    mobileSearchInput.addEventListener('input', handleSearch);
+
 
     detailsModal.addEventListener('click', (e) => {
         if (e.target === detailsModal) closeModal('movie-details-modal');
@@ -1857,10 +2020,12 @@ function displayMovies(movies) {
     mobileMenuBtn.addEventListener('click', () => {
         buildAndBindMobileMenu();
         mobileMenu.classList.remove('hidden');
+        activeUserContainer.classList.add('hidden');
+        mobileSearchIconBtn.classList.remove('hidden'); // Ensure search icon is visible
     });
 
-    mobileMenuCloseBtn.addEventListener('click', () => {
-        mobileMenu.classList.add('hidden');
+    mobileSearchIconBtn.addEventListener('click', () => {
+        mobileSearchContainer.classList.toggle('hidden');
     });
 
     filterToggleBtn.addEventListener('click', () => {
@@ -1920,7 +2085,10 @@ function displayMovies(movies) {
             if (!document.getElementById('stream-modal').classList.contains('hidden')) closeModal('stream-modal');
             if (!passwordResetModal.classList.contains('hidden')) closeModal('password-reset-modal');
             if (!notificationModal.classList.contains('hidden')) closeModal('notification-modal');
-            if (!mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                updateHeaderState(); // Restore header state on escape
+            }
             if(!leftSidebar.classList.contains('hidden')) leftSidebar.classList.add('hidden');
             if (!aboutUsModal.classList.contains('hidden')) closeModal('about-us-modal');
         }
@@ -1959,3 +2127,4 @@ document.addEventListener('DOMContentLoaded', () => {
     
     updateUserCount();
 });
+

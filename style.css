@@ -58,6 +58,8 @@ body {
 .dark .ad-placeholder { background-color: #262626; border-color: #404040; }
 .dark footer { background-color: #111; }
 .dark .site-title { background-color: rgba(255, 255, 255, 0.1); }
+.dark #mobile-menu { background-color: rgba(26, 26, 26, 0.98); backdrop-filter: blur(8px); }
+.dark .mobile-nav-link:hover { color: var(--brand-orange); background-color: rgba(255, 255, 255, 0.05); }
 
 
 /* Light Theme */
@@ -99,6 +101,10 @@ body {
 .light .ad-placeholder { background-color: #e5e5e5; border-color: #d4d4d4; }
 .light footer { background-color: #e5e5e5; }
 .light .site-title { background-color: rgba(0, 0, 0, 0.05); }
+.light #mobile-menu { background-color: rgba(245, 245, 245, 0.98); backdrop-filter: blur(8px); color: #1a1a1a;}
+.light .mobile-nav-link:hover { color: var(--brand-red); background-color: rgba(0, 0, 0, 0.05); }
+.light #mobile-menu .text-gray-400 { color: #525252 !important; }
+.light #mobile-menu .border-neutral-700 { border-color: #d4d4d4; }
 
 
 .hero-bg {
