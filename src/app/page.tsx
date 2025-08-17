@@ -1,8 +1,11 @@
+import CategorySection from "@/components/CategorySection";
+import FeaturedContent from "@/components/FeaturedContent";
 
 export default function Home() {
   return (
-    <div className="text-green-400">
-      Hello
-    </div>
+    <>
+      <FeaturedContent />
+      <CategorySection />
+    </>
   );
 }
