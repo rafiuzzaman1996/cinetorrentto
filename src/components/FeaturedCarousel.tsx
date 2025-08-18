@@ -22,7 +22,7 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
     <Carousel
       className="w-full"
       opts={{
-        loop: false,
+        loop: true,
       }}
       plugins={[
         Autoplay({
@@ -44,11 +44,12 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
               {/* Background image */}
               <div className="absolute inset-0">
                 <Image
-                  src={item.img}
+                  src={item.content.poster_image_url}
                   alt={`FeaturedContent ${item.id}`}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   quality={90}
+                  priority={true}
                   className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                 />
 
@@ -60,9 +61,9 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
               {/* Foreground content */}
               <CardContent className="relative z-10 flex h-30 flex-col justify-end p-6 pb-0 text-white md:h-45">
                 <h3 className="text-2xl font-semibold leading-tight md:text-lg">
-                  {item.title}
+                  {item.content.title}
                 </h3>
-                <p>{item.genre?.map(data => data.title).join(',')}</p>
+                <p>{item.content.genres?.map(data => data.title).join(',')}</p>
               </CardContent>
 
               {/* Decorative focus ring on hover */}

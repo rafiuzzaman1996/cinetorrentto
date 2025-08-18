@@ -1,36 +1,35 @@
-'use client'
-import React from "react"
+import { getContentsByCategory } from '@/app/api/category-api/route'
+import ContentInfo from '@/components/CategorySections/ContentInfo2';
+import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
+import { Dialog, DialogTrigger, DialogContent } from '@radix-ui/react-dialog';
+import React from 'react'
 import Image from "next/image"
-import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
-import { Category } from "./CategorySections/Categories"
-import {
-    Dialog,
-    DialogContent,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import ContentInfo from "./CategorySections/ContentInfo2"
-import { useRouter } from "next/navigation"
 
-interface FeaturedCarouselProps {
-    category: Category;
+export interface Content {
+    title: string;
+    genres: {
+        id: number,
+        title: string
+    }[];
+    release_date: number;
+    rating: number;
+    poster_image_url: string;
 }
-const CategorySection: React.FC<FeaturedCarouselProps> = ({ category }) => {
-    const router = useRouter()
+const CategoryPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+      const { slug } = await params   // ✅ await params
 
-  const handleClick = (slug: string) => {
-    router.push(`/category/${slug}`)
-  }
-    return (
-        <div className="my-8">
-            <div className="flex items-center justify-between mb-4 px-4 md:px-8">
-                <h2 className="text-xl font-bold text-orange-500">{category.title}</h2>
-                <button onClick={() => handleClick(category.slug)} className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
-                    SEE ALL
-                </button>
-            </div>
+    const searchParams = {
+        slug: slug,
+        page: 1,
+        limit: 10
+    }
+    const contents :{data: Content[]} = await getContentsByCategory(searchParams)
+    console.log('🩸🩸 ~ contents:', contents);
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 px-4 md:px-8">
-                {category.contents.slice(0, 6).map((content, index) => (
+  return (
+    <div className="my-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 px-4 md:px-8">
+                {contents.data.map((content, index) => (
                     <Dialog key={index}>
                         <DialogTrigger asChild>
                             <Card key={index} className="bg-gray-800 p-0 gap-2 dark:bg-gray-900 overflow-hidden border-0 duration-500 hover:scale-105">
@@ -58,8 +57,8 @@ const CategorySection: React.FC<FeaturedCarouselProps> = ({ category }) => {
                     </Dialog>
                 ))}
             </div>
-        </div>
-    )
+    </div>
+  )
 }
 
-export default CategorySection
+export default CategoryPage
