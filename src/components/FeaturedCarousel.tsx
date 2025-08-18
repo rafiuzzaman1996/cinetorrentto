@@ -11,12 +11,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Card, CardContent } from "./ui/card"
-
-interface FeaturedContentItem {
-  img: string;
-  id: number;
-  // Add other known properties here as needed
-}
+import {FeaturedContentItem} from "./FeaturedContent"
 
 interface FeaturedCarouselProps {
   featuredContent: FeaturedContentItem[];
@@ -42,17 +37,37 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
             key={index}
             className="flex-none w-full sm:w-1/2 md:w-1/4" // 4 items on md+, 2 on sm, 1 on mobile
           >
-          <Card className="h-48 flex items-center justify-center">
-            <CardContent className="flex items-center justify-center p-2">
-             <Image
-            src={item.img}
-            alt={`Featured ${index + 1}`}
-            width={600}
-            height={80}
-            className="h-60 object-cover"
-          />
-            </CardContent>
-          </Card>
+            <Card
+              role="region"
+              className="group relative overflow-hidden rounded-2xl border-0 shadow-md transition-all duration-500 hover:scale-105"
+            >
+              {/* Background image */}
+              <div className="absolute inset-0">
+                <Image
+                  src={item.img}
+                  alt={`FeaturedContent ${item.id}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  quality={90}
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                />
+
+                {/* Scrim + gradient for text contrast */}
+                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              </div>
+
+              {/* Foreground content */}
+              <CardContent className="relative z-10 flex h-30 flex-col justify-end p-6 pb-0 text-white md:h-45">
+                <h3 className="text-2xl font-semibold leading-tight md:text-lg">
+                  {item.title}
+                </h3>
+                <p>{item.genre?.map(data => data.title).join(',')}</p>
+              </CardContent>
+
+              {/* Decorative focus ring on hover */}
+              <div className="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-white/0 transition-all duration-300 group-hover:ring-4 group-hover:ring-white/10" />
+            </Card>
 
           </CarouselItem>
         ))}

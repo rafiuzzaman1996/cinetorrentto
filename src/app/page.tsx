@@ -1,11 +1,11 @@
-import CategorySection from "@/components/CategorySection";
+import Categories from "@/components/CategorySections/Categories";
 import FeaturedContent from "@/components/FeaturedContent";
 
 export default function Home() {
   return (
     <>
       <FeaturedContent />
-      <CategorySection />
+      <Categories />
     </>
   );
 }
