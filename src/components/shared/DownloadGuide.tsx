@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 
 const DownloadGuide = () => {
     return (
-        <div className="container mx-auto px-6 py-8 rounded-lg bg-gray-300 text-gray-900 dark:bg-gray-800 dark:text-white text-center">
+        <div className="container mx-auto px-6 py-8 rounded-lg bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white text-center">
             <p className="mb-2 text-sm md:text-base">
                 Please let us know in the comments if you have any problems downloading.
                 We will resolve the issue quickly.

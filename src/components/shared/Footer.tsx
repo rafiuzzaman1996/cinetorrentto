@@ -3,7 +3,7 @@ import React from 'react'
 
 const Footer = () => {
     return (
-        <div className="mt-4 bg-gradient-to-br bg-gray-300 text-gray-900 dark:bg-gray-800 dark:text-white flex flex-col items-center justify-center p-4 text-center">
+        <div className="mt-4 bg-gradient-to-br bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white flex flex-col items-center justify-center p-4 text-center">
             {/* Ad section */}
             <div className="w-full max-w-[728px] h-[90px] flex items-center justify-center border-2 border-dashed">
                 <div className=" font-medium tracking-wide">
