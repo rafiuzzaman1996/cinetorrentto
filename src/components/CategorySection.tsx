@@ -6,10 +6,13 @@ import { Category } from "./CategorySections/Categories"
 import {
     Dialog,
     DialogContent,
+    DialogHeader,
+    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
 import ContentInfo from "./CategorySections/ContentInfo2"
 import { useRouter } from "next/navigation"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 
 interface FeaturedCarouselProps {
     category: Category;
@@ -17,9 +20,9 @@ interface FeaturedCarouselProps {
 const CategorySection: React.FC<FeaturedCarouselProps> = ({ category }) => {
     const router = useRouter()
 
-  const handleClick = (slug: string) => {
-    router.push(`/category/${slug}`)
-  }
+    const handleClick = (slug: string) => {
+        router.push(`/category/${slug}`)
+    }
     return (
         <div className="my-8">
             <div className="flex items-center justify-between mb-4 px-4 md:px-8">
@@ -51,9 +54,20 @@ const CategorySection: React.FC<FeaturedCarouselProps> = ({ category }) => {
                                 </CardContent>
                             </Card>
                         </DialogTrigger>
-                        <DialogContent className="max-w-2xl rounded-2xl">
-                            {/* <ContentInfo content={content} /> */}
+                        {/* <DialogContent className="rounded-2xl"> */}
+                        {/* <DialogContent className="max-w-6xl w-full h-[80vh] overflow-y-auto rounded-2xl">
+                            <div className="overflow-y-auto max-h-[70vh] px-2">
                             <ContentInfo />
+                            </div>
+                            </DialogContent> */}
+                        <DialogContent className="sm:max-w-4xl w-full h-[85vh] flex flex-col rounded-2xl py-6 px-0">
+                            <VisuallyHidden>
+                                <DialogTitle>Content Info</DialogTitle>
+                            </VisuallyHidden>
+                            {/* <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4"> */}
+                            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500">
+                            <ContentInfo />
+                            </div>
                         </DialogContent>
                     </Dialog>
                 ))}
