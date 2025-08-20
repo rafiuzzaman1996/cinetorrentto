@@ -1,6 +1,6 @@
 import React from 'react'
-import { columns, Payment } from "@/components/management/data-table/column"
-import { DataTable } from "@/components/management/data-table/data-table"
+import { columns, Payment } from "@/components/admin/management/data-table/column"
+import { DataTable } from "@/components/admin/management/data-table/data-table"
 
 async function getData(): Promise<Payment[]> {
   // Fetch data from your API here.

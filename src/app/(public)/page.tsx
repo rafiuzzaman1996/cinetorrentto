@@ -1,5 +1,5 @@
-import Categories from "@/components/CategorySections/Categories";
-import FeaturedContent from "@/components/FeaturedContent";
+import Categories from "@/components/public/CategorySections/Categories";
+import FeaturedContent from "@/components/public/FeaturedContent";
 
 export default function Home() {
   return (

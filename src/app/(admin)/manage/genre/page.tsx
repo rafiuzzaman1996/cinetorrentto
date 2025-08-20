@@ -1,4 +1,4 @@
-import { DataTable } from '@/components/management/data-table/data-table2'
+import { DataTable } from '@/components/admin/management/data-table/data-table2'
 import React from 'react'
 import data from "./data.json"
 

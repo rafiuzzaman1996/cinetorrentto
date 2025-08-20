@@ -11,10 +11,10 @@ import {
   LayoutDashboard,
 } from "lucide-react"
 
-import { NavMain } from "@/components/management/nav-main"
-import { NavSettings } from "@/components/management/nav-settings"
-import { NavUser } from "@/components/management/nav-user"
-import { TeamSwitcher } from "@/components/management/team-switcher"
+import { NavMain } from "@/components/admin/management/nav-main"
+import { NavSettings } from "@/components/admin/management/nav-settings"
+import { NavUser } from "@/components/admin/management/nav-user"
+import { TeamSwitcher } from "@/components/admin/management/team-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -44,7 +44,7 @@ const data = {
     ],
   navMain: [
     {
-      title: "Content Setting",
+      title: "Contents",
       url: "#",
       icon: Clapperboard,
       isActive: true,

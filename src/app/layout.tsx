@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "@/components/shared/theme-provider";
+import { ThemeProvider } from "@/components/public/shared/theme-provider";
 
 export const metadata: Metadata = {
   title: "Cinetorrento",

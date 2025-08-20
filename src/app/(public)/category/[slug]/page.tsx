@@ -1,5 +1,5 @@
 import { getContentsByCategory } from '@/app/api/category-api/route'
-import ContentInfo from '@/components/CategorySections/ContentInfo2';
+import ContentInfo from '@/components/public/CategorySections/ContentInfo2';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogTrigger, DialogContent } from '@radix-ui/react-dialog';
 import React from 'react'
