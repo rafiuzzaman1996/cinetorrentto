@@ -16,6 +16,7 @@ const ThemeToggle = () => {
       variant="outline"
       size="icon"
       onClick={toggleTheme}
+      className="cursor-pointer"
     >
       <Sun className="h-[1.2rem] w-[1.2rem] transition-all dark:hidden" />
       <Moon className="h-[1.2rem] w-[1.2rem] hidden dark:block transition-all" />

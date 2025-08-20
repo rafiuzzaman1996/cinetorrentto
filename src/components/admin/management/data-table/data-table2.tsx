@@ -263,34 +263,15 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         cell: () => (
             <div className="flex gap-2">
                 <Button variant="ghost" size="icon" className="data-[state=open]:bg-muted text-muted-foreground flex size-8">
-                    <Eye color="#c2ffc9"/>
+                    <Eye color="#c2ffc9" />
                 </Button>
                 <Button variant="ghost" size="icon" className="data-[state=open]:bg-muted text-muted-foreground flex size-8">
-                    <Pencil color="#e0c2ff"/>
+                    <Pencil color="#e0c2ff" />
                 </Button>
                 <Button variant="ghost" size="icon" className="data-[state=open]:bg-muted text-muted-foreground flex size-8">
-                    <Trash color="#fe959f"/>
+                    <Trash color="#fe959f" />
                 </Button>
             </div>
-            // <DropdownMenu>
-            //     <DropdownMenuTrigger asChild>
-            //         <Button
-            //             variant="ghost"
-            //             className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            //             size="icon"
-            //         >
-            //             <EllipsisVertical />
-            //             <span className="sr-only">Open menu</span>
-            //         </Button>
-            //     </DropdownMenuTrigger>
-            //     <DropdownMenuContent align="end" className="w-32">
-            //         <DropdownMenuItem>Edit</DropdownMenuItem>
-            //         <DropdownMenuItem>Make a copy</DropdownMenuItem>
-            //         <DropdownMenuItem>Favorite</DropdownMenuItem>
-            //         <DropdownMenuSeparator />
-            //         <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-            //     </DropdownMenuContent>
-            // </DropdownMenu>
         ),
     },
 ]
@@ -387,6 +368,7 @@ export function DataTable({
 
     return (
         <div className="mt-2">
+            {/* TopBar */}
             <div className="flex items-center justify-end gap-2 mb-2">
                 <Button className="cursor-pointer" variant="outline" size="sm">
                     <PlusCircle />
@@ -424,8 +406,8 @@ export function DataTable({
                             })}
                     </DropdownMenuContent>
                 </DropdownMenu>
-
             </div>
+            {/* Table */}
             <div className="overflow-hidden rounded-lg border">
                 <DndContext
                     collisionDetection={closestCenter}
@@ -477,6 +459,7 @@ export function DataTable({
                     </Table>
                 </DndContext>
             </div>
+            {/* Pagination */}
             <div className="flex items-center justify-between px-4 mt-2">
                 <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
                     {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -553,7 +536,8 @@ export function DataTable({
                         </Button>
                     </div>
                 </div>
-            </div></div>
+            </div>
+        </div>
     )
 }
 

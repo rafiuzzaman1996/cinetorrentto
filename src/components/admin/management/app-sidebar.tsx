@@ -72,8 +72,8 @@ const data = {
       icon: Group,
     },
     {
-      name: "Social Media",
-      url: "/manage/social-media",
+      name: "Social Links",
+      url: "/manage/social-link",
       icon: Globe,
     },
     {
