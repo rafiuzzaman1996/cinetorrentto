@@ -24,7 +24,6 @@ const CategoryPage = async ({ params }: { params: Promise<{ slug: string }> }) =
         limit: 10
     }
     const contents :{data: Content[]} = await getContentsByCategory(searchParams)
-    console.log('🩸🩸 ~ contents:', contents);
 
   return (
     <div className="my-8">
