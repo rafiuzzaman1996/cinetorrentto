@@ -78,7 +78,7 @@ export function SimpleDataTable<TData, TValue>({
   return (
     <div>
       {/* TopBar */}
-      <div className="flex items-center justify-end gap-2 mb-2">
+      {/* <div className="flex items-center justify-end gap-2 mb-2">
         <Button className="cursor-pointer" variant="outline" size="sm">
           <PlusCircle />
           <span className="hidden lg:inline">Add</span>
@@ -115,7 +115,7 @@ export function SimpleDataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+      </div> */}
       {/* Table */}
       <div className="overflow-hidden rounded-md border">
         <Table>
