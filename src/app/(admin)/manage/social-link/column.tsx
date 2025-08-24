@@ -19,10 +19,9 @@ import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useId } from "react"
 import { submitSocialLink } from "../../admin-api/SocialLinkApi/route"
-import { SocialLinkInterface } from "./social-link.interface"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 // Your schema
@@ -82,55 +81,55 @@ export function AddEditDialog({
   //   if (onSubmit) onSubmit(values)
   //   console.log("Submitted:", values)
   // }
-  async function handleSubmit(values: SocialLink, mode: "add" | "edit" | "view" | "delete") {
+  async function handleSubmitForm(values: SocialLink) {
     console.log('🩸🩸 ~ mode:', mode);
     try {
       const data = await submitSocialLink(values, mode)
       console.log("Submitted:", data)
       // show alert
       toast.success(`Social link ${mode === 'add' ? 'Added' : 'Updated'} successfully`)
-      if (onSubmit) onSubmit(values)
-      setOpen(false)
+       setOpen(false)
+      onSubmit?.(values)
       router.refresh()
 
     } catch (err) {
       console.error("Submission failed:", err)
     }
   }
-  async function deleteSocialLink(data: SocialLinkInterface, onSuccess?: () => void) {
-    if (!data.id) {
+  // --- Handle Delete
+  async function handleDelete() {
+    if (!data?.id) {
       toast.error("Delete failed: missing ID")
       return
     }
-
     try {
-      const result = await submitSocialLink(data, "delete")
+      await submitSocialLink(data, "delete")
       toast.success("Social link deleted successfully ✅")
-      if (onSuccess) onSuccess()
-      return result
+      setOpen(false)
+      onSubmit?.(data)
+      router.refresh()
     } catch (err) {
-      toast.error(`Failed to delete social link: ${err}`)
-      return null
+      toast.error("Failed to delete social link ❌")
+      console.error(err)
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          {mode === 'add' ?
-            <Button className="cursor-pointer" variant="outline" size="sm">
-              <PlusCircle />
-              <span className="hidden lg:inline">Add</span>
-            </Button>
-            :
-            <Button variant="ghost" size="icon">
-              {mode === "view" && <Eye color="#c2ffc9" />}
-              {mode === "edit" && <Pencil color="#e0c2ff" />}
-              {mode === "delete" && <Trash color="#fe959f" />}
-              {/* {mode === "add" && <Plus />} */}
-            </Button>
-          }
-        </DialogTrigger>
+      <DialogTrigger asChild>
+        {mode === "add" ? (
+          <Button variant="outline" size="sm">
+            <PlusCircle />
+            <span className="hidden lg:inline">Add</span>
+          </Button>
+        ) : (
+          <Button variant="ghost" size="icon">
+            {mode === "view" && <Eye color="#c2ffc9" />}
+            {mode === "edit" && <Pencil color="#e0c2ff" />}
+            {mode === "delete" && <Trash color="#fe959f" />}
+          </Button>
+        )}
+      </DialogTrigger>
 
       <DialogContent className="h-[85vh] p-2 flex flex-col">
         <DialogHeader>
@@ -141,11 +140,11 @@ export function AddEditDialog({
             {mode === "delete" && "Delete Social Link"}
           </DialogTitle>
           <VisuallyHidden>
-            <DialogDescription>Dialog Description</DialogDescription>
+            <div>Dialog Description</div>
           </VisuallyHidden>
         </DialogHeader>
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500 p-1">
+
+        <div className="flex-1 overflow-y-auto p-1">
           {mode === "view" ? (
             <div className="space-y-2">
               <p><strong>Title:</strong> {data?.title}</p>
@@ -159,150 +158,85 @@ export function AddEditDialog({
             </div>
           ) : (
             <Form {...form}>
-              <form id={formId} onSubmit={form.handleSubmit((values) => handleSubmit(values, mode))} className="space-y-4">
-
-                {/* Title */}
+              <form id={formId} onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-4">
                 <FormField
                   control={form.control}
                   name="title"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter title" {...field} />
-                      </FormControl>
+                      <FormControl><Input placeholder="Enter title" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/* URL */}
                 <FormField
                   control={form.control}
                   name="url"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com" {...field} />
-                      </FormControl>
+                      <FormControl><Input placeholder="https://example.com" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/* Icon URL */}
                 <FormField
                   control={form.control}
                   name="icon_url"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Icon URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://cdn.example.com/icon.png" {...field} />
-                      </FormControl>
+                      <FormControl><Input placeholder="https://cdn.example.com/icon.png" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/* Active */}
                 <FormField
                   control={form.control}
                   name="is_active"
                   render={({ field }) => (
-                    <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                      <FormLabel className="text-sm font-medium">Active</FormLabel>
+                    <FormItem className="flex items-center justify-between border p-3 rounded-lg">
+                      <FormLabel>Active</FormLabel>
                       <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
                     </FormItem>
                   )}
                 />
-
-                {/* Sequence */}
                 <FormField
                   control={form.control}
                   name="sequence"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Sequence</FormLabel>
-                      <FormControl>
-                        <Input type="number" placeholder="1" {...field} />
-                      </FormControl>
+                      <FormControl><Input type="number" placeholder="1" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/* <div className="sticky bottom-0 flex justify-end gap-2 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => form.reset()}
-                  >
-                    Reset
-                  </Button>
-                  <Button type="submit">
-                    {mode === "add" ? "Add" : "Save"}
-                  </Button>
-                  <DialogFooter className="sm:justify-start">
-                    <DialogClose asChild>
-                      <Button type="button" variant="secondary">
-                        Close
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </div> */}
               </form>
             </Form>
           )}
         </div>
 
-        {/* Sticky footer (outside scroll) */}
         <div className="border-t pt-4 flex justify-end gap-2">
           {mode === "delete" ? (
             <>
               <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              {/* <Button
-                variant="destructive"
-                onClick={() => {
-                  if (onSubmit && data) onSubmit(data)
-                  setOpen(false)
-                }}
-              > */}
-              <Button variant="destructive" onClick={async () => {
-                if (!data) return
-                await deleteSocialLink(data, () => {
-                  // Optional: refresh table or call parent callback
-                  if (onSubmit) onSubmit(data)
-                  setOpen(false)
-                })
-              }}
-              >
-                Delete
-              </Button>
+              <Button variant="destructive" onClick={handleDelete}>Delete</Button>
             </>
           ) : (
             <>
-              {mode === 'add' || mode === 'edit' ?
+              {(mode === "add" || mode === "edit") && (
                 <>
-                  <Button type="button" variant="outline" onClick={() => form.reset()}>
-                    Reset
-                  </Button>
-                  <Button type="submit" form={formId}>
-                    {mode === "add" ? "Add" : "Save"}
-                  </Button>
-                </> : <></>
-              }
+                  <Button type="button" variant="outline" onClick={() => form.reset()}>Reset</Button>
+                  <Button type="submit" form={formId}>{mode === "add" ? "Add" : "Save"}</Button>
+                </>
+              )}
               <DialogFooter className="sm:justify-start">
                 <DialogClose asChild>
-                  <Button type="button" variant="secondary">
-                    Close
-                  </Button>
+                  <Button type="button" variant="secondary">Close</Button>
                 </DialogClose>
               </DialogFooter>
             </>
