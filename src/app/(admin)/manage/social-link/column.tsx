@@ -21,7 +21,7 @@ import { Switch } from "@/components/ui/switch"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useId } from "react"
-import { submitSocialLink } from "../../admin-api/SocialLinkApi/route"
+import { submitSocialLink } from "../../admin-api/SocialLinkApi/socialLinkClient"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 // Your schema

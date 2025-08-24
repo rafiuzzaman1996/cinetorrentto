@@ -1,6 +1,6 @@
 import React from 'react'
 import CategorySection from '../CategorySection'
-import { getCategoryWiseContent } from '@/app/api/content-api/route';
+import { getCategoryWiseContent } from '@/app/api/content-api/contentApi';
 
 export interface Content {
     title: string;

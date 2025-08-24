@@ -1,7 +1,7 @@
 import { SimpleDataTable } from '@/components/admin/management/data-table/SimpleDataTable'
 import React from 'react'
 import SocialLinkColumns from './column'
-import { getSocialLinks } from '../../admin-api/SocialLinkApi/route'
+import { getSocialLinks } from '../../admin-api/SocialLinkApi/socialLinkClient'
 
 const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string }> }) => {
   const searchParams = await props.searchParams

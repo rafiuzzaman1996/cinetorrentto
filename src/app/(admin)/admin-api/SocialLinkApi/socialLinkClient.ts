@@ -1,12 +1,12 @@
 "use server";
 
-import { SocialLinkInterface } from "../../manage/social-link/social-link.interface";
+import { SocialLinkInterface } from "@/app/(admin)/manage/social-link/social-link.interface";
 
 // import { NextResponse } from "next/server";
 export const getSocialLinks = async (searchParams: { page: number, limit: number }) => {
     try {
       const apiUrl = process.env.API_URL;
-      const res = await fetch(`${apiUrl}/social-link?page=${searchParams.page}&limit=${searchParams.limit}`, {
+      const res = await fetch(`${apiUrl}/social-link?filter.is_active=true&page=${searchParams.page}&limit=${searchParams.limit}`, {
         // next: { revalidate: 3600 },
       });
 
