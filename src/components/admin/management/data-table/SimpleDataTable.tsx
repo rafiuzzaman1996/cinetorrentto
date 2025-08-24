@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
+import { AddEditDialog } from "@/app/(admin)/manage/social-link/column"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -45,6 +46,7 @@ interface DataTableProps<TData, TValue> {
   totalPages: number
   RowsPerPage: Array<number>
 }
+
 
 export function SimpleDataTable<TData, TValue>({
   columns,
@@ -59,6 +61,7 @@ export function SimpleDataTable<TData, TValue>({
    const router = useRouter()
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [pagination, setPagination] = React.useState({ pageIndex: pageIndex, pageSize })
+  // columns.push(actionColumn);
   const table = useReactTable({
     data,
     columns,
@@ -78,11 +81,10 @@ export function SimpleDataTable<TData, TValue>({
   return (
     <div>
       {/* TopBar */}
-      {/* <div className="flex items-center justify-end gap-2 mb-2">
-        <Button className="cursor-pointer" variant="outline" size="sm">
-          <PlusCircle />
-          <span className="hidden lg:inline">Add</span>
-        </Button>
+      <div className="flex items-center justify-end gap-2 mb-2">
+        <>
+        <AddEditDialog mode="add" />
+        </>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="cursor-pointer" variant="outline" size="sm">
@@ -115,7 +117,7 @@ export function SimpleDataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-      </div> */}
+      </div>
       {/* Table */}
       <div className="overflow-hidden rounded-md border">
         <Table>
@@ -192,7 +194,7 @@ export function SimpleDataTable<TData, TValue>({
             </Select>
           </div>
           <div className="flex w-fit items-center justify-center text-sm font-medium">
-            Page {pageIndex} of {Math.ceil(rowCount / pageSize)}
+            Page {pageIndex} of {totalPages}
           </div>
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button

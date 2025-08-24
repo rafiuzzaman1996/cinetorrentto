@@ -6,12 +6,11 @@ import { getSocialLinks } from '../../admin-api/SocialLinkApi/route'
 const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string }> }) => {
   const searchParams = await props.searchParams
   const pageIndex = Number(searchParams?.page ?? "1") // page number from URL
-  const pageSize = Number(searchParams?.pageSize ?? "1")
-  const searchParams2 = {
+  const pageSize = Number(searchParams?.pageSize ?? "20")
+  const getSocialLinksData = await getSocialLinks({
     page: pageIndex,
     limit: pageSize,
-  }
-  const getSocialLinksData = await getSocialLinks(searchParams2);
+  });
   const data = getSocialLinksData.data
   const total = getSocialLinksData.meta.totalItems
   const totalPages = getSocialLinksData.meta.totalPages
@@ -21,12 +20,13 @@ const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: strin
       <SimpleDataTable
         caption='A list of Social Links.'
         columns={SocialLinkColumns}
+        // schema={schema}
         data={data}
         pageSize={pageSize}
         pageIndex={currentPage}
         totalPages={totalPages}
         rowCount={total}
-        RowsPerPage={[1,2,10, 20, 30, 40, 50]}
+        RowsPerPage={[20, 30, 40, 50]}
       />
     </div>
   )
