@@ -1,6 +1,6 @@
 import React from "react"
 import FeaturedCarousel from "./FeaturedCarousel"
-import { getFeaturedContent } from "@/app/api/featured-api/featuredApi";
+import { getFeaturedContent } from "@/app/(website)/website-api/featuredApi";
 
 export interface FeaturedContentItem {
   id: number;

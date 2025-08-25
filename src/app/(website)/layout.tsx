@@ -1,6 +1,6 @@
-import DownloadGuide from '@/components/public/shared/DownloadGuide';
-import Footer from '@/components/public/shared/Footer';
-import Header from '@/components/public/shared/Header';
+import DownloadGuide from '@/components/website/shared/DownloadGuide';
+import Footer from '@/components/website/shared/Footer';
+import Header from '@/components/website/shared/Header';
 import React from 'react'
 
 const layout = ({

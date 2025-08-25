@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/admin/management/app-sidebar"
-import ThemeToggle from "@/components/public/shared/ThemeToggle"
+import ThemeToggle from "@/components/website/shared/ThemeToggle"
 import {
     SidebarInset,
     SidebarProvider,
