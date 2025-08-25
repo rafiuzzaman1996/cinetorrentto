@@ -1,10 +1,9 @@
 "use client"
 import React from "react"
 
-import { useState } from "react"
+import { useState, useId } from "react"
 import { Button } from "@/components/ui/button"
 import { Eye, Pencil, Trash, PlusCircle } from "lucide-react"
-import { z } from "zod"
 import {
     Form,
     FormControl,
@@ -19,10 +18,10 @@ import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { useId } from "react"
-import { submitSocialLink } from "@/app/(admin)/admin-api/SocialLinkApi/socialLinkClient"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+
+import { submitSocialLink } from "@/app/(admin)/admin-api/SocialLinkApi/socialLinkClient"
 import { schema, SocialLink } from "@/app/(admin)/manage/social-link/social-link.interface"
 
 
@@ -64,12 +63,7 @@ export const AddEditDialog = ({
         }
     }, [open, data, form])
 
-    // function handleSubmit(values: SocialLink) {
-    //   if (onSubmit) onSubmit(values)
-    //   console.log("Submitted:", values)
-    // }
     async function handleSubmitForm(values: SocialLink) {
-        console.log('🩸🩸 ~ mode:', mode);
         try {
             const data = await submitSocialLink(values, mode)
             console.log("Submitted:", data)

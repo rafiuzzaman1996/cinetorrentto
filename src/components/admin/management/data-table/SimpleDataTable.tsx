@@ -34,7 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
-import { AddEditDialog } from "@/app/(admin)/manage/social-link/column"
+import { AddEditDialog } from "@/components/admin/management/data-table/AddEditDialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
