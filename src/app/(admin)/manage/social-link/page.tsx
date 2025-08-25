@@ -11,14 +11,10 @@ const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: strin
     page: pageIndex,
     limit: pageSize,
   });
-    // const data = getSocialLinksData.data
-    // const total = getSocialLinksData.meta.totalItems
-    // const totalPages = getSocialLinksData.meta.totalPages
-    // const currentPage = getSocialLinksData.meta.currentPage
   const data = getSocialLinksData?.data ?? [];
-const total = getSocialLinksData?.meta?.totalItems ?? 0;
-const totalPages = getSocialLinksData?.meta?.totalPages ?? 1;
-const currentPage = getSocialLinksData?.meta?.currentPage ?? 1;
+  const total = getSocialLinksData?.meta?.totalItems ?? 0;
+  const totalPages = getSocialLinksData?.meta?.totalPages ?? 1;
+  const currentPage = getSocialLinksData?.meta?.currentPage ?? 1;
   return (
     <div className="p-4 pt-0">
       <SimpleDataTable
