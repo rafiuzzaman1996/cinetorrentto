@@ -23,7 +23,37 @@ import { useRouter } from "next/navigation"
 
 import { submitSocialLink } from "@/app/(admin)/admin-api/SocialLinkApi/socialLinkClient"
 import { schema, SocialLink } from "@/app/(admin)/manage/social-link/social-link.interface"
-
+import { DynamicForm, FieldConfig } from "./DynamicForm"
+const fields: FieldConfig<typeof schema>[] = [
+  {
+    key: "title",
+    label: "Title",
+    inputType: "text" as const,
+    placeholder: "Enter title",
+    required: true
+  },
+//   {
+//     key: "url",
+//     label: "URL",
+//     inputType: "text" as const,
+//     placeholder: "Enter URL",
+//     required: true
+//   },
+//   {
+//     key: "icon_url",
+//     label: "Icon URL",
+//     inputType: "text" as const,
+//     placeholder: "Enter icon URL",
+//     required: true
+//   },
+//   {
+//     key: "is_active",
+//     label: "Active",
+//     inputType: "switch" as const,
+//     placeholder: ""
+//   },
+//   { key: "sequence", label: "Sequence", inputType: "number" as const, placeholder: "1" },
+];
 
 export const AddEditDialog = ({
     mode,
@@ -137,66 +167,72 @@ export const AddEditDialog = ({
                             <p>Are you sure you want to delete <strong>{data?.title}</strong>?</p>
                         </div>
                     ) : (
-                        <Form {...form}>
-                            <form id={formId} onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-4">
-                                <FormField
-                                    control={form.control}
-                                    name="title"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Title</FormLabel>
-                                            <FormControl><Input placeholder="Enter title" {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="url"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>URL</FormLabel>
-                                            <FormControl><Input placeholder="https://example.com" {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="icon_url"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Icon URL</FormLabel>
-                                            <FormControl><Input placeholder="https://cdn.example.com/icon.png" {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="is_active"
-                                    render={({ field }) => (
-                                        <FormItem className="flex items-center justify-between border p-3 rounded-lg">
-                                            <FormLabel>Active</FormLabel>
-                                            <FormControl>
-                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="sequence"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Sequence</FormLabel>
-                                            <FormControl><Input type="number" placeholder="1" {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </form>
-                        </Form>
+                        // <Form {...form}>
+                        //     <form id={formId} onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-4">
+                        //         <FormField
+                        //             control={form.control}
+                        //             name="title"
+                        //             render={({ field }) => (
+                        //                 <FormItem>
+                        //                     <FormLabel>Title</FormLabel>
+                        //                     <FormControl><Input placeholder="Enter title" {...field} /></FormControl>
+                        //                     <FormMessage />
+                        //                 </FormItem>
+                        //             )}
+                        //         />
+                        //         <FormField
+                        //             control={form.control}
+                        //             name="url"
+                        //             render={({ field }) => (
+                        //                 <FormItem>
+                        //                     <FormLabel>URL</FormLabel>
+                        //                     <FormControl><Input placeholder="https://example.com" {...field} /></FormControl>
+                        //                     <FormMessage />
+                        //                 </FormItem>
+                        //             )}
+                        //         />
+                        //         <FormField
+                        //             control={form.control}
+                        //             name="icon_url"
+                        //             render={({ field }) => (
+                        //                 <FormItem>
+                        //                     <FormLabel>Icon URL</FormLabel>
+                        //                     <FormControl><Input placeholder="https://cdn.example.com/icon.png" {...field} /></FormControl>
+                        //                     <FormMessage />
+                        //                 </FormItem>
+                        //             )}
+                        //         />
+                        //         <FormField
+                        //             control={form.control}
+                        //             name="is_active"
+                        //             render={({ field }) => (
+                        //                 <FormItem className="flex items-center justify-between border p-3 rounded-lg">
+                        //                     <FormLabel>Active</FormLabel>
+                        //                     <FormControl>
+                        //                         <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        //                     </FormControl>
+                        //                 </FormItem>
+                        //             )}
+                        //         />
+                        //         <FormField
+                        //             control={form.control}
+                        //             name="sequence"
+                        //             render={({ field }) => (
+                        //                 <FormItem>
+                        //                     <FormLabel>Sequence</FormLabel>
+                        //                     <FormControl><Input type="number" placeholder="1" {...field} /></FormControl>
+                        //                     <FormMessage />
+                        //                 </FormItem>
+                        //             )}
+                        //         />
+                        //     </form>
+                        // </Form>
+                        <DynamicForm<typeof schema>
+                            form={form}
+                            formId={formId}
+                            fields={fields}
+                            onSubmit={handleSubmitForm}
+                        />
                     )}
                 </div>
 
