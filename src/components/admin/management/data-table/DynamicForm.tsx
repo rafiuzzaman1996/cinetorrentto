@@ -25,12 +25,6 @@ export type FieldConfig<TSchema extends ZodType> = {
   multiple?: boolean // for select/multi
 }
 
-// type DynamicFormProps = {
-//   form: UseFormReturn<any>
-//   formId: string
-//   fields: FieldConfig[]
-//   onSubmit: (data: any) => void
-// }
 type DynamicFormProps<TSchema extends ZodType> = {
   // schema: TSchema
   form: UseFormReturn<z.infer<TSchema> & FieldValues>
@@ -38,9 +32,6 @@ type DynamicFormProps<TSchema extends ZodType> = {
   fields: FieldConfig<TSchema>[]
   onSubmit: (data: z.infer<TSchema>) => void
 }
-// useEffect(() => {
-// console.log("form defaultValues", form.getValues())
-// }, [])
 export function DynamicForm<TSchema extends ZodType>({
   // schema,
   form,

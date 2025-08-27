@@ -15,10 +15,12 @@ export const schema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
   }),
-  url: z.string(),
-  icon_url: z.string().optional(),
-  is_active: z.boolean(),
-  sequence: z.number(),
+  url: z.string().url({
+    message: "Please enter a valid URL.",
+  }),
+  icon_url: z.string().url().optional().or(z.literal("")),
+  is_active: z.boolean().default(true),
+  sequence: z.number().min(0),
 })
 
 export type SocialLink = z.infer<typeof schema>

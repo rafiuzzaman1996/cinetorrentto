@@ -1,96 +1,65 @@
 "use client"
-import React from "react"
-
-import { useState, useId } from "react"
+import React, { useState, useId } from "react"
+import { toast } from "sonner"
+import { useForm, FieldValues } from "react-hook-form"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Eye, Pencil, Trash, PlusCircle } from "lucide-react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
 
-import { submitSocialLink } from "@/app/(admin)/admin-api/SocialLinkApi/socialLinkClient"
-import { schema, SocialLink } from "@/app/(admin)/manage/social-link/social-link.interface"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { DynamicForm, FieldConfig } from "./DynamicForm"
-const fields: FieldConfig<typeof schema>[] = [
-  {
-    key: "title",
-    label: "Title",
-    inputType: "text" as const,
-    placeholder: "Enter title",
-    required: true
-  },
-  {
-    key: "url",
-    label: "URL",
-    inputType: "text" as const,
-    placeholder: "Enter URL",
-    required: true
-  },
-  {
-    key: "icon_url",
-    label: "Icon URL",
-    inputType: "text" as const,
-    placeholder: "Enter icon URL",
-    required: true
-  },
-  {
-    key: "is_active",
-    label: "Active",
-    inputType: "switch" as const,
-    placeholder: ""
-  },
-  { key: "sequence", label: "Sequence", inputType: "number" as const, placeholder: "1" },
-];
+import z, { ZodType } from "zod"
+import type { ZodTypeAny } from "zod"
+import { SocialLink, schema } from "@/app/(admin)/manage/social-link/social-link.interface"
 
-export const AddEditDialog = ({
+// Define a base interface that all data should have
+export interface BaseData {
+  id?: number | string;
+  [key: string]: unknown;
+}
+export function AddEditDialog<
+    TSchema extends ZodTypeAny
+>({
     mode,
     data,
+    fields,
+    schema,
     onSubmit,
 }: {
     mode: "add" | "edit" | "view" | "delete"
-    data?: SocialLink
-    onSubmit?: (values: SocialLink) => void
-}) => {
+    data?: z.infer<TSchema>
+    fields: FieldConfig<TSchema>[]
+    schema: TSchema
+    onSubmit?: (values: z.infer<TSchema>, mode: "add" | "edit" | "view" | "delete") => void
+}) {
     const router = useRouter();
     const formId = useId()
     const [open, setOpen] = useState(false)
-    const form = useForm<SocialLink>({
-        resolver: zodResolver(schema),
-        defaultValues: {
-            id: data?.id ?? 0,
-            title: data?.title ?? "",
-            url: data?.url ?? "",
-            icon_url: data?.icon_url ?? "",
-            is_active: data?.is_active ?? false,
-            sequence: data?.sequence ?? 1,
-        },
-    })
 
+    // Infer the type from the schema
+    type FormValues = z.infer<typeof schema>
+
+    const form = useForm<FormValues & FieldValues>({
+        resolver: zodResolver(schema),
+        defaultValues: (data as FormValues) || ({} as FormValues),
+    })
     // Reset when opening (important for edit/view)
     React.useEffect(() => {
-        if (open) {
-            form.reset({
-                id: data?.id ?? 0,
-                title: data?.title ?? "",
-                url: data?.url ?? "",
-                icon_url: data?.icon_url ?? "",
-                is_active: data?.is_active ?? false,
-                sequence: data?.sequence ?? 1,
-            })
+        if (open && data) {
+            form.reset(data as FormValues)
         }
     }, [open, data, form])
 
-    async function handleSubmitForm(values: SocialLink) {
+    async function handleSubmitForm(values: TData) {
         try {
-            const data = await submitSocialLink(values, mode)
-            console.log("Submitted:", data)
+            // const data = await submitSocialLink(values, mode)
+            await onSubmit?.(values, mode)
+            console.log("Submitted111:", values)
             // show alert
             toast.success(`Social link ${mode === 'add' ? 'Added' : 'Updated'} successfully`)
             setOpen(false)
-            onSubmit?.(values)
             router.refresh()
 
         } catch (err) {
@@ -104,10 +73,10 @@ export const AddEditDialog = ({
             return
         }
         try {
-            await submitSocialLink(data, "delete")
+            // await submitSocialLink(data, "delete")
+            await onSubmit?.(data, mode)
             toast.success("Social link deleted successfully ✅")
             setOpen(false)
-            onSubmit?.(data)
             router.refresh()
         } catch (err) {
             toast.error("Failed to delete social link ❌")
@@ -147,14 +116,14 @@ export const AddEditDialog = ({
                 <div className="flex-1 overflow-y-auto p-1">
                     {mode === "view" ? (
                         <div className="space-y-2">
-                            <p><strong>Title:</strong> {data?.title}</p>
-                            <p><strong>URL:</strong> {data?.url}</p>
-                            <p><strong>Active:</strong> {data?.is_active ? "Yes" : "No"}</p>
-                            <p><strong>Sequence:</strong> {data?.sequence}</p>
+                            <p><strong>Title:</strong> {String(data?.title ?? "")}</p>
+                            <p><strong>URL:</strong> {String(data?.url ?? "")}</p>
+                            <p><strong>Active:</strong> {String(data?.is_active ? "Yes" : "No")}</p>
+                            <p><strong>Sequence:</strong> {String(data?.sequence ?? "")}</p>
                         </div>
                     ) : mode === "delete" ? (
                         <div className="space-y-4">
-                            <p>Are you sure you want to delete <strong>{data?.title}</strong>?</p>
+                            <p>Are you sure you want to delete <strong>{String(data?.title ?? "")}</strong>?</p>
                         </div>
                     ) : (
                         // <Form {...form}>

@@ -24,7 +24,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { PlusCircle, Columns2, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { Columns2, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -35,8 +35,10 @@ import {
 } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
 import { AddEditDialog } from "@/components/admin/management/data-table/AddEditDialog";
+import { FieldConfig } from "./DynamicForm"
+import { ZodType } from "zod"
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData, TValue, TSchema extends ZodType> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   caption?: string
@@ -45,10 +47,13 @@ interface DataTableProps<TData, TValue> {
   rowCount: number
   totalPages: number
   RowsPerPage: Array<number>
+  fields: FieldConfig<ZodType>[]
+  schema: TSchema
+  onSubmit?: (values: TData, mode: "add" | "edit" | "view" | "delete") => void
 }
 
 
-export function SimpleDataTable<TData, TValue>({
+export function SimpleDataTable<TData, TValue, TSchema>({
   columns,
   data,
   caption,
@@ -57,8 +62,11 @@ export function SimpleDataTable<TData, TValue>({
   rowCount,
   totalPages,
   RowsPerPage,
-}: DataTableProps<TData, TValue>) {
-   const router = useRouter()
+  fields,
+  schema,
+  onSubmit
+}: DataTableProps<TData, TValue, TSchema>) {
+  const router = useRouter()
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [pagination, setPagination] = React.useState({ pageIndex: pageIndex, pageSize })
   // columns.push(actionColumn);
@@ -82,9 +90,7 @@ export function SimpleDataTable<TData, TValue>({
     <div>
       {/* TopBar */}
       <div className="flex items-center justify-end gap-2 mb-2">
-        <>
-        <AddEditDialog mode="add" />
-        </>
+        {/* <AddEditDialog mode="add" fields={fields} schema={schema} onSubmit={onSubmit} /> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="cursor-pointer" variant="outline" size="sm">
