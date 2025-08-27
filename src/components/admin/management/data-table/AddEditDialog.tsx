@@ -4,18 +4,8 @@ import React from "react"
 import { useState, useId } from "react"
 import { Button } from "@/components/ui/button"
 import { Eye, Pencil, Trash, PlusCircle } from "lucide-react"
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { toast } from "sonner"
@@ -32,27 +22,27 @@ const fields: FieldConfig<typeof schema>[] = [
     placeholder: "Enter title",
     required: true
   },
-//   {
-//     key: "url",
-//     label: "URL",
-//     inputType: "text" as const,
-//     placeholder: "Enter URL",
-//     required: true
-//   },
-//   {
-//     key: "icon_url",
-//     label: "Icon URL",
-//     inputType: "text" as const,
-//     placeholder: "Enter icon URL",
-//     required: true
-//   },
-//   {
-//     key: "is_active",
-//     label: "Active",
-//     inputType: "switch" as const,
-//     placeholder: ""
-//   },
-//   { key: "sequence", label: "Sequence", inputType: "number" as const, placeholder: "1" },
+  {
+    key: "url",
+    label: "URL",
+    inputType: "text" as const,
+    placeholder: "Enter URL",
+    required: true
+  },
+  {
+    key: "icon_url",
+    label: "Icon URL",
+    inputType: "text" as const,
+    placeholder: "Enter icon URL",
+    required: true
+  },
+  {
+    key: "is_active",
+    label: "Active",
+    inputType: "switch" as const,
+    placeholder: ""
+  },
+  { key: "sequence", label: "Sequence", inputType: "number" as const, placeholder: "1" },
 ];
 
 export const AddEditDialog = ({
@@ -141,7 +131,7 @@ export const AddEditDialog = ({
                 )}
             </DialogTrigger>
 
-            <DialogContent className="h-[85vh] p-2 flex flex-col">
+            <DialogContent className="sm:max-w-6/12 w-full h-[80vh] p-2 flex flex-col">
                 <DialogHeader>
                     <DialogTitle>
                         {mode === "add" && "Add Social Link"}
@@ -227,12 +217,14 @@ export const AddEditDialog = ({
                         //         />
                         //     </form>
                         // </Form>
+                        <div className="">
                         <DynamicForm<typeof schema>
                             form={form}
                             formId={formId}
                             fields={fields}
                             onSubmit={handleSubmitForm}
                         />
+                        </div>
                     )}
                 </div>
 

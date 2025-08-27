@@ -6,9 +6,8 @@ import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FieldValues, FormProvider, Path, UseFormReturn } from "react-hook-form"
+import { FieldValues, Path, UseFormReturn } from "react-hook-form"
 import { z, ZodType } from "zod"
-import { useEffect } from "react"
 
 export type FieldConfig<TSchema extends ZodType> = {
   key: Path<z.infer<TSchema> & FieldValues>   // 🔥 ensures the key is a valid form path
@@ -50,107 +49,87 @@ export function DynamicForm<TSchema extends ZodType>({
   onSubmit,
 }: DynamicFormProps<TSchema>) {
   return (
-    <FormProvider {...form}>
+    <Form {...form}>
       <form
         id={formId}
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4"
       >
-        {fields.map((fieldConfig) => {
-          if (fieldConfig.hidden) return <></>
-
-          return (
-            <FormField
-              key={fieldConfig.key}
-              control={form.control}
-              name={fieldConfig.key}
-              render={({ field }) => (
-                <FormItem className={fieldConfig.className} style={fieldConfig.style}>
-                  {fieldConfig.label && (
-                    <FormLabel>
-                      {fieldConfig.label}
-                      {fieldConfig.required && <span className="text-destructive"> *</span>}
-                    </FormLabel>
-                  )}
-                  <FormControl>
-                    {fieldConfig.inputType === "text" && (
-                      <Input
-                        placeholder={fieldConfig.placeholder}
-                        disabled={fieldConfig.disabled}
-                        readOnly={fieldConfig.readOnly}
-                        required={fieldConfig.required}
-                        {...field}
-                        value={field.value ?? ""}
-                      />
-                    )}
-
-                    {fieldConfig.inputType === "number" && (
-                      <Input
-                        type="number"
-                        placeholder={fieldConfig.placeholder}
-                        disabled={fieldConfig.disabled}
-                        readOnly={fieldConfig.readOnly}
-                        required={fieldConfig.required}
-                        value={field.value ?? ""}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          field.onChange(value === "" ? "" : Number(value));
-                        }}
-                      />
-                    )}
-
-                    {fieldConfig.inputType === "switch" && (
-                      <Switch
-                        checked={!!field.value}
-                        onCheckedChange={field.onChange}
-                        disabled={fieldConfig.disabled}
-                        required={fieldConfig.required}
-                      />
-                    )}
-
-                    {fieldConfig.inputType === "textarea" && (
-                      <Textarea
-                        placeholder={fieldConfig.placeholder}
-                        disabled={fieldConfig.disabled}
-                        readOnly={fieldConfig.readOnly}
-                        required={fieldConfig.required}
-                        {...field}
-                        value={field.value ?? ""}
-                      />
-                    )}
-
-                    {fieldConfig.inputType === "checkbox" && !fieldConfig.options && (
-                      <Checkbox
-                        checked={!!field.value}
-                        onCheckedChange={field.onChange}
-                        disabled={fieldConfig.disabled}
-                        required={fieldConfig.required}
-                      />
-                    )}
-
-                    {fieldConfig.inputType === "checkbox" && fieldConfig.options && (
-                      <div className="flex flex-col gap-2">
-                        {fieldConfig.options.map((opt) => (
-                          <label key={opt.value} className="flex items-center gap-2">
-                            <Checkbox
-                              checked={Array.isArray(field.value) ? field.value.includes(opt.value) : false}
-                              onCheckedChange={(checked) => {
-                                let newValue = Array.isArray(field.value) ? [...field.value] : []
-                                if (checked) {
-                                  newValue.push(opt.value)
-                                } else {
-                                  newValue = newValue.filter((v) => v !== opt.value)
-                                }
-                                field.onChange(newValue)
-                              }}
-                            />
-                            <span>{opt.label}</span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-
-                    {fieldConfig.inputType === "select" && (
+        {fields.map((fieldConfig) => (
+          <FormField
+            key={fieldConfig.key}
+            control={form.control}
+            name={fieldConfig.key}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{fieldConfig.label ?? fieldConfig.key}</FormLabel>
+                <FormControl>
+                  {fieldConfig.inputType === "text" ? (
+                    <Input
+                      placeholder={fieldConfig.placeholder}
+                      {...field}
+                      disabled={fieldConfig.disabled}
+                      readOnly={fieldConfig.readOnly}
+                      className={fieldConfig.className}
+                      style={fieldConfig.style}
+                    />
+                  ) : fieldConfig.inputType === "number" ? (
+                    <Input
+                      type="number"
+                      placeholder={fieldConfig.placeholder}
+                      disabled={fieldConfig.disabled}
+                      readOnly={fieldConfig.readOnly}
+                      required={fieldConfig.required}
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        field.onChange(value === "" ? "" : Number(value));
+                      }}
+                    />
+                  ) : fieldConfig.inputType === "switch" ? (
+                    <Switch
+                      checked={!!field.value}
+                      onCheckedChange={field.onChange}
+                      disabled={fieldConfig.disabled}
+                      required={fieldConfig.required}
+                    />
+                  ) : fieldConfig.inputType === "textarea" ? (
+                    <Textarea
+                      placeholder={fieldConfig.placeholder}
+                      disabled={fieldConfig.disabled}
+                      readOnly={fieldConfig.readOnly}
+                      required={fieldConfig.required}
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  ) : (fieldConfig.inputType === "checkbox" && !fieldConfig.options) ? (
+                    <Checkbox
+                      checked={!!field.value}
+                      onCheckedChange={field.onChange}
+                      disabled={fieldConfig.disabled}
+                      required={fieldConfig.required}
+                    />
+                  ) : (fieldConfig.inputType === "checkbox" && fieldConfig.options) ? (
+                    <div className="flex flex-col gap-2">
+                      {fieldConfig.options.map((opt) => (
+                        <label key={opt.value} className="flex items-center gap-2">
+                          <Checkbox
+                            checked={Array.isArray(field.value) ? field.value.includes(opt.value) : false}
+                            onCheckedChange={(checked) => {
+                              let newValue = Array.isArray(field.value) ? [...field.value] : []
+                              if (checked) {
+                                newValue.push(opt.value)
+                              } else {
+                                newValue = newValue.filter((v) => v !== opt.value)
+                              }
+                              field.onChange(newValue)
+                            }}
+                          />
+                          <span>{opt.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  ) : fieldConfig.inputType === "select" ? (
                       <Select
                         value={
                           fieldConfig.multiple
@@ -180,15 +159,14 @@ export function DynamicForm<TSchema extends ZodType>({
                           ))}
                         </SelectContent>
                       </Select>
-                    )}
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )
-        })}
+                    ) : null}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ))}
       </form>
-    </FormProvider>
+    </Form>
   )
 }
