@@ -53,7 +53,7 @@ interface DataTableProps<TData, TValue, TSchema extends ZodType> {
 }
 
 
-export function SimpleDataTable<TData, TValue, TSchema>({
+export function SimpleDataTable<TData, TValue, TSchema extends ZodType>({
   columns,
   data,
   caption,

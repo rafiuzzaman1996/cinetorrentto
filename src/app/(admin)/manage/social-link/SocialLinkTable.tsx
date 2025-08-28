@@ -115,9 +115,9 @@ export default function SocialLinkTable({
         const link = row.original
         return (
           <div className="flex gap-2">
-            <AddEditDialog<typeof schema> mode="view" data={link} fields={fields} schema={schema} onSubmit={handleSubmitForm} />
-            <AddEditDialog<typeof schema> mode="edit" data={link} fields={fields} schema={schema} onSubmit={handleSubmitForm} />
-            <AddEditDialog<typeof schema> mode="delete" data={link} fields={fields} schema={schema} onSubmit={handleSubmitForm} />
+            <AddEditDialog mode="view" data={link} fields={fields} schema={schema} onSubmit={handleSubmitForm} />
+            <AddEditDialog mode="edit" data={link} fields={fields} schema={schema} onSubmit={handleSubmitForm} />
+            <AddEditDialog mode="delete" data={link} fields={fields} schema={schema} onSubmit={handleSubmitForm} />
           </div>
         )
       }

@@ -6,11 +6,11 @@ import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FieldValues, Path, UseFormReturn } from "react-hook-form"
+import { FieldValues, Path, UseFormReturn, useForm } from "react-hook-form"
 import { z, ZodType } from "zod"
 
 export type FieldConfig<TSchema extends ZodType> = {
-  key: Path<z.infer<TSchema> & FieldValues>   // 🔥 ensures the key is a valid form path
+  key: Path<z.infer<TSchema>>   // 🔥 ensures the key is a valid form path
   label?: string
   inputType: "text" | "number" | "switch" | "select" | "textarea" | "checkbox"
   placeholder?: string
@@ -27,7 +27,7 @@ export type FieldConfig<TSchema extends ZodType> = {
 
 type DynamicFormProps<TSchema extends ZodType> = {
   // schema: TSchema
-  form: UseFormReturn<z.infer<TSchema> & FieldValues>
+  form: UseFormReturn
   formId: string
   fields: FieldConfig<TSchema>[]
   onSubmit: (data: z.infer<TSchema>) => void
@@ -43,7 +43,7 @@ export function DynamicForm<TSchema extends ZodType>({
     <Form {...form}>
       <form
         id={formId}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit as Parameters<typeof form.handleSubmit>[0])}
         className="space-y-4"
       >
         {fields.map((fieldConfig) => (

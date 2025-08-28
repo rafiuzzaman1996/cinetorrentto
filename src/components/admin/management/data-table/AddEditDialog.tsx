@@ -17,11 +17,9 @@ import { SocialLink, schema } from "@/app/(admin)/manage/social-link/social-link
 // Define a base interface that all data should have
 export interface BaseData {
   id?: number | string;
-  [key: string]: unknown;
+//   [key: string]: unknown;
 }
-export function AddEditDialog<
-    TSchema extends ZodTypeAny
->({
+export function AddEditDialog<TData, TSchema extends ZodType>({
     mode,
     data,
     fields,
@@ -38,12 +36,23 @@ export function AddEditDialog<
     const formId = useId()
     const [open, setOpen] = useState(false)
 
-    // Infer the type from the schema
-    type FormValues = z.infer<typeof schema>
+    // make zod schema from fields
+    const schema2 = z.object(
+        fields.reduce((acc, field) => {
+            if(field.inputType === "text") {
+                acc[field.key] = field.required ? z.string() : z.string().optional()
+            }
+            return acc
+        }, {} as Record<string, z.ZodTypeAny>)
+    )
 
-    const form = useForm<FormValues & FieldValues>({
-        resolver: zodResolver(schema),
-        defaultValues: (data as FormValues) || ({} as FormValues),
+    // Infer the type from the schema
+    type FormValues = z.infer<typeof schema2>
+
+    const form = useForm<FormValues>({
+        resolver: zodResolver(schema2),
+        defaultValues: data ? { ...data } : {},
+        mode: "onBlur",
     })
     // Reset when opening (important for edit/view)
     React.useEffect(() => {
@@ -52,7 +61,7 @@ export function AddEditDialog<
         }
     }, [open, data, form])
 
-    async function handleSubmitForm(values: TData) {
+    async function handleSubmitForm(values: z.infer<TSchema>) {
         try {
             // const data = await submitSocialLink(values, mode)
             await onSubmit?.(values, mode)
@@ -67,22 +76,22 @@ export function AddEditDialog<
         }
     }
     // --- Handle Delete
-    async function handleDelete() {
-        if (!data?.id) {
-            toast.error("Delete failed: missing ID")
-            return
-        }
-        try {
-            // await submitSocialLink(data, "delete")
-            await onSubmit?.(data, mode)
-            toast.success("Social link deleted successfully ✅")
-            setOpen(false)
-            router.refresh()
-        } catch (err) {
-            toast.error("Failed to delete social link ❌")
-            console.error(err)
-        }
-    }
+    // async function handleDelete() {
+    //     if (!data?.id) {
+    //         toast.error("Delete failed: missing ID")
+    //         return
+    //     }
+    //     try {
+    //         // await submitSocialLink(data, "delete")
+    //         await onSubmit?.(data, mode)
+    //         toast.success("Social link deleted successfully ✅")
+    //         setOpen(false)
+    //         router.refresh()
+    //     } catch (err) {
+    //         toast.error("Failed to delete social link ❌")
+    //         console.error(err)
+    //     }
+    // }
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -116,78 +125,18 @@ export function AddEditDialog<
                 <div className="flex-1 overflow-y-auto p-1">
                     {mode === "view" ? (
                         <div className="space-y-2">
-                            <p><strong>Title:</strong> {String(data?.title ?? "")}</p>
+                            {/* <p><strong>Title:</strong> {String(data?.title ?? "")}</p>
                             <p><strong>URL:</strong> {String(data?.url ?? "")}</p>
                             <p><strong>Active:</strong> {String(data?.is_active ? "Yes" : "No")}</p>
-                            <p><strong>Sequence:</strong> {String(data?.sequence ?? "")}</p>
+                            <p><strong>Sequence:</strong> {String(data?.sequence ?? "")}</p> */}
                         </div>
                     ) : mode === "delete" ? (
                         <div className="space-y-4">
-                            <p>Are you sure you want to delete <strong>{String(data?.title ?? "")}</strong>?</p>
+                            {/* <p>Are you sure you want to delete <strong>{String(data?.title ?? "")}</strong>?</p> */}
                         </div>
                     ) : (
-                        // <Form {...form}>
-                        //     <form id={formId} onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-4">
-                        //         <FormField
-                        //             control={form.control}
-                        //             name="title"
-                        //             render={({ field }) => (
-                        //                 <FormItem>
-                        //                     <FormLabel>Title</FormLabel>
-                        //                     <FormControl><Input placeholder="Enter title" {...field} /></FormControl>
-                        //                     <FormMessage />
-                        //                 </FormItem>
-                        //             )}
-                        //         />
-                        //         <FormField
-                        //             control={form.control}
-                        //             name="url"
-                        //             render={({ field }) => (
-                        //                 <FormItem>
-                        //                     <FormLabel>URL</FormLabel>
-                        //                     <FormControl><Input placeholder="https://example.com" {...field} /></FormControl>
-                        //                     <FormMessage />
-                        //                 </FormItem>
-                        //             )}
-                        //         />
-                        //         <FormField
-                        //             control={form.control}
-                        //             name="icon_url"
-                        //             render={({ field }) => (
-                        //                 <FormItem>
-                        //                     <FormLabel>Icon URL</FormLabel>
-                        //                     <FormControl><Input placeholder="https://cdn.example.com/icon.png" {...field} /></FormControl>
-                        //                     <FormMessage />
-                        //                 </FormItem>
-                        //             )}
-                        //         />
-                        //         <FormField
-                        //             control={form.control}
-                        //             name="is_active"
-                        //             render={({ field }) => (
-                        //                 <FormItem className="flex items-center justify-between border p-3 rounded-lg">
-                        //                     <FormLabel>Active</FormLabel>
-                        //                     <FormControl>
-                        //                         <Switch checked={field.value} onCheckedChange={field.onChange} />
-                        //                     </FormControl>
-                        //                 </FormItem>
-                        //             )}
-                        //         />
-                        //         <FormField
-                        //             control={form.control}
-                        //             name="sequence"
-                        //             render={({ field }) => (
-                        //                 <FormItem>
-                        //                     <FormLabel>Sequence</FormLabel>
-                        //                     <FormControl><Input type="number" placeholder="1" {...field} /></FormControl>
-                        //                     <FormMessage />
-                        //                 </FormItem>
-                        //             )}
-                        //         />
-                        //     </form>
-                        // </Form>
                         <div className="">
-                        <DynamicForm<typeof schema>
+                        <DynamicForm
                             form={form}
                             formId={formId}
                             fields={fields}
@@ -201,7 +150,7 @@ export function AddEditDialog<
                     {mode === "delete" ? (
                         <>
                             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+                            {/* <Button variant="destructive" onClick={handleDelete}>Delete</Button> */}
                         </>
                     ) : (
                         <>
