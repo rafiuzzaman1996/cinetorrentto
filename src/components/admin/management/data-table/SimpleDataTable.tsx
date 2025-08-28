@@ -24,7 +24,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { PlusCircle, Columns2, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { Columns2, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -34,7 +34,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
-import { AddEditDialog } from "@/components/admin/management/data-table/AddEditDialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -45,8 +44,8 @@ interface DataTableProps<TData, TValue> {
   rowCount: number
   totalPages: number
   RowsPerPage: Array<number>
+  addDialog: React.ReactNode
 }
-
 
 export function SimpleDataTable<TData, TValue>({
   columns,
@@ -57,11 +56,11 @@ export function SimpleDataTable<TData, TValue>({
   rowCount,
   totalPages,
   RowsPerPage,
+  addDialog
 }: DataTableProps<TData, TValue>) {
    const router = useRouter()
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [pagination, setPagination] = React.useState({ pageIndex: pageIndex, pageSize })
-  // columns.push(actionColumn);
   const table = useReactTable({
     data,
     columns,
@@ -73,7 +72,6 @@ export function SimpleDataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onPaginationChange: setPagination,
     manualPagination: true,
-    // getPaginationRowModel: getPaginationRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
 
   })
@@ -82,9 +80,7 @@ export function SimpleDataTable<TData, TValue>({
     <div>
       {/* TopBar */}
       <div className="flex items-center justify-end gap-2 mb-2">
-        <>
-        <AddEditDialog mode="add" />
-        </>
+        {addDialog}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="cursor-pointer" variant="outline" size="sm">

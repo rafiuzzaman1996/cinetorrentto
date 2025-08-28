@@ -2,6 +2,8 @@ import { SimpleDataTable } from '@/components/admin/management/data-table/Simple
 import React from 'react'
 import SocialLinkColumns from './column'
 import { getSocialLinks } from '../../admin-api/SocialLinkApi/socialLinkClient'
+import { AddEditDialog } from './AddEditDialog'
+import { DataTableSkeleton } from '@/components/admin/management/data-table/data-table-skeleton'
 
 const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string }> }) => {
   const searchParams = await props.searchParams
@@ -17,17 +19,37 @@ const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: strin
   const currentPage = getSocialLinksData?.meta?.currentPage ?? 1;
   return (
     <div className="p-4 pt-0">
-      <SimpleDataTable
-        caption='A list of Social Links.'
-        columns={SocialLinkColumns}
-        // schema={schema}
-        data={data}
-        pageSize={pageSize}
-        pageIndex={currentPage}
-        totalPages={totalPages}
-        rowCount={total}
-        RowsPerPage={[20, 30, 40, 50]}
-      />
+      <React.Suspense
+        fallback={
+          <DataTableSkeleton
+            columnCount={7}
+            filterCount={2}
+            cellWidths={[
+              "10rem",
+              "30rem",
+              "10rem",
+              "10rem",
+              "6rem",
+              "6rem",
+              "6rem",
+            ]}
+            shrinkZero
+          />
+        }
+      >
+        <SimpleDataTable
+          caption='A list of Social Links.'
+          columns={SocialLinkColumns}
+          // schema={schema}
+          addDialog={<AddEditDialog mode="add" />}
+          data={data}
+          pageSize={pageSize}
+          pageIndex={currentPage}
+          totalPages={totalPages}
+          rowCount={total}
+          RowsPerPage={[20, 30, 40, 50]}
+        />
+      </React.Suspense>
     </div>
   )
 }

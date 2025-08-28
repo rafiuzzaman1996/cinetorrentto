@@ -24,25 +24,13 @@ export type FieldConfig<TSchema extends ZodType> = {
   options?: { label: string; value: string | number }[] // for select/multi
   multiple?: boolean // for select/multi
 }
-
-// type DynamicFormProps = {
-//   form: UseFormReturn<any>
-//   formId: string
-//   fields: FieldConfig[]
-//   onSubmit: (data: any) => void
-// }
 type DynamicFormProps<TSchema extends ZodType> = {
-  // schema: TSchema
   form: UseFormReturn<z.infer<TSchema> & FieldValues>
   formId: string
   fields: FieldConfig<TSchema>[]
   onSubmit: (data: z.infer<TSchema>) => void
 }
-// useEffect(() => {
-// console.log("form defaultValues", form.getValues())
-// }, [])
 export function DynamicForm<TSchema extends ZodType>({
-  // schema,
   form,
   formId,
   fields,
@@ -130,36 +118,36 @@ export function DynamicForm<TSchema extends ZodType>({
                       ))}
                     </div>
                   ) : fieldConfig.inputType === "select" ? (
-                      <Select
-                        value={
-                          fieldConfig.multiple
-                            ? (Array.isArray(field.value) ? field.value.map(String) : [])
-                            : (field.value ? String(field.value) : "")
+                    <Select
+                      value={
+                        fieldConfig.multiple
+                          ? (Array.isArray(field.value) ? field.value.map(String) : [])
+                          : (field.value ? String(field.value) : "")
+                      }
+                      onValueChange={(val) => {
+                        if (fieldConfig.multiple) {
+                          const values = Array.isArray(field.value) ? [...field.value] : []
+                          if (!values.includes(val)) values.push(val)
+                          field.onChange(values)
+                        } else {
+                          field.onChange(val)
                         }
-                        onValueChange={(val) => {
-                          if (fieldConfig.multiple) {
-                            const values = Array.isArray(field.value) ? [...field.value] : []
-                            if (!values.includes(val)) values.push(val)
-                            field.onChange(values)
-                          } else {
-                            field.onChange(val)
-                          }
-                        }}
-                        disabled={fieldConfig.disabled}
-                        required={fieldConfig.required}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder={fieldConfig.placeholder || "Select option"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {fieldConfig.options?.map((opt) => (
-                            <SelectItem key={String(opt.value)} value={String(opt.value)}>
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    ) : null}
+                      }}
+                      disabled={fieldConfig.disabled}
+                      required={fieldConfig.required}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={fieldConfig.placeholder || "Select option"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fieldConfig.options?.map((opt) => (
+                          <SelectItem key={String(opt.value)} value={String(opt.value)}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : null}
                 </FormControl>
                 <FormMessage />
               </FormItem>

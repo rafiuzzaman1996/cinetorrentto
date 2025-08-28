@@ -4,7 +4,7 @@ import React from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { z } from "zod"
 import { schema } from "@/app/(admin)/manage/social-link/social-link.interface"
-import { AddEditDialog } from "@/components/admin/management/data-table/AddEditDialog"
+import { AddEditDialog } from "@/app/(admin)/manage/social-link/AddEditDialog"
 
 export const SocialLinkColumns: ColumnDef<z.infer<typeof schema>>[] = [
   // {
