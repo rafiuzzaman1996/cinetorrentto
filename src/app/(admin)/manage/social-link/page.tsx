@@ -4,14 +4,21 @@ import SocialLinkColumns from './column'
 import { getSocialLinks } from '../../admin-api/SocialLinkApi/socialLinkClient'
 import { AddEditDialog } from './AddEditDialog'
 import { DataTableSkeleton } from '@/components/admin/management/data-table/data-table-skeleton'
+import { FilterSearch } from './FilterSearch'
 
-const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string }> }) => {
+const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string, search?: string }> }) => {
   const searchParams = await props.searchParams
+  console.log('🩸🩸 ~ searchParams:', searchParams);
   const pageIndex = Number(searchParams?.page ?? "1") // page number from URL
   const pageSize = Number(searchParams?.pageSize ?? "20")
+
   const getSocialLinksData = await getSocialLinks({
     page: pageIndex,
     limit: pageSize,
+    // search: searchParams?.search
+    // ? { title: searchParams.search, url: searchParams.search, icon_url: searchParams.search }  // only send filter if search is present
+    // : undefined
+    search: searchParams?.search ?? ''
   });
   const data = getSocialLinksData?.data ?? [];
   const total = getSocialLinksData?.meta?.totalItems ?? 0;
@@ -41,6 +48,7 @@ const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: strin
           caption='A list of Social Links.'
           columns={SocialLinkColumns}
           // schema={schema}
+          filterSearch={<FilterSearch />}
           addDialog={<AddEditDialog mode="add" />}
           data={data}
           pageSize={pageSize}

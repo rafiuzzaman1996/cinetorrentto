@@ -15,6 +15,13 @@ export const SocialLinkColumns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "title",
     header: "Title",
+    // meta: {
+    //     label: "Title",
+    //     placeholder: "Search titles...",
+    //     variant: "text",
+    //     icon: Text,
+    //   },
+    //   enableColumnFilter: true,
   },
   {
     accessorKey: "url",

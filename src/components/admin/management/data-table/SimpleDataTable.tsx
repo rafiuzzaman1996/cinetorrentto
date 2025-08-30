@@ -45,6 +45,7 @@ interface DataTableProps<TData, TValue> {
   totalPages: number
   RowsPerPage: Array<number>
   addDialog: React.ReactNode
+  filterSearch: React.ReactNode
 }
 
 export function SimpleDataTable<TData, TValue>({
@@ -56,7 +57,8 @@ export function SimpleDataTable<TData, TValue>({
   rowCount,
   totalPages,
   RowsPerPage,
-  addDialog
+  addDialog,
+  filterSearch
 }: DataTableProps<TData, TValue>) {
    const router = useRouter()
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -78,7 +80,11 @@ export function SimpleDataTable<TData, TValue>({
 
   return (
     <div>
+    <div className="w-full flex justify-between">
       {/* TopBar */}
+      <div className="flex items-center justify-self-start gap-2 mb-2">
+        {filterSearch}
+      </div>
       <div className="flex items-center justify-end gap-2 mb-2">
         {addDialog}
         <DropdownMenu>
@@ -113,6 +119,7 @@ export function SimpleDataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
       </div>
       {/* Table */}
       <div className="overflow-hidden rounded-md border">
