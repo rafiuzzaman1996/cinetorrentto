@@ -9,7 +9,6 @@ export const getSocialLinks = async (searchParams: {page: number; limit: number;
         // 🔹 Convert filter into URLSearchParams, auto prepend $ilike
         let filterParams = '';
         if (searchParams.filter) {
-            console.log('🩸🩸 ~ searchParams.filter:', searchParams.filter);
             const params = new URLSearchParams();
             for (const [key, value] of Object.entries(searchParams.filter)) {
                 // if caller didn’t already include an operator, default to $ilike
@@ -18,20 +17,11 @@ export const getSocialLinks = async (searchParams: {page: number; limit: number;
             }
             filterParams = params.toString();
         }
-        console.log('🩸🩸 ~ filterParams:', filterParams);
 
         const url = `${apiUrl}/social-link?page=${searchParams.page}&limit=${searchParams.limit}${searchParams.search ? `&search=${searchParams.search}` : ''}${filterParams ? `&${filterParams}` : ''}`;
 
-        console.log('🩸🩸 ~ url:', url);
 
-        // const filterParams = 'filter.'+new URLSearchParams(searchParams.filter as Record<string, string>).toString();
-        // console.log('🩸🩸 ~ filterParams:', filterParams);
-        // const url =`${apiUrl}/social-link?page=${searchParams.page}&limit=${searchParams.limit}&${filterParams}`;
-        // console.log('🩸🩸 ~ url:', url);
-        const res = await fetch(url, {
-            // const res = await fetch(`${apiUrl}/social-link?filter.is_active=true&page=${searchParams.page}&limit=${searchParams.limit}`, {
-            // next: { revalidate: 3600 },
-        });
+        const res = await fetch(url);
 
         if (!res.ok) {
             throw new Error(`Failed to fetch social-link: ${res.status}`);

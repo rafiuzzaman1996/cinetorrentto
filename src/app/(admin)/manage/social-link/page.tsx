@@ -8,7 +8,6 @@ import { FilterSearch } from './FilterSearch'
 
 const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string, search?: string }> }) => {
   const searchParams = await props.searchParams
-  console.log('🩸🩸 ~ searchParams:', searchParams);
   const pageIndex = Number(searchParams?.page ?? "1") // page number from URL
   const pageSize = Number(searchParams?.pageSize ?? "20")
 
