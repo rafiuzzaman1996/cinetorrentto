@@ -1,12 +1,29 @@
 import {z} from 'zod';
 
-export interface SocialLinkInterface {
+export interface Content {
     id?: number;
     title: string;
-    url: string;
-    icon_url?: string;
+    slug: string;
+    category_id: number;
+    description?: string;
+    type: string;
+    release_date?: Date;
+    poster_image_url?: string;
+    trailer_url?: string;
+    backdrop_image_url?: string;
+    stream_url?: string;
+    running_time?: string;
+    rating?: number;
+    budget?: number;
+    tags?: string[];
+    languages?: string[];
     is_active: boolean;
     sequence: number;
+    cast?: string[];
+    director?: string[];
+    category?: object;
+    genres?: object[];
+
 }
 
 // Define a TypeScript enum for content types
@@ -47,7 +64,7 @@ export const schema = z.object({
 
     rating: z.number().min(0).max(10).nullable().optional(),
 
-    budget: z.number().nullable().optional(),
+    budget: z.string().nullable().optional(),
 
     tags: z.string().nullable().optional(),
     languages: z.string().nullable().optional(),
@@ -59,4 +76,4 @@ export const schema = z.object({
     director: z.string().nullable().optional(),
 });
 
-export type Content = z.infer<typeof schema>;
+export type ContentSchema = z.infer<typeof schema>;

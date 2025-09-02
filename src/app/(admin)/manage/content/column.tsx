@@ -5,7 +5,6 @@ import { ColumnDef } from "@tanstack/react-table"
 import { z } from "zod"
 import { schema } from "./content.interface"
 import { AddEditDialog } from "./AddEditDialog"
-import EditDialogWrapper from "./EditDialogWrapper"
 
 export const SocialLinkColumns: ColumnDef<z.infer<typeof schema>>[] = [
   {
@@ -42,11 +41,7 @@ export const SocialLinkColumns: ColumnDef<z.infer<typeof schema>>[] = [
       return (
         <div className="flex gap-2">
           <AddEditDialog mode="view" data={link} />
-          <a href={`/manage/content/${row.original.id}`}>
-            Edit
-          </a>
-          {/* {typeof link.id === "number" ? <EditDialogWrapper id={link.id} /> : null} */}
-          {/* <AddEditDialog mode="edit" data={link} /> */}
+          <AddEditDialog mode="edit" data={link} />
           <AddEditDialog mode="delete" data={link} />
         </div>
       )

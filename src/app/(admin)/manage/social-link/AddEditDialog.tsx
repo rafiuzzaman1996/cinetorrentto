@@ -123,9 +123,9 @@ export const AddEditDialog = ({
                     </Button>
                 ) : (
                     <Button variant="ghost" size="icon">
-                        {mode === "view" && <Eye color="#c2ffc9" />}
-                        {mode === "edit" && <Pencil color="#e0c2ff" />}
-                        {mode === "delete" && <Trash color="#fe959f" />}
+                        {mode === "view" && <Eye color="#2eff46" />}
+                        {mode === "edit" && <Pencil color="#9933ff" />}
+                        {mode === "delete" && <Trash color="#ff3d51" />}
                     </Button>
                 )}
             </DialogTrigger>

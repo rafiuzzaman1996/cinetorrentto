@@ -100,7 +100,7 @@ export function DynamicForm<TSchema extends ZodType>({
                   ) : (fieldConfig.inputType === "checkbox" && fieldConfig.options) ? (
                     <div className="flex flex-col gap-2">
                       {fieldConfig.options.map((opt) => (
-                        <label key={opt.value} className="flex items-center gap-2">
+                        <label key={String(opt.value)} className="flex items-center gap-2">
                           <Checkbox
                             checked={Array.isArray(field.value) ? field.value.includes(opt.value) : false}
                             onCheckedChange={(checked) => {
@@ -125,12 +125,13 @@ export function DynamicForm<TSchema extends ZodType>({
                           : (field.value ? String(field.value) : "")
                       }
                       onValueChange={(val) => {
+                        const parsedVal = typeof fieldConfig.options?.[0]?.value === "number" ? Number(val) : val
                         if (fieldConfig.multiple) {
                           const values = Array.isArray(field.value) ? [...field.value] : []
-                          if (!values.includes(val)) values.push(val)
+                          if (!values.includes(parsedVal)) values.push(parsedVal)
                           field.onChange(values)
                         } else {
-                          field.onChange(val)
+                          field.onChange(parsedVal)
                         }
                       }}
                       disabled={fieldConfig.disabled}
@@ -141,7 +142,10 @@ export function DynamicForm<TSchema extends ZodType>({
                       </SelectTrigger>
                       <SelectContent>
                         {fieldConfig.options?.map((opt) => (
-                          <SelectItem key={String(opt.value)} value={String(opt.value)}>
+                          <SelectItem
+                            key={String(opt.value)}
+                            value={String(opt.value)}
+                          >
                             {opt.label}
                           </SelectItem>
                         ))}

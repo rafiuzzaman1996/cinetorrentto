@@ -3,7 +3,7 @@ import React from "react"
 
 import { useState, useId } from "react"
 import { Button } from "@/components/ui/button"
-import { Eye, Pencil, Trash, PlusCircle } from "lucide-react"
+import { Eye, Pencil, Trash, PlusCircle, LoaderCircle } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
@@ -11,8 +11,11 @@ import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogT
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-import { schema, Content } from "@/app/(admin)/manage/content/content.interface"
+import { schema, ContentSchema, Content } from "@/app/(admin)/manage/content/content.interface"
 import { DynamicForm, FieldConfig } from "../../../../components/admin/management/data-table/DynamicForm"
+import { getContent, submitContent } from "../../admin-api/ContentApi"
+import { getAllCategories } from "../../admin-api/CategoryApi"
+import { Category } from "../category/category.interface"
 
 const fields: FieldConfig<typeof schema>[] = [
 
@@ -146,16 +149,16 @@ const fields: FieldConfig<typeof schema>[] = [
     },
 ];
 
-// async function getContentInfo(id: number): Promise<Content | null> {
-//     try {
-//         const content = await getContent(id);
-//         if (!content) throw new Error("Failed to fetch content");
-//         return schema.parse(content);
-//     } catch (error) {
-//         console.error("Error fetching content info:", error);
-//         return null;
-//     }
-// }
+async function getContentInfo(id: number): Promise<Content | null> {
+    try {
+        const content = await getContent(id);
+        if (!content) throw new Error("Failed to fetch content");
+        return content;
+    } catch (error) {
+        console.error("Error fetching content info:", error);
+        return null;
+    }
+}
 
 
 export const AddEditDialog = ({
@@ -164,12 +167,13 @@ export const AddEditDialog = ({
     onSubmit,
 }: {
     mode: "add" | "edit" | "view" | "delete"
-    data?: Content
-    onSubmit?: (values: Content) => void
+    data?: ContentSchema
+    onSubmit?: (values: ContentSchema) => void
 }) => {
     const router = useRouter();
     const formId = useId()
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const defaultValues = React.useMemo(
         () => ({
@@ -184,11 +188,50 @@ export const AddEditDialog = ({
         [data]
     )
 
+    React.useEffect(() => {
+        // get Categories
+        if (open && mode === "edit") {
+            const fetchCategories = async () => {
 
-    const form = useForm<Content>({
+                const categories = await getAllCategories();
+                if (categories) {
+                    // update fields categories options
+                    fields.find(f => f.key === "category_id")!.options = categories.data.map((cat: Category) => ({
+                        value: cat.id,
+                        label: cat.title
+                    }));
+                }
+            };
+            setIsLoading(true);
+            fetchCategories();
+        }
+    }, [open, mode]);
+
+
+    const form = useForm<ContentSchema>({
         resolver: zodResolver(schema),
-        defaultValues : {...defaultValues},
+        defaultValues: { ...defaultValues },
     })
+
+
+
+    // get content data if in edit mode using API
+    React.useEffect(() => {
+
+        if (open && mode === "edit" && data?.id !== undefined) {
+            // Fetch content data from API
+            const fetchData = async () => {
+                if (data.id === undefined) return;
+
+                const content = await getContentInfo(data.id);
+                if (content) {
+                    form.reset(schema.parse(content));
+                }
+            };
+            fetchData();
+            setIsLoading(false);
+        }
+    }, [data?.id, form, mode, open])
 
 
     // Reset when opening (important for edit/view)
@@ -198,9 +241,9 @@ export const AddEditDialog = ({
         }
     }, [open, data, form, defaultValues])
 
-    async function handleSubmitForm(values: Content) {
+    async function handleSubmitForm(values: ContentSchema) {
         try {
-            // await submitContent(values, mode)
+            await submitContent(values, mode)
             toast.success(`Content ${mode === 'add' ? 'Added' : 'Updated'} successfully`)
             setOpen(false)
             onSubmit?.(values)
@@ -217,7 +260,7 @@ export const AddEditDialog = ({
             return
         }
         try {
-            // await submitSocialLink(data, "delete")
+            await submitContent(data, "delete")
             toast.success("Social link deleted successfully ✅")
             setOpen(false)
             onSubmit?.(data)
@@ -231,15 +274,15 @@ export const AddEditDialog = ({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {mode === "add" ? (
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="cursor-pointer">
                         <PlusCircle />
                         <span className="hidden lg:inline">Add</span>
                     </Button>
                 ) : (
-                    <Button variant="ghost" size="icon">
-                        {mode === "view" && <Eye color="#c2ffc9" />}
-                        {mode === "edit" && <Pencil color="#e0c2ff" />}
-                        {mode === "delete" && <Trash color="#fe959f" />}
+                    <Button variant="ghost" size="icon" className="cursor-pointer">
+                        {mode === "view" && <Eye color="#2eff46" />}
+                        {mode === "edit" && <Pencil color="#9933ff" />}
+                        {mode === "delete" && <Trash color="#ff3d51" />}
                     </Button>
                 )}
             </DialogTrigger>
@@ -257,52 +300,61 @@ export const AddEditDialog = ({
                     </VisuallyHidden>
                 </DialogHeader>
 
-                <div className="flex-1 overflow-y-auto p-1">
-                    {mode === "view" ? (
-                        <div className="space-y-2">
-                            <p><strong>Title:</strong> {data?.title}</p>
-                            <p><strong>Slug:</strong> {data?.slug}</p>
-                            {/* <p><strong>Active:</strong> {data?.is_active ? "Yes" : "No"}</p>
+                {isLoading ? (
+                    // loading spinner center of the dialog
+                    <div className="h-auto flex justify-center items-center flex-1">
+                        <LoaderCircle size={50} className="animate-spin" />
+                    </div>
+                ) : (
+                    <>
+                        <div className="flex-1 overflow-y-auto p-1">
+                            {mode === "view" ? (
+                                <div className="space-y-2">
+                                    <p><strong>Title:</strong> {data?.title}</p>
+                                    <p><strong>Slug:</strong> {data?.slug}</p>
+                                    {/* <p><strong>Active:</strong> {data?.is_active ? "Yes" : "No"}</p>
                             <p><strong>Sequence:</strong> {data?.sequence}</p> */}
+                                </div>
+                            ) : mode === "delete" ? (
+                                <div className="space-y-4">
+                                    <p>Are you sure you want to delete <strong>{data?.title}</strong>?</p>
+                                </div>
+                            ) : (
+                                <div className="">
+                                    <DynamicForm<typeof schema>
+                                        form={form}
+                                        formId={formId}
+                                        fields={fields}
+                                        onSubmit={handleSubmitForm}
+                                    />
+                                </div>
+                            )}
                         </div>
-                    ) : mode === "delete" ? (
-                        <div className="space-y-4">
-                            <p>Are you sure you want to delete <strong>{data?.title}</strong>?</p>
-                        </div>
-                    ) : (
-                        <div className="">
-                            <DynamicForm<typeof schema>
-                                form={form}
-                                formId={formId}
-                                fields={fields}
-                                onSubmit={handleSubmitForm}
-                            />
-                        </div>
-                    )}
-                </div>
 
-                <div className="border-t pt-4 flex justify-end gap-2">
-                    {mode === "delete" ? (
-                        <>
-                            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
-                        </>
-                    ) : (
-                        <>
-                            {(mode === "add" || mode === "edit") && (
+                        <div className="border-t pt-4 flex justify-end gap-2">
+                            {mode === "delete" ? (
                                 <>
-                                    <Button type="button" variant="outline" onClick={() => form.reset()}>Reset</Button>
-                                    <Button type="submit" form={formId}>{mode === "add" ? "Add" : "Save"}</Button>
+                                    <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                                    <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+                                </>
+                            ) : (
+                                <>
+                                    {(mode === "add" || mode === "edit") && (
+                                        <>
+                                            <Button type="button" variant="outline" onClick={() => form.reset()}>Reset</Button>
+                                            <Button type="submit" form={formId}>{mode === "add" ? "Add" : "Save"}</Button>
+                                        </>
+                                    )}
+                                    <DialogFooter className="sm:justify-start">
+                                        <DialogClose asChild>
+                                            <Button type="button" variant="secondary">Close</Button>
+                                        </DialogClose>
+                                    </DialogFooter>
                                 </>
                             )}
-                            <DialogFooter className="sm:justify-start">
-                                <DialogClose asChild>
-                                    <Button type="button" variant="secondary">Close</Button>
-                                </DialogClose>
-                            </DialogFooter>
-                        </>
-                    )}
-                </div>
+                        </div>
+                    </>
+                )}
             </DialogContent>
         </Dialog>
     )
