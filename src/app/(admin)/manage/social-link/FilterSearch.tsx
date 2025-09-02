@@ -13,8 +13,6 @@ export const FilterSearch = () => {
     const router = useRouter();
 
     async function handleSearch(query: string) {
-        console.log("Searching for:", query);
-        console.log(router)
         const currentParams = new URLSearchParams(window.location.search);
         currentParams.set('search', query);
         router.push(`?${currentParams.toString()}`);
