@@ -1,3 +1,4 @@
+import { Genre } from '@/types/admin/Genre';
 import {z} from 'zod';
 
 export interface Content {
@@ -22,7 +23,7 @@ export interface Content {
     cast?: string[];
     director?: string[];
     category?: object;
-    genres?: object[];
+    genres?: Genre[];
 
 }
 
@@ -74,6 +75,8 @@ export const schema = z.object({
 
     cast: z.string().nullable().optional(),
     director: z.string().nullable().optional(),
+
+    genres: z.array(z.any()).optional().nullable(),
 });
 
 export type ContentSchema = z.infer<typeof schema>;

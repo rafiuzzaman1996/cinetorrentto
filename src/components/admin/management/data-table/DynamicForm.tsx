@@ -8,11 +8,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FieldValues, Path, UseFormReturn } from "react-hook-form"
 import { z, ZodType } from "zod"
+import { MultiSelect, MultiSelectOption } from "@/components/ui/multi-select"
 
 export type FieldConfig<TSchema extends ZodType> = {
   key: Path<z.infer<TSchema> & FieldValues>   // 🔥 ensures the key is a valid form path
   label?: string
-  inputType: "text" | "number" | "switch" | "select" | "textarea" | "checkbox"
+  inputType: "text" | "number" | "switch" | "select" | "textarea" | "checkbox" | "multi-select"
   placeholder?: string
   defaultValue?: unknown
   required?: boolean
@@ -22,6 +23,7 @@ export type FieldConfig<TSchema extends ZodType> = {
   className?: string
   style?: React.CSSProperties
   options?: { label: string; value: string | number }[] // for select/multi
+  multiSelectOptions?: MultiSelectOption[]
   multiple?: boolean // for select/multi
 }
 type DynamicFormProps<TSchema extends ZodType> = {
@@ -55,7 +57,8 @@ export function DynamicForm<TSchema extends ZodType>({
                   {fieldConfig.inputType === "text" ? (
                     <Input
                       placeholder={fieldConfig.placeholder}
-                      {...field}
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
                       disabled={fieldConfig.disabled}
                       readOnly={fieldConfig.readOnly}
                       className={fieldConfig.className}
@@ -87,8 +90,17 @@ export function DynamicForm<TSchema extends ZodType>({
                       disabled={fieldConfig.disabled}
                       readOnly={fieldConfig.readOnly}
                       required={fieldConfig.required}
-                      {...field}
                       value={field.value ?? ""}
+                      onChange={field.onChange}
+                    />
+                  ) : (fieldConfig.inputType === "multi-select" && fieldConfig.multiSelectOptions) ? (
+                    <MultiSelect
+                      modalPopover={true}
+                      options={fieldConfig.multiSelectOptions}
+                      value={field.value ?? []}
+                      defaultValue={field.value ?? []}
+                      onValueChange={(val) => field.onChange(val ?? [])}
+                      placeholder="Choose frameworks..."
                     />
                   ) : (fieldConfig.inputType === "checkbox" && !fieldConfig.options) ? (
                     <Checkbox

@@ -1,6 +1,6 @@
 'use server';
 
-export const getCategories = async (searchParams: {page: number; limit: number; filter?: unknown, search: string}) => {
+export const getGenres = async (searchParams: {page: number; limit: number; filter?: unknown, search: string}) => {
     try {
         const apiUrl = process.env.API_URL;
         // 🔹 Convert filter into URLSearchParams, auto prepend $ilike
@@ -14,54 +14,54 @@ export const getCategories = async (searchParams: {page: number; limit: number; 
             filterParams = params.toString();
         }
 
-        const url = `${apiUrl}/category?page=${searchParams.page}&limit=${searchParams.limit}${searchParams.search ? `&search=${searchParams.search}` : ''}${filterParams ? `&${filterParams}` : ''}`;
+        const url = `${apiUrl}/genre?page=${searchParams.page}&limit=${searchParams.limit}${searchParams.search ? `&search=${searchParams.search}` : ''}${filterParams ? `&${filterParams}` : ''}`;
 
 
         const res = await fetch(url);
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch categories: ${res.status}`);
+            throw new Error(`Failed to fetch genres: ${res.status}`);
         }
 
         const data = await res.json();
         return data || [];
     } catch (error) {
-        console.error('Failed to fetch categories:', error);
+        console.error('Failed to fetch genres:', error);
         return [];
     }
 };
-export const getCategory = async (id: number) => {
+export const getGenre = async (id: number) => {
     try {
         const apiUrl = process.env.API_URL;
-        const res = await fetch(`${apiUrl}/category/${id}`);
+        const res = await fetch(`${apiUrl}/genre/${id}`);
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch category: ${res.status}`);
+            throw new Error(`Failed to fetch genre: ${res.status}`);
         }
 
         const data = await res.json();
         return data;
     } catch (error) {
-        console.error('Failed to fetch category:', error);
+        console.error('Failed to fetch genre:', error);
         return null;
     }
 };
 
-// getAllCategories
+// getAllGenres
 
-export const getAllCategories = async () => {
+export const getAllGenres = async () => {
     try {
         const apiUrl = process.env.API_URL;
-        const res = await fetch(`${apiUrl}/category`);
+        const res = await fetch(`${apiUrl}/genre`);
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch categories: ${res.status}`);
+            throw new Error(`Failed to fetch genres: ${res.status}`);
         }
 
         const data = await res.json();
         return data;
     } catch (error) {
-        console.error('Failed to fetch categories:', error);
+        console.error('Failed to fetch genres:', error);
         return [];
     }
 };

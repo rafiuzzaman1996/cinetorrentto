@@ -7,7 +7,7 @@ import { Eye, Pencil, Trash, PlusCircle, LoaderCircle } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
@@ -16,6 +16,8 @@ import { DynamicForm, FieldConfig } from "../../../../components/admin/managemen
 import { getContent, submitContent } from "../../admin-api/ContentApi"
 import { getAllCategories } from "../../admin-api/CategoryApi"
 import { Category } from "../category/category.interface"
+import { getAllGenres } from "../../admin-api/GenreApi"
+import { Genre } from "@/types/admin/Genre"
 
 const fields: FieldConfig<typeof schema>[] = [
 
@@ -147,6 +149,15 @@ const fields: FieldConfig<typeof schema>[] = [
         inputType: "text",
         placeholder: "Enter director name",
     },
+    {
+        key: "genres",
+        label: "Genre",
+        inputType: "multi-select",
+        placeholder: "Select genre",
+        required: false,
+        multiple: true,
+        multiSelectOptions: [], // fill dynamically from genres API
+    }
 ];
 
 async function getContentInfo(id: number): Promise<Content | null> {
@@ -184,6 +195,7 @@ export const AddEditDialog = ({
             type: 'movie',
             is_active: data?.is_active ?? true,
             sequence: data?.sequence ?? 0,
+            genres: [],
         }),
         [data]
     )
@@ -202,8 +214,21 @@ export const AddEditDialog = ({
                     }));
                 }
             };
+
+            const fetchGenres = async () => {
+                const genres = await getAllGenres();
+                if (genres) {
+                    // update fields genres options
+                    fields.find(f => f.key === "genres")!.multiSelectOptions = genres.data.map((gen: Genre) => ({
+                        value: String(gen.id),
+                        label: gen.title
+                    }));
+                }
+            };
+
             setIsLoading(true);
             fetchCategories();
+            fetchGenres();
         }
     }, [open, mode]);
 
@@ -225,7 +250,11 @@ export const AddEditDialog = ({
 
                 const content = await getContentInfo(data.id);
                 if (content) {
-                    form.reset(schema.parse(content));
+                    const genreIds = content.genres
+                        ?.filter((genre): genre is Genre => typeof genre === "object" && genre !== null && "id" in genre)
+                        .map((genre) => String(genre.id)!)
+                        .filter(Boolean) ?? [];
+                    form.reset(schema.parse({ ...content, genres: genreIds }));
                 }
             };
             fetchData();
@@ -295,9 +324,11 @@ export const AddEditDialog = ({
                         {mode === "view" && "View Social Link"}
                         {mode === "delete" && "Delete Social Link"}
                     </DialogTitle>
-                    <VisuallyHidden>
-                        <div>Dialog Description</div>
-                    </VisuallyHidden>
+                    <DialogDescription>
+                        <VisuallyHidden>
+                            Dialog Description
+                        </VisuallyHidden>
+                    </DialogDescription>
                 </DialogHeader>
 
                 {isLoading ? (

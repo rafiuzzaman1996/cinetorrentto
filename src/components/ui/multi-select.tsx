@@ -79,7 +79,7 @@ interface MultiSelectOption {
 	/** The text to display for the option. */
 	label: string;
 	/** The unique value associated with the option. */
-	value: string;
+	value: string ;
 	/** Optional icon component to display alongside the option. */
 	icon?: React.ComponentType<{ className?: string }>;
 	/** Whether this option is disabled */
