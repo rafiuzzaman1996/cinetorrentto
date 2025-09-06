@@ -54,12 +54,12 @@ export const schema = z.object({
     // type: contentTypeSchema.default(ContentType.MOVIE),
     type: z.string(),
 
-    release_date: z.string().datetime({offset: true}).nullable().optional(),
+    release_date: z.iso.datetime({offset: true}).nullable().optional(),
 
-    poster_image_url: z.string().url().nullable().optional(),
-    trailer_url: z.string().url().nullable().optional(),
-    backdrop_image_url: z.string().url().nullable().optional(),
-    stream_url: z.string().url().nullable().optional(),
+    poster_image_url: z.url().nullable().optional(),
+    trailer_url: z.url().nullable().optional(),
+    backdrop_image_url: z.url().nullable().optional(),
+    stream_url: z.url().nullable().optional(),
 
     running_time: z.string().nullable().optional(),
 
@@ -77,6 +77,13 @@ export const schema = z.object({
     director: z.string().nullable().optional(),
 
     genres: z.array(z.any()).optional().nullable(),
+
+    downloadLinks: z.array(z.object({
+        name: z.string().min(1, 'Name is required'),
+        url: z.url('Invalid URL').min(1, 'URL is required'),
+        size: z.string().nullable().optional(),
+
+    })).optional().nullable(),
 });
 
 export type ContentSchema = z.infer<typeof schema>;

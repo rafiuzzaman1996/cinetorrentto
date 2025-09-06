@@ -157,6 +157,34 @@ const fields: FieldConfig<typeof schema>[] = [
         required: false,
         multiple: true,
         multiSelectOptions: [], // fill dynamically from genres API
+    },
+    {
+        key: "downloadLinks",
+        label: "Download Links",
+        inputType: "dynamic-array",
+        arrayItemConfig: [
+            {
+                key: "name",
+                label: "Name",
+                inputType: "text",
+                placeholder: "Enter name",
+                // required: true,
+            },
+            {
+                key: "url",
+                label: "URL",
+                inputType: "text",
+                placeholder: "https://example.com/file.zip",
+                // required: true,
+            },
+            {
+                key: "size",
+                label: "Size",
+                inputType: "text",
+                placeholder: "e.g., 1.5 GB",
+                // required: false,
+            }
+        ]
     }
 ];
 
@@ -196,6 +224,7 @@ export const AddEditDialog = ({
             is_active: data?.is_active ?? true,
             sequence: data?.sequence ?? 0,
             genres: [],
+            downloadLinks: [{ name: '', url: '', size: '' }],
         }),
         [data]
     )

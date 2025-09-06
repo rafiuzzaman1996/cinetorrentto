@@ -45,7 +45,7 @@ export const getContent = async (id: number) => {
         return data;
     } catch (error) {
         console.error('Failed to fetch content:', error);
-        return null;
+        return error;
     }
 };
 
@@ -82,13 +82,13 @@ export const submitContent = async (data: ContentSchema, mode: 'add' | 'edit' | 
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to ${mode} social-link: ${res.status}`);
+            throw new Error(`Failed to ${mode} content: ${res.status}`);
         }
 
         // GET may return JSON or empty
         return method === 'DELETE' ? null : await res.json();
     } catch (error) {
-        console.error(`Failed to ${mode} social-link:`, error);
-        return null;
+        console.error(`Failed to ${mode} content:`, error);
+        return error;
     }
 };
