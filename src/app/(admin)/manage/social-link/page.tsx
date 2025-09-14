@@ -5,11 +5,20 @@ import { getSocialLinks } from '../../admin-api/SocialLinkApi/socialLinkClient'
 import { AddEditDialog } from './AddEditDialog'
 import { DataTableSkeleton } from '@/components/admin/management/data-table/data-table-skeleton'
 import { FilterSearch } from './FilterSearch'
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/helper/auth-options';
+import { redirect } from 'next/navigation';
 
 const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string, search?: string }> }) => {
   const searchParams = await props.searchParams
   const pageIndex = Number(searchParams?.page ?? "1") // page number from URL
   const pageSize = Number(searchParams?.pageSize ?? "20")
+
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect('/login');
+  }
 
   const getSocialLinksData = await getSocialLinks({
     page: pageIndex,
