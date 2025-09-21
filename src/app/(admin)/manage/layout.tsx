@@ -5,6 +5,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+import UserInfo from "@/components/admin/common/UserInfo"
 
 export default function ManageMentLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -18,6 +19,7 @@ export default function ManageMentLayout({ children }: { children: React.ReactNo
                     </div>
                     <div className="flex items-center gap-2 px-4">
                         <ThemeToggle />
+                        <UserInfo />
                     </div>
                 </header>
                 {children}

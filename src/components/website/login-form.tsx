@@ -1,3 +1,5 @@
+'use client'
+import React, { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -7,53 +9,131 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { Loader } from "lucide-react"
 
-export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
+// Schema for form validation
+export const schema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+})
+
+export type LoginFormType = z.infer<typeof schema>
+
+export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
+
+
+  const form = useForm<LoginFormType>({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  })
+
+  async function onSubmit(data: LoginFormType) {
+    console.log("Form submitted:", data)
+    setLoading(true);
+
+    // Sign in using NextAuth.js
+    const result = await fetch("/admin-api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: data.username, password: data.password }),
+    });
+
+    const userInfo = await result.json();
+
+    // Handle errors
+    if (result?.ok) {
+      // Save user info to local storage or context if needed
+      localStorage.setItem("user", JSON.stringify(userInfo.user));
+      toast.success("Login successful!");
+      router.push("/manage"); // use router to navigate
+      window.location.href = "/manage"; // redirect to /manage
+    } else {
+      toast.error("Invalid credentials. Please try again.");
+    }
+    setLoading(false);
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      {/* Back to Home */}
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="m@example.com"
+                        type="text"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center">
+                      <FormLabel>Password</FormLabel>
+                      <a
+                        href="#"
+                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                      >
+                        Forgot your password?
+                      </a>
+                    </div>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button disabled={loading} type="submit" className="w-full">
+                {loading ?
+                  <>
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    <span>Loading...</span>
+                  </> : "Login"}
+              </Button>
+
+              <div className="mt-4 text-center text-sm">
+                Don&apos;t have an account?{" "}
+                <a href="#" className="underline underline-offset-4">
+                  Sign up
+                </a>
               </div>
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input id="password" type="password" required />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full">
-                  Login
-                </Button>
-              </div>
-            </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
-                Sign up
-              </a>
-            </div>
-          </form>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>
