@@ -1,10 +1,17 @@
 'use server';
 
 import {SocialLinkInterface} from '@/app/(admin)/manage/social-link/social-link.interface';
+import { cookies } from "next/headers";
+import { NextResponse } from 'next/server';
 
 // import { NextResponse } from "next/server";
 export const getSocialLinks = async (searchParams: {page: number; limit: number; filter?: unknown, search: string}) => {
     try {
+        const token = (await cookies()).get("token")?.value;
+
+        if (!token) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
         const apiUrl = process.env.API_URL;
         // 🔹 Convert filter into URLSearchParams, auto prepend $ilike
         let filterParams = '';
@@ -21,7 +28,13 @@ export const getSocialLinks = async (searchParams: {page: number; limit: number;
         const url = `${apiUrl}/social-link?page=${searchParams.page}&limit=${searchParams.limit}${searchParams.search ? `&search=${searchParams.search}` : ''}${filterParams ? `&${filterParams}` : ''}`;
 
 
-        const res = await fetch(url);
+        const res = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            method: 'GET',
+        });
 
         if (!res.ok) {
             throw new Error(`Failed to fetch social-link: ${res.status}`);
@@ -37,6 +50,11 @@ export const getSocialLinks = async (searchParams: {page: number; limit: number;
 
 export const submitSocialLink = async (data: SocialLinkInterface, mode: 'add' | 'edit' | 'view' | 'delete') => {
     try {
+        const token = (await cookies()).get("token")?.value;
+
+        if (!token) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
         const apiUrl = process.env.API_URL;
         let url = `${apiUrl}/social-link`;
         let method: 'POST' | 'PUT' | 'DELETE' | 'GET' = 'POST';
@@ -62,8 +80,11 @@ export const submitSocialLink = async (data: SocialLinkInterface, mode: 'add' | 
         }
 
         const res = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             method,
-            headers: {'Content-Type': 'application/json'},
             body: mode === 'add' || mode === 'edit' ? JSON.stringify(data) : null,
         });
 

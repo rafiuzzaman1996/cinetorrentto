@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 
 const SECRET: jwt.Secret = process.env.JWT_SECRET as string; // store securely in env
-console.log('🩸🩸 ~ SECRET:', SECRET);
 
 export function signJwt(payload: object, expiresIn: number = 1800) {
   return jwt.sign(payload, SECRET, { expiresIn });

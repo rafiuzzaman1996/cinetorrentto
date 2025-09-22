@@ -44,7 +44,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   })
 
   async function onSubmit(data: LoginFormType) {
-    console.log("Form submitted:", data)
     setLoading(true);
 
     // Sign in using NextAuth.js
@@ -61,8 +60,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       // Save user info to local storage or context if needed
       localStorage.setItem("user", JSON.stringify(userInfo.user));
       toast.success("Login successful!");
-      router.push("/manage"); // use router to navigate
-      window.location.href = "/manage"; // redirect to /manage
+      router.push("/manage/dashboard"); // use router to navigate
     } else {
       toast.error("Invalid credentials. Please try again.");
     }

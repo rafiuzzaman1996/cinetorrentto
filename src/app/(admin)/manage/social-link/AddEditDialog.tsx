@@ -63,8 +63,8 @@ export const AddEditDialog = ({
         defaultValues: {
             id: data?.id ?? 0,
             title: data?.title ?? "",
-            url: data?.url ?? "",
-            icon_url: data?.icon_url ?? "",
+            // url: data?.url ?? "",
+            // icon_url: data?.icon_url ?? "",
             is_active: data?.is_active ?? false,
             sequence: data?.sequence ?? 1,
         },
@@ -76,8 +76,8 @@ export const AddEditDialog = ({
             form.reset({
                 id: data?.id ?? 0,
                 title: data?.title ?? "",
-                url: data?.url ?? "",
-                icon_url: data?.icon_url ?? "",
+                // url: data?.url ?? "",
+                // icon_url: data?.icon_url ?? "",
                 is_active: data?.is_active ?? false,
                 sequence: data?.sequence ?? 1,
             })
@@ -86,7 +86,11 @@ export const AddEditDialog = ({
 
     async function handleSubmitForm(values: SocialLink) {
         try {
-            await submitSocialLink(values, mode)
+            const result = await submitSocialLink(values, mode)
+            if(result && 'error' in result){
+                toast.error(`Submission failed: ${result.error}`)
+                return
+            }
             toast.success(`Social link ${mode === 'add' ? 'Added' : 'Updated'} successfully`)
             setOpen(false)
             onSubmit?.(values)
