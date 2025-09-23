@@ -1,8 +1,7 @@
 'use client'
-import React from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
-import { Category } from "./CategorySections/Categories"
 import {
     Dialog,
     DialogContent,
@@ -12,12 +11,15 @@ import {
 import ContentInfo from "./CategorySections/ContentInfo2"
 import { useRouter } from "next/navigation"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { Category } from "@/types/website/Category"
+import ContentInfoClient from "./CategorySections/ContentInfo.client"
 
 interface FeaturedCarouselProps {
     category: Category;
 }
 const CategorySection: React.FC<FeaturedCarouselProps> = ({ category }) => {
     const router = useRouter()
+    const [open, setOpen] = useState(false);
 
     const handleClick = (slug: string) => {
         router.push(`/category/${slug}`)
@@ -33,7 +35,7 @@ const CategorySection: React.FC<FeaturedCarouselProps> = ({ category }) => {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 px-4 md:px-8">
                 {category.contents.slice(0, 6).map((content, index) => (
-                    <Dialog key={index}>
+                    <Dialog key={index} open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>
                             <Card key={index} className="bg-gray-800 p-0 gap-2 dark:bg-gray-900 overflow-hidden border-0 duration-500 hover:scale-105">
                                 <Image
@@ -45,7 +47,7 @@ const CategorySection: React.FC<FeaturedCarouselProps> = ({ category }) => {
                                 />
                                 <CardContent className="p-2">
                                     <CardTitle className="text-white text-sm md:text-base truncate" title={content.title}>{content.title}</CardTitle>
-                                    <CardDescription className="text-gray-400 text-xs truncate">{content.genres.map(data => data.title).join(', ')}</CardDescription>
+                                    <CardDescription className="text-gray-400 text-xs truncate">{(content.genres ?? []).map(data => data.title).join(', ')}</CardDescription>
                                     <div className="flex items-center justify-between mt-1">
                                         <span className="text-gray-300 text-xs">{new Date(content.release_date).getFullYear()}</span>
                                         <span className="text-yellow-400 font-semibold text-xs">★ {content.rating}</span>
@@ -65,7 +67,7 @@ const CategorySection: React.FC<FeaturedCarouselProps> = ({ category }) => {
                             </VisuallyHidden>
                             {/* <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4"> */}
                             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500">
-                            <ContentInfo />
+                            <ContentInfoClient slug={content.slug}/>
                             </div>
                         </DialogContent>
                     </Dialog>

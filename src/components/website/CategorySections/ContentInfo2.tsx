@@ -1,10 +1,12 @@
-
+'use server'
 import React from 'react'
 import Image from 'next/image'
 import { CirclePlay } from 'lucide-react'
+import { getContentBySlug } from '@/app/(website)/website-api/contentApi'
+import { Content } from '@/types/website/Content'
 
 
-const movie = {
+const movie2 = {
   title: 'Valiant One',
   year: 2025,
   rating: 5.1,
@@ -47,7 +49,10 @@ const movie = {
   ],
 }
 
-export default function MovieDetail() {
+export default async function ContentInfo({slug}: {slug: string}) {
+  const movie: Content = await getContentBySlug(slug)
+  console.log('🩸🩸 ~ movie:', movie);
+
   return (
     <>
       {/* Row 1: 2 columns */}
@@ -55,7 +60,7 @@ export default function MovieDetail() {
         <div className="rounded-lg p-2">
           <div className="details-poster-wrapper rounded-lg shadow-lg overflow-hidden">
             <Image
-              src={movie.poster}
+              src={movie.poster_image_url}
               alt={movie.title}
               width={400}
               height={500}
@@ -64,7 +69,7 @@ export default function MovieDetail() {
           </div>
           <div className="hidden md:block mt-4 space-y-2 text-sm movie-details-info">
             <p><strong className='text-orange-500'>Director:</strong> {movie.director || 'N/A'}</p>
-            <p><strong className='text-orange-500'>Running Time:</strong> {movie.runtime || 'N/A'}</p>
+            <p><strong className='text-orange-500'>Running Time:</strong> {movie.running_time || 'N/A'}</p>
             <p><strong className='text-orange-500'>Budget:</strong> {movie.budget || 'N/A'}</p>
             <p><strong className='text-orange-500'>Cast:</strong> {movie.cast || 'N/A'}</p>
           </div>
@@ -72,10 +77,10 @@ export default function MovieDetail() {
         <div className="col-span-2 rounded-lg p-4">
           <div className="md:w-3/3">
             <div className="flex justify-between items-start">
-              <h2 className="text-3xl text-orange-500 font-bold mb-2">{movie.title} <span className="text-2xl font-normal text-gray-400">({new Date(movie.release).getFullYear()})</span></h2>
+              <h2 className="text-3xl text-orange-500 font-bold mb-2">{movie.title} <span className="text-2xl font-normal text-gray-400">({new Date(movie.release_date).getFullYear()})</span></h2>
             </div>
             <div className="flex flex-wrap gap-2 mb-4">
-              {movie.genres.map((genre, i) =>(
+              {(movie?.genres ?? []).map((genre, i) =>(
                 <span key={i}  className="bg-neutral-700 text-gray-300 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
                   {genre.title}
                 </span>
@@ -83,13 +88,13 @@ export default function MovieDetail() {
             </div>
             <div className="flex items-center gap-4 mb-4 text-gray-400">
               <span>Rating: <span className="font-bold text-lg text-orange-500">★ {movie.rating.toFixed(1)}</span> / 10</span>
-              <p>Release: {new Date(movie.release).toLocaleDateString()}</p>
+              <p>Release: {new Date(movie.release_date).toLocaleDateString()}</p>
             </div>
             <h3 className="text-lg text-orange-500 font-semibold mb-2">Overview</h3>
-            <p className="leading-relaxed text-sm mb-2">{movie.overview}</p>
+            <p className="leading-relaxed text-sm mb-2">{movie.description}</p>
             <div className="block md:hidden mt-4 space-y-2 text-sm movie-details-info">
               <p><strong>Director:</strong> {movie.director || 'N/A'}</p>
-              <p><strong>Running Time:</strong> {movie.runtime || 'N/A'}</p>
+              <p><strong>Running Time:</strong> {movie.running_time || 'N/A'}</p>
               <p><strong>Budget:</strong> {movie.budget || 'N/A'}</p>
               <p><strong>Cast:</strong> {movie.cast || 'N/A'}</p>
             </div>
@@ -118,7 +123,7 @@ export default function MovieDetail() {
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-2 text-orange-500">Download Options</h3>
               <div className="grid grid-cols-2 gap-2">
-                {movie.download_links.map((link, i) =>
+                {(movie.downloadLinks ?? []).map((link, i) =>
                   <button
                     key={i}
                     // onclick="openDownloadLinks(event, ${movie.id}, '${link.name}', '${link.url || '#'}')"
