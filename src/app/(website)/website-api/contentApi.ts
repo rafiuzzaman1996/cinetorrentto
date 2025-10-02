@@ -21,7 +21,6 @@ export const getCategoryWiseContent = async () => {
     }
   }
 export const getContentBySlug = async (slug: string) => {
-    console.log('🩸🩸 ~ slug:', slug);
     try {
       const apiUrl = process.env.API_URL;
       const res = await fetch(`${apiUrl}/api/contents/${slug}`, {
