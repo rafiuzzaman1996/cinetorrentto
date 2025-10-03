@@ -3,18 +3,23 @@
 import { Category } from "@/types/website/Category"
 import { useRouter } from "next/navigation"
 import { ContentCard } from "./Content";
+import Link from "next/link";
 
 export const CategorySection = ({ category }: { category: Category }) => {
     const router = useRouter()
     const handleClick = (slug: string) => {
-
         router.push(`/category/${slug}`)
     }
     return (
         <>
             <div className="flex items-center justify-between mb-4 px-4 md:px-8">
-                <h2 className="text-xl font-bold text-orange-500">{category.title}</h2>
-                <button onClick={() => handleClick(category.slug)} className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
+                <Link
+                    href={`/category/${category.slug}`}
+                    className="cursor-pointer"
+                >
+                    <h2 className="text-xl font-bold text-orange-500 hover:text-orange-600">{category.title}</h2>
+                </Link>
+                <button onClick={() => handleClick(category.slug)} className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 cursor-pointer">
                     SEE ALL
                 </button>
             </div>

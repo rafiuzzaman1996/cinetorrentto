@@ -1,7 +1,10 @@
-import React from 'react'
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, User, Menu } from "lucide-react"
+import { Search, Menu } from "lucide-react"
 import Link from 'next/link'
 import {
   Sheet,
@@ -56,6 +59,20 @@ const menuItems = [
 ]
 
 const Header = () => {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    setQuery(searchParams.get("q") || "");
+  }, [searchParams]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+    setQuery("");
+  };
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -100,51 +117,63 @@ const Header = () => {
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold">
               {/* <span className='bg-gray-200 px-2 py-1 rounded text-2xl'>CineTorrento</span> */}
-            <Logo />
+              <Logo />
             </Link>
           </div>
         </div>
         {/* Desktop Navigation */}
         <div className="flex">
-        <div className="hidden lg:flex">
-          <NavigationMenu viewport={false}>
-            <NavigationMenuList>
-              {menuItems.map((section) => (
-                <NavigationMenuItem key={section.title}>
-                  <NavigationMenuTrigger className='hover:bg-transparent'>{section.title}</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[200px] gap-3 p-2">
-                    {/* <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]"> */}
-                      {section.items.map((item) => (
-                        <li key={item.href}>
-                          <Link
-                            href={item.href}
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none hover:bg-accent transition-colors focus:text-accent-foreground"
-                          >
-                            {item.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
+          <div className="hidden lg:flex">
+            <NavigationMenu viewport={false}>
+              <NavigationMenuList>
+                {menuItems.map((section) => (
+                  <NavigationMenuItem key={section.title}>
+                    <NavigationMenuTrigger className='hover:bg-transparent'>{section.title}</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[200px] gap-3 p-2">
+                        {/* <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]"> */}
+                        {section.items.map((item) => (
+                          <li key={item.href}>
+                            <Link
+                              href={item.href}
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none hover:bg-accent transition-colors focus:text-accent-foreground"
+                            >
+                              {item.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
 
-        {/* Search */}
+          {/* Search */}
           <div className="hidden md:flex w-full max-w-lg items-center space-x-2 px-4">
-            <Input
-              type="text"
-              placeholder="Search movies..."
-              className="w-full"
-            />
-            <Button type="submit" size="icon">
-              <Search className="h-4 w-4" />
-            </Button>
+            <form
+              onSubmit={handleSubmit}
+              className="hidden md:flex w-full max-w-lg items-center px-4"
+            >
+              <div className="relative w-full">
+                <Input
+                  type="text"
+                  placeholder="Search movies..."
+                  className="w-full pr-10" // add right padding so text doesn’t overlap button
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 cursor-pointer"
+                >
+                  <Search className="h-4 w-4" />
+                </button>
+              </div>
+            </form>
           </div>
-          </div>
+        </div>
 
 
         <div className="flex">
@@ -178,12 +207,10 @@ const Header = () => {
 
           {/* User Icon */}
           <div className="flex items-center">
-              <ThemeToggle />
-
-
-            <Button variant="ghost" size="icon">
+            <ThemeToggle />
+            {/* <Button variant="ghost" size="icon">
               <User className="h-5 w-5" />
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>

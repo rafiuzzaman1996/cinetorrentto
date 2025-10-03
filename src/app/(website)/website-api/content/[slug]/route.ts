@@ -4,7 +4,7 @@ export async function GET(request: Request, {params}: {params: Promise<{slug: st
     const slug = (await params).slug;
     try {
         const apiUrl = process.env.API_URL;
-        const res = await fetch(`${apiUrl}/api/content/${slug}`, {});
+        const res = await fetch(`${apiUrl}/api/contents/${slug}`, {});
 
         if (!res.ok) {
             return NextResponse.json({error: 'Content not found'}, {status: 404});

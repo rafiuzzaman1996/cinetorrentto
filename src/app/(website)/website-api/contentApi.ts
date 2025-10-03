@@ -38,3 +38,22 @@ export const getContentBySlug = async (slug: string) => {
       return [];
     }
   }
+export const getContentsBySearch = async (q: string, page: number) => {
+    try {
+      const apiUrl = process.env.API_URL;
+      const res = await fetch(`${apiUrl}/api/contents?search=${q}&page=${page}`, {
+      });
+
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch Content: ${res.status}`);
+      }
+
+      const data = await res.json();
+      return data || [];
+    } catch (error) {
+      console.error("Failed to fetch Content:", error);
+      return [];
+    }
+  }
+

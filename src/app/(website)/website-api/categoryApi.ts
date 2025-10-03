@@ -1,10 +1,10 @@
 "use server";
 
 // import { NextResponse } from "next/server";
-export const getContentsByCategory = async (searchParams: { slug: string | string[], page: number, limit: number }) => {
+export const getContentsByCategory = async (searchParams: { slug: string | string[], page: number }) => {
     try {
       const apiUrl = process.env.API_URL;
-      const res = await fetch(`${apiUrl}/api/content?page=${searchParams.page}&limit=${searchParams.limit}&filter.category.slug=${searchParams.slug}`, {
+      const res = await fetch(`${apiUrl}/api/contents?page=${searchParams.page}&filter.category.slug=${searchParams.slug}`, {
         // next: { revalidate: 3600 },
       });
 

@@ -1,5 +1,7 @@
+'use client'
+
 import { Content } from '@/types/website/Content'
-import React, { useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
 import {

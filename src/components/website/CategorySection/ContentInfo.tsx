@@ -1,12 +1,12 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import {Download} from 'lucide-react';
-import {Content} from '@/types/website/Content';
+import { Download } from 'lucide-react';
+import { Content } from '@/types/website/Content';
 import { TrailerDialog } from './TrailerDialog';
 import { StreamDialog } from './StreamDialog';
 
-export default function ContentInfo({content}: {content: Content}) {
+export default function ContentInfo({ content }: { content: Content }) {
 
     return (
         <>
@@ -73,7 +73,7 @@ export default function ContentInfo({content}: {content: Content}) {
                                 <StreamDialog streamUrl={content.stream_url} />
                             )}
                             {content.trailer_url && (
-                                    <TrailerDialog trailerUrl={content.trailer_url} />
+                                <TrailerDialog trailerUrl={content.trailer_url} />
                             )}
                         </div>
 

@@ -31,7 +31,7 @@ export const TrailerDialog = ({ trailerUrl }: { trailerUrl: string }) => {
     }
 
     if (!videoId) {
-        toast('Could not extract video ID from the trailer link.');
+        toast('Could not process the trailer link.');
         return;
     }
 
