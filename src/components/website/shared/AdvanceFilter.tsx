@@ -136,7 +136,7 @@ export const AdvanceFilter = () => {
                             modalPopover={true}
                             options={ratingOptions.map((rating) => ({
                                 value: rating,
-                                label: `⭐️ ${rating}+`,
+                                label: `★ ${rating}+`,
                             }))}
                             value={filters.rating}
                             defaultValue={filters.rating}
