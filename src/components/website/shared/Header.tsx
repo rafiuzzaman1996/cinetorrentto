@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Menu } from "lucide-react"
+import { Search, Menu, Filter } from "lucide-react"
 import Link from 'next/link'
 import {
   Sheet,
@@ -22,6 +22,9 @@ import {
 import ThemeToggle from './ThemeToggle'
 import Logo from './Logo'
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { MenuAd } from "../Ad/MenuAd";
+import { AdvanceFilter } from "./AdvanceFilter";
 
 const menuItems = [
   {
@@ -85,16 +88,13 @@ const Header = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-                <nav className="flex flex-col gap-4">
-                  <Link href="/" className="text-xl font-bold">
-                    CineTorrent
-                  </Link>
-                  <div className="flex flex-col space-y-3">
-                    {menuItems.map((section) => (
-                      <div key={section.title} className="space-y-2">
-                        <h2 className="font-semibold px-2">{section.title}</h2>
-                        <div className="pl-4 flex flex-col space-y-1">
+              <SheetContent side="left" className="w-[300px] sm:w-[400px] p-4">
+                <Accordion type="single" collapsible className="w-full mt-5">
+                  {menuItems.map((section) => (
+                    <AccordionItem key={section.title} value={section.title}>
+                      <AccordionTrigger>{section.title}</AccordionTrigger>
+                      <AccordionContent>
+                        <div className="flex flex-col space-y-1 pl-2">
                           {section.items.map((item) => (
                             <Link
                               key={item.href}
@@ -105,10 +105,13 @@ const Header = () => {
                             </Link>
                           ))}
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </nav>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+
+                {/* Menu Ad */}
+                <MenuAd />
               </SheetContent>
             </Sheet>
           </div>
@@ -177,13 +180,11 @@ const Header = () => {
 
 
         <div className="flex">
-
-
           {/* Mobile Search Button */}
           <div className="md:hidden pe-2">
             <Sheet>
               <SheetTrigger asChild>
-                <Button size="icon">
+                <Button size="icon" variant="ghost" title="Search">
                   <Search className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
@@ -191,23 +192,41 @@ const Header = () => {
                 <VisuallyHidden>
                   <SheetTitle>Search</SheetTitle> {/* ✅ Accessible title */}
                 </VisuallyHidden>
-                <div className="flex items-center space-x-2 pt-2 pb-2 px-2">
-                  <Input
-                    type="text"
-                    placeholder="Search movies..."
-                    className="w-4/6"
-                  />
-                  <Button type="submit" size="icon">
-                    <Search className="h-4 w-4" />
-                  </Button>
-                </div>
+                <form
+                  onSubmit={handleSubmit}
+                  className="md:hidden flex w-full max-w-lg items-center px-4"
+                >
+                  <div className="relative w-4/5 py-2">
+                    <Input
+                      type="text"
+                      placeholder="Search movies..."
+                      className="w-full pr-10" // padding-right so text doesn't overlap button
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                    <Button
+                      type="submit"
+                      size="icon"
+                      variant="ghost"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    >
+                      <Search className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </form>
+
               </SheetContent>
             </Sheet>
           </div>
 
-          {/* User Icon */}
+
+
           <div className="flex items-center">
+            {/* Advance Filter */}
+            <AdvanceFilter />
+            {/* Theme Toggle */}
             <ThemeToggle />
+          {/* User Icon */}
             {/* <Button variant="ghost" size="icon">
               <User className="h-5 w-5" />
             </Button> */}

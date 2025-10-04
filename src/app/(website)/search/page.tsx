@@ -2,13 +2,13 @@
 import React, { Suspense } from "react";
 import { getContentsBySearch } from "../website-api/contentApi";
 import { Content } from "@/types/website/Content";
-import { ContentCard } from "@/components/website/CategorySection/Content";
+import { ContentCard } from "@/components/website/CategorySection/ContentCard";
 import Pagination from "@/components/website/shared/Pagination";
 import SkeletonGrid from "@/components/website/shared/SkeletonGrid";
 import { Search } from "lucide-react";
 
-const SearchResult = async ({ q, page }: { q: string; page: number }) => {
-    const getContentInfo = await getContentsBySearch(q, page);
+const SearchResult = async ({ q, page, genre, year, alphabet, rating }: { q: string; page: number; genre?: string; year?: string; alphabet?: string; rating?: string; }) => {
+    const getContentInfo = await getContentsBySearch(q, page, genre, year, alphabet, rating);
 
     const contents: Content[] = getContentInfo.data || [];
     const pagination = {
@@ -54,7 +54,14 @@ const SearchResult = async ({ q, page }: { q: string; page: number }) => {
 const SearchPage = async ({
     searchParams,
 }: {
-    searchParams?: Promise<{ q?: string; page?: string }>;
+    searchParams?: Promise<{
+        q?: string;
+        page?: string;
+        genre?: string;
+        year?: string;
+        alphabet?: string;
+        rating?: string;
+    }>;
 }) => {
     const resolvedSearchParams = await searchParams;
     const q = resolvedSearchParams?.q || "";
@@ -62,7 +69,7 @@ const SearchPage = async ({
 
     return (
         <Suspense fallback={<SkeletonGrid />}>
-            <SearchResult q={q} page={page} />
+            <SearchResult q={q} page={page} genre={resolvedSearchParams?.genre} year={resolvedSearchParams?.year} alphabet={resolvedSearchParams?.alphabet} rating={resolvedSearchParams?.rating} />
         </Suspense>
     );
 };

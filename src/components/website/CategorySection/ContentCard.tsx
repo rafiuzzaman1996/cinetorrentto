@@ -46,7 +46,7 @@ export const ContentCard = ({ content }: { content: Content }) => {
           alt={content.title}
           width={500}
           height={500}  // increased height
-          className="h-100 object-cover object-center transition-transform cursor-pointer"
+          className="h-75 object-cover object-center transition-transform cursor-pointer"
         />
         <CardContent className="p-2">
           <CardTitle className="cursor-pointer text-white text-sm md:text-base truncate" title={content.title}>{content.title}</CardTitle>

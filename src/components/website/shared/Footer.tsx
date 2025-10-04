@@ -1,16 +1,13 @@
 'use client'
 import { cn } from '@/lib/utils';
 import React from 'react'
+import { FooterAd } from '../Ad/FooterAd';
 
 const Footer = () => {
     return (
         <div className="mt-4 bg-gradient-to-br bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white flex flex-col items-center justify-center p-4 text-center">
             {/* Ad section */}
-            <div className="w-full max-w-[728px] h-[90px] flex items-center justify-center border-2 border-dashed">
-                <div className=" font-medium tracking-wide">
-                    ADVERTISEMENT
-                </div>
-            </div>
+            <FooterAd />
             <div className="w-full space-y-6">
                 {/* Title */}
                 <h1 className={cn(

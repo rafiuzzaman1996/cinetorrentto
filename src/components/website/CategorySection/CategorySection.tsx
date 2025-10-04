@@ -2,7 +2,7 @@
 
 import { Category } from "@/types/website/Category"
 import { useRouter } from "next/navigation"
-import { ContentCard } from "./Content";
+import { ContentCard } from "./ContentCard";
 import Link from "next/link";
 
 export const CategorySection = ({ category }: { category: Category }) => {
@@ -11,7 +11,7 @@ export const CategorySection = ({ category }: { category: Category }) => {
         router.push(`/category/${slug}`)
     }
     return (
-        <>
+        <div className="mb-8">
             <div className="flex items-center justify-between mb-4 px-4 md:px-8">
                 <Link
                     href={`/category/${category.slug}`}
@@ -29,6 +29,6 @@ export const CategorySection = ({ category }: { category: Category }) => {
                 ))}
             </div>
 
-        </>
+        </div>
     )
 }
