@@ -1,8 +1,14 @@
 'use server';
 
-export const getCategories = async (searchParams: {page: number; limit: number; filter?: unknown, search: string}) => {
+import {cookies} from 'next/headers';
+
+export const getCategories = async (searchParams: {page: number; limit: number; filter?: unknown; search: string}) => {
     try {
         const apiUrl = process.env.API_URL;
+        // get token from cookies
+        const cookieStore = await cookies();
+        const token = cookieStore.get('token')?.value;
+
         // 🔹 Convert filter into URLSearchParams, auto prepend $ilike
         let filterParams = '';
         if (searchParams.filter) {
@@ -16,8 +22,13 @@ export const getCategories = async (searchParams: {page: number; limit: number; 
 
         const url = `${apiUrl}/category?page=${searchParams.page}&limit=${searchParams.limit}${searchParams.search ? `&search=${searchParams.search}` : ''}${filterParams ? `&${filterParams}` : ''}`;
 
-
-        const res = await fetch(url);
+        const res = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            method: 'GET',
+        });
 
         if (!res.ok) {
             throw new Error(`Failed to fetch categories: ${res.status}`);
@@ -33,7 +44,14 @@ export const getCategories = async (searchParams: {page: number; limit: number; 
 export const getCategory = async (id: number) => {
     try {
         const apiUrl = process.env.API_URL;
-        const res = await fetch(`${apiUrl}/category/${id}`);
+        // get accessToken from cookies
+        const cookieStore = await cookies();
+        const token = cookieStore.get('token')?.value;
+        const res = await fetch(`${apiUrl}/category/${id}`, {
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : '',
+            },
+        });
 
         if (!res.ok) {
             throw new Error(`Failed to fetch category: ${res.status}`);
@@ -52,7 +70,16 @@ export const getCategory = async (id: number) => {
 export const getAllCategories = async () => {
     try {
         const apiUrl = process.env.API_URL;
-        const res = await fetch(`${apiUrl}/category`);
+        // get accessToken from cookies
+        const cookieStore = await cookies();
+        const token = cookieStore.get('token')?.value;
+        const res = await fetch(`${apiUrl}/category?limit=1000`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            method: 'GET',
+        });
 
         if (!res.ok) {
             throw new Error(`Failed to fetch categories: ${res.status}`);

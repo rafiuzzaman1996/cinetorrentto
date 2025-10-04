@@ -109,7 +109,7 @@ const fields: FieldConfig<typeof schema>[] = [
     {
         key: "budget",
         label: "Budget",
-        inputType: "number",
+        inputType: "text",
         placeholder: "50000000",
     },
     {
@@ -229,67 +229,87 @@ export const AddEditDialog = ({
         [data]
     )
 
-    React.useEffect(() => {
-        // get Categories
-        if (open && mode === "edit") {
-            const fetchCategories = async () => {
-
-                const categories = await getAllCategories();
-                if (categories) {
-                    // update fields categories options
-                    fields.find(f => f.key === "category_id")!.options = categories.data.map((cat: Category) => ({
-                        value: cat.id,
-                        label: cat.title
-                    }));
-                }
-            };
-
-            const fetchGenres = async () => {
-                const genres = await getAllGenres();
-                if (genres) {
-                    // update fields genres options
-                    fields.find(f => f.key === "genres")!.multiSelectOptions = genres.data.map((gen: Genre) => ({
-                        value: String(gen.id),
-                        label: gen.title
-                    }));
-                }
-            };
-
+    const handleDialogOpenChange = (isOpen: boolean) => {
+        setOpen(isOpen);
+        if (isOpen && (mode === "edit" || mode === "add")) {
             setIsLoading(true);
-            fetchCategories();
-            fetchGenres();
+            // Fetch categories and genres
+            Promise.all([getAllCategories(), getAllGenres()])
+                .then(([categories, genres]) => {
+                    if (categories) {
+                        // update fields categories options
+                        fields.find(f => f.key === "category_id")!.options = categories.data.map((cat: Category) => ({
+                            value: cat.id,
+                            label: cat.title
+                        }));
+                    }
+                    if (genres) {
+                        // update fields genres options
+                        fields.find(f => f.key === "genres")!.multiSelectOptions = genres.data.map((gen: Genre) => ({
+                            value: String(gen.id),
+                            label: gen.title
+                        }));
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching categories or genres:", error);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         }
-    }, [open, mode]);
 
+        if (isOpen && mode === "edit" && data?.id !== undefined) {
+            console.log('🩸🩸 ~ mode:', mode);
+            setIsLoading(true);
+            // Fetch content data from API
+            getContentInfo(data.id).then((content) => {
+                console.log('🩸🩸 ~ content:', content);
+                if (content) {
+                    const genreIds = content.genres
+                        ?.filter((genre): genre is Genre => typeof genre === "object" && genre !== null && "id" in genre)
+                        .map((genre) => String(genre.id)!)
+                        .filter(Boolean) ?? [];
+                    console.log('🩸🩸 ~ genreIds:', genreIds);
+                    form.reset(schema.parse({ ...content, genres: genreIds }));
+                }
+            }).catch((error) => {
+                console.error("Error fetching content info:", error);
+            }).finally(() => {
+                setIsLoading(false);
+            });
+        }
+
+
+
+    }
 
     const form = useForm<ContentSchema>({
         resolver: zodResolver(schema),
         defaultValues: { ...defaultValues },
     })
 
-
-
     // get content data if in edit mode using API
-    React.useEffect(() => {
+    // React.useEffect(() => {
 
-        if (open && mode === "edit" && data?.id !== undefined) {
-            // Fetch content data from API
-            const fetchData = async () => {
-                if (data.id === undefined) return;
+    //     if (open && mode === "edit" && data?.id !== undefined) {
+    //         // Fetch content data from API
+    //         const fetchData = async () => {
+    //             if (data.id === undefined) return;
 
-                const content = await getContentInfo(data.id);
-                if (content) {
-                    const genreIds = content.genres
-                        ?.filter((genre): genre is Genre => typeof genre === "object" && genre !== null && "id" in genre)
-                        .map((genre) => String(genre.id)!)
-                        .filter(Boolean) ?? [];
-                    form.reset(schema.parse({ ...content, genres: genreIds }));
-                }
-            };
-            fetchData();
-            setIsLoading(false);
-        }
-    }, [data?.id, form, mode, open])
+    //             const content = await getContentInfo(data.id);
+    //             if (content) {
+    //                 const genreIds = content.genres
+    //                     ?.filter((genre): genre is Genre => typeof genre === "object" && genre !== null && "id" in genre)
+    //                     .map((genre) => String(genre.id)!)
+    //                     .filter(Boolean) ?? [];
+    //                 form.reset(schema.parse({ ...content, genres: genreIds }));
+    //             }
+    //         };
+    //         fetchData();
+    //         setIsLoading(false);
+    //     }
+    // }, [data?.id, form, mode, open])
 
 
     // Reset when opening (important for edit/view)
@@ -329,7 +349,7 @@ export const AddEditDialog = ({
         }
     }
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleDialogOpenChange}>
             <DialogTrigger asChild>
                 {mode === "add" ? (
                     <Button variant="outline" size="sm" className="cursor-pointer">

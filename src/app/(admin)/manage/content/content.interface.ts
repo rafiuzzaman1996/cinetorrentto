@@ -54,7 +54,7 @@ export const schema = z.object({
     // type: contentTypeSchema.default(ContentType.MOVIE),
     type: z.string(),
 
-    release_date: z.iso.datetime({offset: true}).nullable().optional(),
+    release_date: z.iso.date().nullable().optional(),
 
     poster_image_url: z.url().nullable().optional(),
     trailer_url: z.url().nullable().optional(),

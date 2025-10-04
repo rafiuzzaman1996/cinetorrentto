@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Menu, Filter } from "lucide-react"
+import { Search, Menu } from "lucide-react"
 import Link from 'next/link'
 import {
   Sheet,
