@@ -6,7 +6,7 @@ import { DataTableSkeleton } from '@/components/admin/management/data-table/data
 import { getCategories } from '../../admin-api/CategoryApi'
 import { FilterSearch } from './FilterSearch'
 
-const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string, search?: string }> }) => {
+const AdminCategoryListPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string, search?: string }> }) => {
   const searchParams = await props.searchParams
   const pageIndex = Number(searchParams?.page ?? "1") // page number from URL
   const pageSize = Number(searchParams?.pageSize ?? "20")
@@ -44,7 +44,7 @@ const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: strin
         }
       >
         <SimpleDataTable
-          caption='A list of Social Links.'
+          caption='A list of Category.'
           columns={CategoryColumns}
           // schema={schema}
           filterSearch={<FilterSearch />}
@@ -61,4 +61,4 @@ const AdminSocialLinkPage = async (props: { searchParams: Promise<{ page?: strin
   )
 }
 
-export default AdminSocialLinkPage
+export default AdminCategoryListPage

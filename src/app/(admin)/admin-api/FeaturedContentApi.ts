@@ -1,9 +1,9 @@
 'use server';
 import { cookies } from 'next/headers';
-import { GenreForm } from '../manage/genre/genre.schema';
 import { NextResponse } from 'next/server';
+import { FeaturedContentForm } from '../manage/featured-content/FeaturedContent.schema';
 
-export const getGenres = async (searchParams: {page: number; limit: number; filter?: unknown, search: string}) => {
+export const getFeaturedContents = async (searchParams: {page: number; limit: number; filter?: unknown, search: string}) => {
     try {
         const apiUrl = process.env.API_URL;
         // get token from cookies
@@ -20,7 +20,7 @@ export const getGenres = async (searchParams: {page: number; limit: number; filt
             filterParams = params.toString();
         }
 
-        const url = `${apiUrl}/genre?page=${searchParams.page}&limit=${searchParams.limit}${searchParams.search ? `&search=${searchParams.search}` : ''}${filterParams ? `&${filterParams}` : ''}`;
+        const url = `${apiUrl}/featured-content?page=${searchParams.page}&limit=${searchParams.limit}${searchParams.search ? `&search=${searchParams.search}` : ''}${filterParams ? `&${filterParams}` : ''}`;
 
 
         const res = await fetch(url, {
@@ -31,70 +31,18 @@ export const getGenres = async (searchParams: {page: number; limit: number; filt
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch genres: ${res.status}`);
+            throw new Error(`Failed to fetch FeaturedContents: ${res.status}`);
         }
 
         const data = await res.json();
         return data || [];
     } catch (error) {
-        console.error('Failed to fetch genres:', error);
-        return [];
-    }
-};
-export const getGenre = async (id: number) => {
-    try {
-        const apiUrl = process.env.API_URL;
-        // get token from cookies
-        const cookieStore = await cookies();
-        const token = cookieStore.get('token')?.value;
-        const res = await fetch(`${apiUrl}/genre/${id}`, {
-            headers: {
-                'Authorization': token ? `Bearer ${token}` : '',
-            },
-            method: 'GET',
-        });
-
-        if (!res.ok) {
-            throw new Error(`Failed to fetch genre: ${res.status}`);
-        }
-
-        const data = await res.json();
-        return data;
-    } catch (error) {
-        console.error('Failed to fetch genre:', error);
-        return null;
-    }
-};
-
-// getAllGenres
-
-export const getAllGenres = async () => {
-    try {
-        const apiUrl = process.env.API_URL;
-        // get accessToken from cookies
-        const cookieStore = await cookies();
-        const token = cookieStore.get('token')?.value;
-        const res = await fetch(`${apiUrl}/genre?limit=1000`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-            method: 'GET',
-        });
-
-        if (!res.ok) {
-            throw new Error(`Failed to fetch genres: ${res.status}`);
-        }
-
-        const data = await res.json();
-        return data;
-    } catch (error) {
-        console.error('Failed to fetch genres:', error);
+        console.error('Failed to fetch FeaturedContents:', error);
         return [];
     }
 };
 
-export const submitGenre = async (data: GenreForm, mode: 'add' | 'edit' | 'view' | 'delete') => {
+export const submitFeaturedContents= async (data: FeaturedContentForm, mode: 'add' | 'edit' | 'view' | 'delete') => {
     try {
         const token = (await cookies()).get("token")?.value;
 
@@ -102,7 +50,7 @@ export const submitGenre = async (data: GenreForm, mode: 'add' | 'edit' | 'view'
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         const apiUrl = process.env.API_URL;
-        let url = `${apiUrl}/genre`;
+        let url = `${apiUrl}/featured-content`;
         let method: 'POST' | 'PUT' | 'DELETE' | 'GET' = 'POST';
 
         switch (mode) {
@@ -136,13 +84,13 @@ export const submitGenre = async (data: GenreForm, mode: 'add' | 'edit' | 'view'
 
         if (!res.ok) {
             const errorData = await res.json();
-            throw (`Failed to ${mode} genre: ${errorData.message || res.statusText}`);
+            throw (`Failed to ${mode} FeaturedContent: ${errorData.message || res.statusText}`);
         }
 
         // GET may return JSON or empty
         return method === 'DELETE' ? null : await res.json();
     } catch (error) {
-        console.error(`Failed to ${mode} genre:`, error);
+        console.error(`Failed to ${mode} FeaturedContent:`, error);
         throw error;
     }
 };

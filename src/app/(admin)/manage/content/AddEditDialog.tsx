@@ -260,17 +260,14 @@ export const AddEditDialog = ({
         }
 
         if (isOpen && mode === "edit" && data?.id !== undefined) {
-            console.log('🩸🩸 ~ mode:', mode);
             setIsLoading(true);
             // Fetch content data from API
             getContentInfo(data.id).then((content) => {
-                console.log('🩸🩸 ~ content:', content);
                 if (content) {
                     const genreIds = content.genres
                         ?.filter((genre): genre is Genre => typeof genre === "object" && genre !== null && "id" in genre)
                         .map((genre) => String(genre.id)!)
                         .filter(Boolean) ?? [];
-                    console.log('🩸🩸 ~ genreIds:', genreIds);
                     form.reset(schema.parse({ ...content, genres: genreIds }));
                 }
             }).catch((error) => {
@@ -321,13 +318,15 @@ export const AddEditDialog = ({
 
     async function handleSubmitForm(values: ContentSchema) {
         try {
-            await submitContent(values, mode)
+            const result = await submitContent(values, mode)
+            if (!result) throw new Error("Submission failed")
             toast.success(`Content ${mode === 'add' ? 'Added' : 'Updated'} successfully`)
             setOpen(false)
             onSubmit?.(values)
             router.refresh()
 
         } catch (err) {
+            toast.error("Submission failed ❌")
             console.error("Submission failed:", err)
         }
     }

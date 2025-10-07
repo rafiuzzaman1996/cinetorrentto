@@ -124,7 +124,7 @@ export const submitCategory = async (data: CategoryForm, mode: 'add' | 'edit' | 
                 method = 'GET';
                 if (data.id) url += `/${data.id}`; // fetch single
                 break;
-        }
+            }
 
         const res = await fetch(url, {
             headers: {
@@ -136,13 +136,14 @@ export const submitCategory = async (data: CategoryForm, mode: 'add' | 'edit' | 
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to ${mode} category: ${res.status}`);
+            const errorData = await res.json();
+            throw (`Failed to ${mode} category: ${errorData.message || res.statusText}`);
         }
 
         // GET may return JSON or empty
         return method === 'DELETE' ? null : await res.json();
     } catch (error) {
         console.error(`Failed to ${mode} category:`, error);
-        return null;
+        throw error;
     }
 };

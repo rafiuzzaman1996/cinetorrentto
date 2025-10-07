@@ -3,10 +3,10 @@ import React from "react"
 
 import { ColumnDef } from "@tanstack/react-table"
 import { z } from "zod"
-import { schema } from "./category.schema"
+import { schema } from "./genre.schema"
 import { AddEditDialog } from "./AddEditDialog"
 
-export const CategoryColumns: ColumnDef<z.infer<typeof schema>>[] = [
+export const GenreColumns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "title",
     header: "Title",
@@ -21,16 +21,6 @@ export const CategoryColumns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) =>
       row.getValue("is_active") ? (
 
-        <span className="text-green-600 font-medium">Yes</span>
-      ) : (
-        <span className="text-red-600 font-medium">No</span>
-      ),
-  },
-  {
-    accessorKey: "is_featured",
-    header: "Featured",
-    cell: ({ row }) =>
-      row.getValue("is_featured") ? (
         <span className="text-green-600 font-medium">Yes</span>
       ) : (
         <span className="text-red-600 font-medium">No</span>
@@ -57,4 +47,4 @@ export const CategoryColumns: ColumnDef<z.infer<typeof schema>>[] = [
 
 ]
 
-export default CategoryColumns
+export default GenreColumns

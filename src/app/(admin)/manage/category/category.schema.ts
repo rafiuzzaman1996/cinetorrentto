@@ -5,7 +5,9 @@ export const schema = z.object({
     message: "Title must be at least 2 characters.",
   }),
   description: z.string().optional(),
-  slug: z.string().optional(),
+  slug: z.string().max(255).min(1, {
+    message: "Slug is required.",
+  }),
   image_url: z.string().optional(),
   banner_image_url: z.string().optional(),
   icon_url: z.string().optional(),
