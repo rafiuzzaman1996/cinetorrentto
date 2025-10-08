@@ -5,7 +5,7 @@ import { useState, useId } from "react"
 import { Button } from "@/components/ui/button"
 import { Eye, Pencil, Trash, PlusCircle } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Path, useForm } from "react-hook-form"
+import { Controller, Path, useForm } from "react-hook-form"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { toast } from "sonner"
@@ -20,7 +20,13 @@ import { MultiSelectOption, MultiSelectWithSearch } from "@/components/ui/multi-
 import { useApiSearch } from "./api-search"
 import { getContents } from "../../admin-api/ContentApi"
 import { Content } from "@/types/admin/Content"
+import AsyncSelect from 'react-select/async';
+import { useTheme } from "next-themes"; // if you use next-themes for dark mode
 
+interface optionType {
+    label: string;
+    value: number;
+}
 const fields: FieldConfig<typeof schema>[] = [
     {
         key: "content_id",
@@ -30,7 +36,7 @@ const fields: FieldConfig<typeof schema>[] = [
         options: [], // Will be populated dynamically
         required: true
     },
-    { key: "sequence", label: "Sequence", inputType: "number" as const, placeholder: "1" },
+    { key: "sequence", label: "Sequence", inputType: "number" as const },
 ];
 
 export const AddEditDialog = ({
@@ -42,10 +48,11 @@ export const AddEditDialog = ({
     data?: FeaturedContentForm
     onSubmit?: (values: FeaturedContentForm) => void
 }) => {
+    const { theme } = useTheme();
     const router = useRouter();
     const formId = useId()
     const [open, setOpen] = useState(false)
-    const [selectedOptions, setSelectedOptions] = useState<MultiSelectOption[]>([]);
+    const [selectedOption, setSelectedOption] = useState<optionType | null>(null);
 
     const form = useForm<FeaturedContentForm>({
         resolver: zodResolver(schema),
@@ -102,62 +109,21 @@ export const AddEditDialog = ({
         }
     }
 
-    const [options, setOptions] = useState<MultiSelectOption[]>([]);
-    const [loading, setLoading] = useState(false);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const debounceMs = 300;
-    const minQueryLength = 2;
-    const search = useCallback(
-        async (query: string) => {
-            if (query.length < minQueryLength) {
-                setOptions([]);
-                return;
-            }
+    const getContentsOptions = (query: string) => {
+        return getContents({ search: query, limit: 10, page: 1 }).then((res) => {
+            return res.data.map((content: Content) => ({
+                label: content.title,
+                value: content.id,
+            }));
+        });
+    }
 
-            setLoading(true);
-            try {
-                //    const response = await fetch(`${apiUrl}?q=${encodeURIComponent(query)}`);
-                const data = await getContents({
-                    page: 1,
-                    limit: 10,
-                    search: query
-                });
-                console.log('🩸🩸 ~ data:', data);
-                //    if (!response.ok) {
-                //      throw new Error("Failed to fetch");
-                //    }
-                //    const data = await response.json();
-                setOptions(data.data.map((item: Content) => ({ value: item.id, label: item.title })) || []);
-                console.log('🩸🩸 ~ options:', options);
-            } catch (error) {
-                console.error("Search error:", error);
-                setOptions([]);
-            } finally {
-                setLoading(false);
-            }
-        },
-        [minQueryLength]
-    );
-    const debouncedSearch = useCallback(
-        (query: string) => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-            timeoutRef.current = setTimeout(() => {
-                search(query);
-            }, debounceMs);
-        },
-        [search, debounceMs]
-    );
-
-    const handleSearch = (query: string) => {
-        debouncedSearch(query);
-    };
-
-    const handleChange = (selected: MultiSelectOption[]) => {
-        setSelectedOptions(selected);
-        console.log("Selected options:", selected);
-    };
+    const promiseOptions = (inputValue: string) =>
+        new Promise<optionType[]>((resolve) => {
+            setTimeout(() => {
+                resolve(getContentsOptions(inputValue));
+            }, 1000);
+        });
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -232,29 +198,79 @@ export const AddEditDialog = ({
                                                                     className={fieldConfig.className}
                                                                     style={fieldConfig.style}
                                                                 />
+                                                            ) : fieldConfig.inputType === "number" ? (
+                                                                <Input
+                                                                    type="number"
+                                                                    placeholder={fieldConfig.placeholder}
+                                                                    value={field.value ?? 1}
+                                                                    onChange={
+                                                                        (e) => field.onChange(parseInt(e.target.value, 10))
+                                                                    }
+                                                                    disabled={fieldConfig.disabled}
+                                                                    readOnly={fieldConfig.readOnly}
+                                                                    className={fieldConfig.className}
+                                                                    style={fieldConfig.style}
+                                                                />
                                                             ) : fieldConfig.inputType === "select" ? (
-                                                                <>
-                                                                <pre>
-                                                                    {JSON.stringify(options, null, 2)}
-                                                                </pre>
-                                                                <MultiSelectWithSearch
-                                                                    options={options}
-                                                                    // ✅ integrate with react-hook-form
-                                                                    selected={selectedOptions}
-                                                                    onChange={(selected) => {
-                                                                        setSelectedOptions(selected)
-                                                                        // ✅ update react-hook-form value
-                                                                        field.onChange(selected[0]?.value ?? 0)
-                                                                    }}
-                                                                    onSearch={handleSearch}
-                                                                    placeholder="Select content..."
-                                                                    searchPlaceholder="Search content by title..."
-                                                                    emptyMessage="No content found."
-                                                                    loading={loading}
-                                                                    multi={false}
-                                                                    maxDisplay={10}
-                                                                    />
-                                                                    </>
+                                                                <Controller
+                                                                    control={form.control}
+                                                                    name="content_id"
+                                                                    rules={{ required: true }}
+                                                                    render={({ field: controllerField }) => (
+                                                                        <AsyncSelect
+                                                                            required
+                                                                            value={
+                                                                                controllerField.value
+                                                                                    ? selectedOption
+                                                                                    : null
+                                                                            }
+                                                                            onChange={(option) => {
+                                                                                setSelectedOption(option);
+                                                                                controllerField.onChange(option ? option.value : null)
+                                                                            }}
+                                                                            cacheOptions
+                                                                            defaultOptions
+                                                                            loadOptions={promiseOptions}
+                                                                            unstyled
+                                                                            isClearable
+                                                                            menuPortalTarget={null}              // 👈 keep menu inside Dialog
+                                                                            menuPosition="absolute"
+                                                                            menuPlacement="bottom"
+                                                                            menuShouldScrollIntoView={false}     // 👈 prevents weird jumping
+                                                                            classNames={{
+                                                                                control: ({ isFocused }) =>
+                                                                                    `flex min-h-[40px] w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm
+                                                                                    placeholder:text-muted-foreground
+                                                                                    focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
+                                                                                    disabled:cursor-not-allowed disabled:opacity-50
+                                                                                    ${isFocused ? "border-ring ring-2 ring-ring ring-offset-2" : "border-input"}`,
+                                                                                valueContainer: () => "flex gap-1 flex-wrap",
+                                                                                input: () => "text-sm text-foreground bg-transparent focus:outline-none",
+                                                                                placeholder: () => "text-muted-foreground text-sm",
+                                                                                singleValue: () => "text-sm text-foreground",
+                                                                                multiValue: () =>
+                                                                                    "flex items-center rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground",
+                                                                                multiValueRemove: () =>
+                                                                                    "ml-1 cursor-pointer text-muted-foreground hover:text-foreground",
+                                                                                indicatorsContainer: () => "flex items-center gap-1",
+                                                                                indicatorSeparator: () => "hidden",
+                                                                                dropdownIndicator: ({ isFocused }) =>
+                                                                                    `p-1 cursor-pointer text-muted-foreground hover:text-foreground transition ${isFocused ? "text-foreground" : ""
+                                                                                    }`,
+                                                                                clearIndicator: () =>
+                                                                                    "p-1 cursor-pointer text-muted-foreground hover:text-foreground transition",
+                                                                                menu: () =>
+                                                                                    "mt-2 rounded-md border bg-popover text-popover-foreground shadow-md",
+                                                                                menuList: () => "max-h-60 overflow-auto p-1",
+                                                                                option: ({ isFocused, isSelected }) =>
+                                                                                    `cursor-pointer rounded-sm px-2 py-1.5 text-sm
+                                                                                    ${isSelected ? "bg-accent text-accent-foreground" : ""}
+                                                                                    ${isFocused && !isSelected ? "bg-accent/50 text-accent-foreground" : ""}`,
+                                                                                noOptionsMessage: () => "text-muted-foreground p-2 text-sm",
+                                                                            }}
+                                                                        />
+                                                                    )}
+                                                                />
                                                             ) : null}
                                                         </FormControl>
                                                         <FormMessage />
