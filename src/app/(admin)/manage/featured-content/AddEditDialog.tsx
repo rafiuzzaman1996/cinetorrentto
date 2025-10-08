@@ -63,6 +63,8 @@ export const AddEditDialog = ({
         },
     })
 
+    // On Edit
+
     // Reset when opening (important for edit/view)
     React.useEffect(() => {
         if (open) {
@@ -104,7 +106,7 @@ export const AddEditDialog = ({
             onSubmit?.(data)
             router.refresh()
         } catch (err) {
-            toast.error("Failed to delete Genre ❌")
+            toast.error("Failed to delete Featured Content ❌")
             console.error(err)
         }
     }
@@ -145,10 +147,10 @@ export const AddEditDialog = ({
             <DialogContent className="sm:max-w-6/12 w-full h-[80vh] p-2 flex flex-col">
                 <DialogHeader>
                     <DialogTitle>
-                        {mode === "add" && "Add Genre"}
-                        {mode === "edit" && "Edit Genre"}
-                        {mode === "view" && "View Genre"}
-                        {mode === "delete" && "Delete Genre"}
+                        {mode === "add" && "Add Featured Content"}
+                        {mode === "edit" && "Edit Featured Content"}
+                        {mode === "view" && "View Featured Content"}
+                        {mode === "delete" && "Delete Featured Content"}
                     </DialogTitle>
                     <VisuallyHidden>
                         <div>Dialog Description</div>
@@ -161,17 +163,10 @@ export const AddEditDialog = ({
                             <p><strong>Sequence:</strong> {data?.sequence}</p>
                         </div>
                     ) : mode === "delete" ? (
-                        <div className="space-y-4">
-                            {/* <p>Are you sure you want to delete <strong>{data?.title}</strong>?</p> */}
+                        <div className="">
                         </div>
                     ) : (
                         <div className="">
-                            {/* <DynamicForm<typeof schema>
-                            form={form}
-                            formId={formId}
-                            fields={fields}
-                            onSubmit={handleSubmitForm}
-                        /> */}
                             <Form {...form}>
                                 <form
                                     id={formId}
