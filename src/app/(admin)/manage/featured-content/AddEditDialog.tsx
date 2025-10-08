@@ -1,29 +1,36 @@
 "use client"
-import React from "react"
+import React, { useCallback, useRef } from "react"
 
 import { useState, useId } from "react"
 import { Button } from "@/components/ui/button"
 import { Eye, Pencil, Trash, PlusCircle } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { Path, useForm } from "react-hook-form"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-import { DynamicForm, FieldConfig } from "../../../../components/admin/management/data-table/DynamicForm"
+import { FieldConfig } from "../../../../components/admin/management/data-table/DynamicForm"
 import { FeaturedContentForm, schema } from "./FeaturedContent.schema"
 import { submitFeaturedContents } from "../../admin-api/FeaturedContentApi"
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { MultiSelectOption, MultiSelectWithSearch } from "@/components/ui/multi-select-search"
+import { useApiSearch } from "./api-search"
+import { getContents } from "../../admin-api/ContentApi"
+import { Content } from "@/types/admin/Content"
 
 const fields: FieldConfig<typeof schema>[] = [
-  {
-    key: "content",
-    label: "Content",
-    inputType: "text" as const,
-    placeholder: "Enter title",
-    required: true
-  },
-  { key: "sequence", label: "Sequence", inputType: "number" as const, placeholder: "1" },
+    {
+        key: "content_id",
+        label: "Content",
+        inputType: "select" as const,
+        placeholder: "Select Content",
+        options: [], // Will be populated dynamically
+        required: true
+    },
+    { key: "sequence", label: "Sequence", inputType: "number" as const, placeholder: "1" },
 ];
 
 export const AddEditDialog = ({
@@ -38,6 +45,8 @@ export const AddEditDialog = ({
     const router = useRouter();
     const formId = useId()
     const [open, setOpen] = useState(false)
+    const [selectedOptions, setSelectedOptions] = useState<MultiSelectOption[]>([]);
+
     const form = useForm<FeaturedContentForm>({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -61,7 +70,7 @@ export const AddEditDialog = ({
     async function handleSubmitForm(values: FeaturedContentForm) {
         try {
             const result = await submitFeaturedContents(values, mode)
-            if(result && 'error' in result || !result) {
+            if (result && 'error' in result || !result) {
                 toast.error(`Submission failed: ${result}`)
                 return
             }
@@ -71,7 +80,7 @@ export const AddEditDialog = ({
             router.refresh()
 
         } catch (err) {
-            toast.error("Submission failed ❌" +err)
+            toast.error("Submission failed ❌" + err)
             console.error("Submission failed:", err)
         }
     }
@@ -92,6 +101,64 @@ export const AddEditDialog = ({
             console.error(err)
         }
     }
+
+    const [options, setOptions] = useState<MultiSelectOption[]>([]);
+    const [loading, setLoading] = useState(false);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const debounceMs = 300;
+    const minQueryLength = 2;
+    const search = useCallback(
+        async (query: string) => {
+            if (query.length < minQueryLength) {
+                setOptions([]);
+                return;
+            }
+
+            setLoading(true);
+            try {
+                //    const response = await fetch(`${apiUrl}?q=${encodeURIComponent(query)}`);
+                const data = await getContents({
+                    page: 1,
+                    limit: 10,
+                    search: query
+                });
+                console.log('🩸🩸 ~ data:', data);
+                //    if (!response.ok) {
+                //      throw new Error("Failed to fetch");
+                //    }
+                //    const data = await response.json();
+                setOptions(data.data.map((item: Content) => ({ value: item.id, label: item.title })) || []);
+                console.log('🩸🩸 ~ options:', options);
+            } catch (error) {
+                console.error("Search error:", error);
+                setOptions([]);
+            } finally {
+                setLoading(false);
+            }
+        },
+        [minQueryLength]
+    );
+    const debouncedSearch = useCallback(
+        (query: string) => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+            timeoutRef.current = setTimeout(() => {
+                search(query);
+            }, debounceMs);
+        },
+        [search, debounceMs]
+    );
+
+    const handleSearch = (query: string) => {
+        debouncedSearch(query);
+    };
+
+    const handleChange = (selected: MultiSelectOption[]) => {
+        setSelectedOptions(selected);
+        console.log("Selected options:", selected);
+    };
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -133,12 +200,71 @@ export const AddEditDialog = ({
                         </div>
                     ) : (
                         <div className="">
-                        <DynamicForm<typeof schema>
+                            {/* <DynamicForm<typeof schema>
                             form={form}
                             formId={formId}
                             fields={fields}
                             onSubmit={handleSubmitForm}
-                        />
+                        /> */}
+                            <Form {...form}>
+                                <form
+                                    id={formId}
+                                    onSubmit={form.handleSubmit(handleSubmitForm)}
+                                    className="space-y-4"
+                                >
+                                    {fields.map((fieldConfig) => {
+                                        return (
+                                            <FormField
+                                                key={fieldConfig.key}
+                                                control={form.control}
+                                                name={fieldConfig.key as Path<FeaturedContentForm>}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>{fieldConfig.label ?? fieldConfig.key}</FormLabel>
+                                                        <FormControl>
+                                                            {fieldConfig.inputType === "text" ? (
+                                                                <Input
+                                                                    placeholder={fieldConfig.placeholder}
+                                                                    value={field.value ?? ""}
+                                                                    onChange={field.onChange}
+                                                                    disabled={fieldConfig.disabled}
+                                                                    readOnly={fieldConfig.readOnly}
+                                                                    className={fieldConfig.className}
+                                                                    style={fieldConfig.style}
+                                                                />
+                                                            ) : fieldConfig.inputType === "select" ? (
+                                                                <>
+                                                                <pre>
+                                                                    {JSON.stringify(options, null, 2)}
+                                                                </pre>
+                                                                <MultiSelectWithSearch
+                                                                    options={options}
+                                                                    // ✅ integrate with react-hook-form
+                                                                    selected={selectedOptions}
+                                                                    onChange={(selected) => {
+                                                                        setSelectedOptions(selected)
+                                                                        // ✅ update react-hook-form value
+                                                                        field.onChange(selected[0]?.value ?? 0)
+                                                                    }}
+                                                                    onSearch={handleSearch}
+                                                                    placeholder="Select content..."
+                                                                    searchPlaceholder="Search content by title..."
+                                                                    emptyMessage="No content found."
+                                                                    loading={loading}
+                                                                    multi={false}
+                                                                    maxDisplay={10}
+                                                                    />
+                                                                    </>
+                                                            ) : null}
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        )
+                                    })}
+                                </form>
+                            </Form>
                         </div>
                     )}
                 </div>

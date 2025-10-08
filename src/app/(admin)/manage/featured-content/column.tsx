@@ -9,7 +9,7 @@ import { FeaturedContent } from "@/types/admin/FeaturedContent"
 
 export const FeaturedContentColumns: ColumnDef<FeaturedContent>[] = [
   {
-    accessorKey: "content",
+    accessorKey: "content_id",
     header: "Content",
     cell: ({ row }) => {
       const data = row.original as FeaturedContent

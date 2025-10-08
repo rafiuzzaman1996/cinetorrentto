@@ -11,13 +11,14 @@ import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogT
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-import { schema, ContentSchema, Content } from "@/app/(admin)/manage/content/content.interface"
+import { schema, ContentSchema } from "@/app/(admin)/manage/content/content.interface"
 import { DynamicForm, FieldConfig } from "../../../../components/admin/management/data-table/DynamicForm"
 import { getContent, submitContent } from "../../admin-api/ContentApi"
 import { getAllCategories } from "../../admin-api/CategoryApi"
 import { Category } from "@/types/admin/Category"
 import { getAllGenres } from "../../admin-api/GenreApi"
 import { Genre } from "@/types/admin/Genre"
+import { Content } from "@/types/admin/Content"
 
 const fields: FieldConfig<typeof schema>[] = [
 

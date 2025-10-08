@@ -4,9 +4,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ path: string }> }) {
   const path = (await params).path;
+  console.log('🩸🩸 ~ path:', path);
   const accessToken = req.cookies.get('accessToken')?.value;
 
   const url = `${process.env.NEXT_PUBLIC_API_URL}/${path}${req.nextUrl.search}`;
+  console.log('🩸🩸 ~ req:', req);
 
   const resp = await fetch(url, {
     headers: {
