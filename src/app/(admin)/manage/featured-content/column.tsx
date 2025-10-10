@@ -2,8 +2,6 @@
 import React from "react"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { z } from "zod"
-import { schema } from "./FeaturedContent.schema"
 import { AddEditDialog } from "./AddEditDialog"
 import { FeaturedContent } from "@/types/admin/FeaturedContent"
 

@@ -1,72 +1,81 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, Menu } from "lucide-react";
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Search, Menu } from "lucide-react"
+import Link from 'next/link'
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@/components/ui/sheet"
 import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import ThemeToggle from './ThemeToggle';
-import Logo from './Logo';
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+} from "@/components/ui/navigation-menu"
+import ThemeToggle from './ThemeToggle'
+import Logo from './Logo'
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MenuAd } from "../Ad/MenuAd";
 import { AdvanceFilter } from "./AdvanceFilter";
-import { Ads } from "@/types/admin/Ads";
 
 const menuItems = [
   {
     title: "Movies",
     items: [
-      { href: "/category/english_movies", label: "English Movies" },
-      { href: "/category/bangla_movies", label: "Bangla Movies" },
-      { href: "/category/hindi_movies", label: "Hindi Movies" },
+      { href: "/movies/english", label: "English Movies" },
+      { href: "/movies/bangla", label: "Bangla Movies" },
+      { href: "/movies/hindi", label: "Hindi Movies" },
     ]
   },
   {
     title: "Series",
     items: [
-      { href: "/category/english_series", label: "English Series" },
-      { href: "/category/korean_series", label: "Korean Series" },
-      { href: "/category/anime_series", label: "Anime Series" },
+      { href: "/series/english", label: "English Series" },
+      { href: "/series/korean", label: "Korean Series" },
+      { href: "/series/anime", label: "Anime Series" },
     ]
   },
   {
     title: "Games",
     items: [
-      { href: "/category/pc_games", label: "PC Games" },
-      { href: "/category/console_games", label: "Console Games" },
-      { href: "/category/mobile_games", label: "Mobile Games" },
+      { href: "/games/pc", label: "PC Games" },
+      { href: "/games/console", label: "Console Games" },
+      { href: "/games/mobile", label: "Mobile Games" },
     ]
   },
   {
     title: "More",
     items: [
-      { href: "/category/software", label: "Software" },
-      { href: "/category/music", label: "Music" },
-      { href: "/category/books", label: "Books" },
+      { href: "/software", label: "Software" },
+      { href: "/music", label: "Music" },
+      { href: "/books", label: "Books" },
     ]
   }
 ]
 
-
-const Header = ({filterAds, menuAds}: {filterAds: Ads[], menuAds: Ads[]}) => {
+const Header = () => {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    setQuery(searchParams.get("q") || "");
+  }, [searchParams]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+    setQuery("");
+  };
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -102,7 +111,7 @@ const Header = ({filterAds, menuAds}: {filterAds: Ads[], menuAds: Ads[]}) => {
                 </Accordion>
 
                 {/* Menu Ad */}
-                <MenuAd ads={menuAds} />
+                <MenuAd />
               </SheetContent>
             </Sheet>
           </div>
@@ -110,11 +119,11 @@ const Header = ({filterAds, menuAds}: {filterAds: Ads[], menuAds: Ads[]}) => {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold">
+              {/* <span className='bg-gray-200 px-2 py-1 rounded text-2xl'>CineTorrento</span> */}
               <Logo />
             </Link>
           </div>
         </div>
-
         {/* Desktop Navigation */}
         <div className="flex">
           <div className="hidden lg:flex">
@@ -122,14 +131,15 @@ const Header = ({filterAds, menuAds}: {filterAds: Ads[], menuAds: Ads[]}) => {
               <NavigationMenuList>
                 {menuItems.map((section) => (
                   <NavigationMenuItem key={section.title}>
-                    <NavigationMenuTrigger className="hover:bg-transparent">{section.title}</NavigationMenuTrigger>
+                    <NavigationMenuTrigger className='hover:bg-transparent'>{section.title}</NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <ul className="grid w-[200px] gap-3 p-2">
+                        {/* <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]"> */}
                         {section.items.map((item) => (
-                          <li key={item.href} className="bg-transparent hover:bg-transparent">
+                          <li key={item.href}>
                             <Link
                               href={item.href}
-                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none bg-transparent transition-colors focus:text-accent-foreground"
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none hover:bg-accent transition-colors focus:text-accent-foreground"
                             >
                               {item.label}
                             </Link>
@@ -145,11 +155,29 @@ const Header = ({filterAds, menuAds}: {filterAds: Ads[], menuAds: Ads[]}) => {
 
           {/* Search */}
           <div className="hidden md:flex w-full max-w-lg items-center space-x-2 px-4">
-            <Suspense fallback={<div>Loading...</div>}>
-              <SearchBar query={query} setQuery={setQuery} router={router} />
-            </Suspense>
+            <form
+              onSubmit={handleSubmit}
+              className="hidden md:flex w-full max-w-lg items-center px-4"
+            >
+              <div className="relative w-full">
+                <Input
+                  type="text"
+                  placeholder="Search movies..."
+                  className="w-full pr-10" // add right padding so text doesn’t overlap button
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 cursor-pointer"
+                >
+                  <Search className="h-4 w-4" />
+                </button>
+              </div>
+            </form>
           </div>
         </div>
+
 
         <div className="flex">
           {/* Mobile Search Button */}
@@ -162,63 +190,51 @@ const Header = ({filterAds, menuAds}: {filterAds: Ads[], menuAds: Ads[]}) => {
               </SheetTrigger>
               <SheetContent side="top" className="w-full">
                 <VisuallyHidden>
-                  <SheetTitle>Search</SheetTitle>
+                  <SheetTitle>Search</SheetTitle> {/* ✅ Accessible title */}
                 </VisuallyHidden>
-                <Suspense fallback={<div>Loading...</div>}>
-                  <SearchBar query={query} setQuery={setQuery} router={router} />
-                </Suspense>
+                <form
+                  onSubmit={handleSubmit}
+                  className="md:hidden flex w-full max-w-lg items-center px-4"
+                >
+                  <div className="relative w-4/5 py-2">
+                    <Input
+                      type="text"
+                      placeholder="Search movies..."
+                      className="w-full pr-10" // padding-right so text doesn't overlap button
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                    <Button
+                      type="submit"
+                      size="icon"
+                      variant="ghost"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    >
+                      <Search className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </form>
+
               </SheetContent>
             </Sheet>
           </div>
 
+
+
           <div className="flex items-center">
             {/* Advance Filter */}
-            <AdvanceFilter filterAds={filterAds}/>
+            <AdvanceFilter />
             {/* Theme Toggle */}
             <ThemeToggle />
+          {/* User Icon */}
+            {/* <Button variant="ghost" size="icon">
+              <User className="h-5 w-5" />
+            </Button> */}
           </div>
         </div>
       </div>
     </header>
-  );
-};
-interface SearchBarProps {
-  query: string;
-  setQuery: (query: string) => void;
-  router: ReturnType<typeof useRouter>;
+  )
 }
-const SearchBar = ({ query, setQuery, router }: SearchBarProps) => {
-  const searchParams = useSearchParams();
-  useEffect(() => {
-    setQuery(searchParams.get("q") || "");
-  }, [searchParams, setQuery]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
-    router.push(`/search?q=${encodeURIComponent(query)}`);
-    setQuery("");
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-lg items-center px-4">
-      <div className="relative w-full">
-        <Input
-          type="text"
-          placeholder="Search movies..."
-          className="w-full pr-10"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <button
-          type="submit"
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 cursor-pointer"
-        >
-          <Search className="h-4 w-4" />
-        </button>
-      </div>
-    </form>
-  );
-};
-
-export default Header;
+export default Header

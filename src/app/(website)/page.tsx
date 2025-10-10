@@ -1,3 +1,4 @@
+import HomeAds from "@/components/website/Ad/HomeAd";
 import Categories from "@/components/website/CategorySection/Categories";
 import FeaturedContent from "@/components/website/FeaturedSection/FeaturedContent";
 
@@ -6,10 +7,12 @@ export default function Home() {
     <>
       <FeaturedContent />
       <div className="flex">
-        <div className="w-full xl:w-11/12">
+        <div className="w-full xl:w-16/18">
           <Categories />
         </div>
-        <div className="hidden bg-gray-500 xl:block xl:w-1/12">Ad</div>
+        <div className="hidden xl:block xl:w-2/18 px-1">
+          <HomeAds />
+        </div>
       </div>
     </>
   );

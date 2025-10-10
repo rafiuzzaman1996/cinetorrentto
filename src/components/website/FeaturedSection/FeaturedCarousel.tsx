@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import { useState } from "react"
 import Autoplay from "embla-carousel-autoplay"
 import Image from "next/image"
 import {
@@ -11,13 +11,43 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Card, CardContent } from "../../ui/card"
-import {FeaturedContentItem} from "./FeaturedContent"
+import { FeaturedContentItem } from "./FeaturedContent"
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Content } from "@/types/website/Content"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import ContentInfo from "../CategorySection/ContentInfo"
+import { Loader2 } from "lucide-react"
 
 interface FeaturedCarouselProps {
   featuredContent: FeaturedContentItem[];
 }
 
 const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) => {
+  const [open, setOpen] = useState(false);
+  const [details, setDetails] = useState<Content | null>(null);
+  const [loading, setLoading] = useState(false);
+  const fetchMovieDetails = async (contentSlug: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/website-api/content/${contentSlug}`);
+      const data = await res.json();
+      setDetails(data);
+    } catch (error) {
+      console.error('Error fetching Content:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleOpenChange = (isOpen: boolean, contentSlug: string) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      fetchMovieDetails(contentSlug);
+    }
+  };
   return (
     <Carousel
       className="w-full"
@@ -38,6 +68,8 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
             className="flex-none w-full sm:w-1/2 md:w-1/4" // 4 items on md+, 2 on sm, 1 on mobile
           >
             <Card
+              onClick={() => handleOpenChange(true, item.content.slug)}
+
               role="region"
               className="group relative overflow-hidden rounded-2xl border-0 shadow-md transition-all duration-500 hover:scale-105"
             >
@@ -69,6 +101,24 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
               {/* Decorative focus ring on hover */}
               <div className="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-white/0 transition-all duration-300 group-hover:ring-4 group-hover:ring-white/10" />
             </Card>
+
+            <Dialog open={open} onOpenChange={(isOpen) => handleOpenChange(isOpen, item.content.slug)}>
+              <DialogContent className="sm:max-w-4xl w-full h-[85vh] flex flex-col rounded-2xl py-6 px-0">
+                <VisuallyHidden>
+                  <DialogTitle>{item.content.title}</DialogTitle>
+                </VisuallyHidden>
+
+                {loading ? (
+                  <div className="flex justify-center items-center py-12">
+                    <Loader2 className="h-12 w-12 animate-spin text-gray-900 dark:text-gray-100" />
+                  </div>
+                ) : details ? (
+                  <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500">
+                    <ContentInfo content={details} />
+                  </div>
+                ) : null}
+              </DialogContent>
+            </Dialog>
 
           </CarouselItem>
         ))}

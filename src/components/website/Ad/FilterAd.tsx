@@ -1,7 +1,6 @@
-import { Ads } from '@/types/admin/Ads'
-import React from 'react'
+import { Ads } from '@/types/website/Ads'
 
-export const MenuAd = ({ ads }: { ads: Ads[] }) => {
+const FilterAd = ({ads}: {ads: Ads[]}) => {
     return (
         <>
             {ads.map((ad: Ads, i: number) => (
@@ -19,3 +18,5 @@ export const MenuAd = ({ ads }: { ads: Ads[] }) => {
         </>
     )
 }
+
+export default FilterAd

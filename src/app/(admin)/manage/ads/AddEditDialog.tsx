@@ -12,77 +12,58 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
 import { DynamicForm, FieldConfig } from "../../../../components/admin/management/data-table/DynamicForm"
-import { CategoryForm, schema } from "./category.schema"
-import { submitCategory } from "../../admin-api/CategoryApi"
+import { AdsForm, schema } from "./ads.schema"
+import { submitAds } from "../../admin-api/AdsApi"
 
 const fields: FieldConfig<typeof schema>[] = [
-    {
-        key: "title",
-        label: "Title",
-        inputType: "text" as const,
-        placeholder: "Enter title",
-        required: true
-    },
-    {
-        key: "slug",
-        label: "Slug",
-        inputType: "text" as const,
-        placeholder: "Enter slug",
-        required: false
-    },
-    {
-        key: "description",
-        label: "Description",
-        inputType: "text" as const,
-        placeholder: "Enter description",
-        required: false
-    },
-    {
-        key: "image_url",
-        label: "Image URL",
-        inputType: "text" as const,
-        placeholder: "Enter image URL",
-        required: false
-    },
-    {
-        key: "banner_image_url",
-        label: "Banner Image URL",
-        inputType: "text" as const,
-        placeholder: "Enter banner image URL",
-        required: false
-    },
-    {
-        key: "icon_url",
-        label: "Icon URL",
-        inputType: "text" as const,
-        placeholder: "Enter icon URL",
-        required: false
-    },
-    {
-        key: "is_active",
-        label: "Active",
-        inputType: "switch" as const,
-        placeholder: ""
-    },
-    {
-        key: "is_featured",
-        label: "Featured",
-        inputType: "switch" as const,
-        placeholder: ""
-    },
-    {
-        key: "is_popular",
-        label: "Popular",
-        inputType: "switch" as const,
-        placeholder: ""
-    },
-    {
-        key: "is_trending",
-        label: "Trending",
-        inputType: "switch" as const,
-        placeholder: ""
-    },
-    { key: "sequence", label: "Sequence", inputType: "number" as const, placeholder: "1" },
+  {
+    key: "title",
+    label: "Title",
+    inputType: "text" as const,
+    placeholder: "Enter title",
+    required: true
+  },
+  {
+    key: "placement",
+    label: "Placement",
+    inputType: "text" as const,
+    placeholder: "Enter placement",
+  },
+  {
+    key: "code",
+    label: "Code",
+    inputType: "text" as const,
+    placeholder: "Enter code",
+    required: false
+  },
+  {
+    key: "url",
+    label: "URL",
+    inputType: "text" as const,
+    placeholder: "Enter URL",
+    required: false
+  },
+  {
+    key: "format",
+    label: "Format",
+    inputType: "text" as const,
+    placeholder: "Enter format",
+    required: false
+  },
+  {
+    key: "size",
+    label: "Size",
+    inputType: "text" as const,
+    placeholder: "Enter size",
+    required: false
+  },
+  {
+    key: "is_active",
+    label: "Active",
+    inputType: "switch" as const,
+    placeholder: ""
+  },
+  { key: "sequence", label: "Sequence", inputType: "number" as const, placeholder: "1" },
 ];
 
 export const AddEditDialog = ({
@@ -91,26 +72,22 @@ export const AddEditDialog = ({
     onSubmit,
 }: {
     mode: "add" | "edit" | "view" | "delete"
-    data?: CategoryForm
-    onSubmit?: (values: CategoryForm) => void
+    data?: AdsForm
+    onSubmit?: (values: AdsForm) => void
 }) => {
     const router = useRouter();
     const formId = useId()
     const [open, setOpen] = useState(false)
-    const form = useForm<CategoryForm>({
+    const form = useForm<AdsForm>({
         resolver: zodResolver(schema),
         defaultValues: {
             id: data?.id ?? 0,
             title: data?.title ?? "",
-            slug: data?.slug ?? "",
-            description: data?.description ?? "",
-            image_url: data?.image_url ?? "",
-            banner_image_url: data?.banner_image_url ?? "",
-            icon_url: data?.icon_url ?? "",
+            placement: data?.placement ?? "",
+            url: data?.url ?? "",
+            format: data?.format ?? "",
+            size: data?.size ?? "",
             is_active: data?.is_active ?? false,
-            is_featured: data?.is_featured ?? false,
-            is_popular: data?.is_popular ?? false,
-            is_trending: data?.is_trending ?? false,
             sequence: data?.sequence ?? 1,
         },
     })
@@ -121,34 +98,30 @@ export const AddEditDialog = ({
             form.reset({
                 id: data?.id ?? 0,
                 title: data?.title ?? "",
-                slug: data?.slug ?? "",
-                description: data?.description ?? "",
-                image_url: data?.image_url ?? "",
-                banner_image_url: data?.banner_image_url ?? "",
-                icon_url: data?.icon_url ?? "",
+                placement: data?.placement ?? "",
+                url: data?.url ?? "",
+                format: data?.format ?? "",
+                size: data?.size ?? "",
                 is_active: data?.is_active ?? false,
-                is_featured: data?.is_featured ?? false,
-                is_popular: data?.is_popular ?? false,
-                is_trending: data?.is_trending ?? false,
                 sequence: data?.sequence ?? 1,
             })
         }
     }, [open, data, form])
 
-    async function handleSubmitForm(values: CategoryForm) {
+    async function handleSubmitForm(values: AdsForm) {
         try {
-            const result = await submitCategory(values, mode)
-            if (result && 'error' in result || !result) {
+            const result = await submitAds(values, mode)
+            if(result && 'error' in result || !result) {
                 toast.error(`Submission failed: ${result}`)
                 return
             }
-            toast.success(`Category ${mode === 'add' ? 'Added' : 'Updated'} successfully`)
+            toast.success(`Ads ${mode === 'add' ? 'Added' : 'Updated'} successfully`)
             setOpen(false)
             onSubmit?.(values)
             router.refresh()
 
         } catch (err) {
-            toast.error("Submission failed ❌" + err)
+            toast.error("Submission failed ❌" +err)
             console.error("Submission failed:", err)
         }
     }
@@ -159,13 +132,13 @@ export const AddEditDialog = ({
             return
         }
         try {
-            await submitCategory(data, "delete")
-            toast.success("Category deleted successfully ✅")
+            await submitAds(data, "delete")
+            toast.success("Ads deleted successfully ✅")
             setOpen(false)
             onSubmit?.(data)
             router.refresh()
         } catch (err) {
-            toast.error("Failed to delete Category ❌")
+            toast.error("Failed to delete Ads ❌")
             console.error(err)
         }
     }
@@ -189,10 +162,10 @@ export const AddEditDialog = ({
             <DialogContent className="sm:max-w-6/12 w-full h-[80vh] p-2 flex flex-col">
                 <DialogHeader>
                     <DialogTitle>
-                        {mode === "add" && "Add Category"}
-                        {mode === "edit" && "Edit Category"}
-                        {mode === "view" && "View Category"}
-                        {mode === "delete" && "Delete Category"}
+                        {mode === "add" && "Add Ads"}
+                        {mode === "edit" && "Edit Ads"}
+                        {mode === "view" && "View Ads"}
+                        {mode === "delete" && "Delete Ads"}
                     </DialogTitle>
                     <VisuallyHidden>
                         <div>Dialog Description</div>
@@ -203,7 +176,10 @@ export const AddEditDialog = ({
                     {mode === "view" ? (
                         <div className="space-y-2">
                             <p><strong>Title:</strong> {data?.title}</p>
-                            <p><strong>Slug:</strong> {data?.slug}</p>
+                            <p><strong>Placement:</strong> {data?.placement}</p>
+                            <p><strong>URL:</strong> {data?.url}</p>
+                            <p><strong>Format:</strong> {data?.format}</p>
+                            <p><strong>Size:</strong> {data?.size}</p>
                             <p><strong>Active:</strong> {data?.is_active ? "Yes" : "No"}</p>
                             <p><strong>Sequence:</strong> {data?.sequence}</p>
                         </div>
@@ -213,12 +189,12 @@ export const AddEditDialog = ({
                         </div>
                     ) : (
                         <div className="">
-                            <DynamicForm<typeof schema>
-                                form={form}
-                                formId={formId}
-                                fields={fields}
-                                onSubmit={handleSubmitForm}
-                            />
+                        <DynamicForm<typeof schema>
+                            form={form}
+                            formId={formId}
+                            fields={fields}
+                            onSubmit={handleSubmitForm}
+                        />
                         </div>
                     )}
                 </div>

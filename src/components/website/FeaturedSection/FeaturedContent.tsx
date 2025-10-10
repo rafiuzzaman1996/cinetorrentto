@@ -1,19 +1,12 @@
 import React from "react"
 import FeaturedCarousel from "./FeaturedCarousel"
 import { getFeaturedContent } from "@/app/(website)/website-api/featuredApi";
+import { Content } from "@/types/website/Content";
 
 export interface FeaturedContentItem {
   id: number;
   sequence: number;
-  content: {
-    id: number;
-    poster_image_url: string;
-    title: string,
-    genres: {
-      id: number;
-      title: string;
-    }[]
-  }
+  content: Content;
 }
 
 const FeaturedContent = async () => {

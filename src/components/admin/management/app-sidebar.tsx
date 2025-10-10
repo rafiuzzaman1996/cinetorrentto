@@ -78,7 +78,7 @@ const data = {
     },
     {
       name: "Ad Management",
-      url: "/manage/ad",
+      url: "/manage/ads",
       icon: BookA,
     },
   ],

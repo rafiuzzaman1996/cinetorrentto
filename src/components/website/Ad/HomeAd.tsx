@@ -1,10 +1,17 @@
-import { Ads } from '@/types/admin/Ads'
+import { getAds } from '@/app/(website)/website-api/AdsApi'
+import { Ads } from '@/types/website/Ads'
 import React from 'react'
 
-export const MenuAd = ({ ads }: { ads: Ads[] }) => {
+const HomeAds = async () => {
+    const getAdsData = await getAds({
+        page: 1,
+        limit: 100,
+        filters: 'filter.placement=$eq:home-right',
+    });
+    const homeAds = getAdsData?.data || [];
     return (
         <>
-            {ads.map((ad: Ads, i: number) => (
+            {homeAds.map((ad: Ads, i: number) => (
                 <div key={i} className="mb-4">
                     <a href={ad.url} target="_blank" rel="noopener noreferrer">
                         {/* {ad.title} */}
@@ -19,3 +26,5 @@ export const MenuAd = ({ ads }: { ads: Ads[] }) => {
         </>
     )
 }
+
+export default HomeAds

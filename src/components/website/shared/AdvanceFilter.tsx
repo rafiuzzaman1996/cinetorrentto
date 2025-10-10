@@ -14,8 +14,10 @@ import { MultiSelect } from "@/components/ui/multi-select"
 import { Genre } from "@/types/website/Genre"
 import { getGenres } from "@/app/(website)/website-api/GenreApi"
 import { useRouter } from "next/navigation";
+import FilterAd from "../Ad/FilterAd";
+import { Ads } from "@/types/admin/Ads"
 
-export const AdvanceFilter = () => {
+export const AdvanceFilter = ({filterAds}: {filterAds: Ads[]}) => {
     const router = useRouter();
     const [open, setOpen] = useState(false)
     const [genres, setGenres] = useState<Genre[]>([])
@@ -143,6 +145,11 @@ export const AdvanceFilter = () => {
                             placeholder="Browse By Rating"
                             onValueChange={(value) => setFilters({ ...filters, rating: value })}
                         />
+
+                        {/* Ads Area */}
+                        <div className="mt-4    ">
+                            <FilterAd ads={filterAds} />
+                        </div>
                     </div>
                     <SheetFooter>
                         <div className="flex gap-2">

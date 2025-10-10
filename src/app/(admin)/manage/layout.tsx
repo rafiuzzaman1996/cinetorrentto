@@ -1,11 +1,11 @@
 import { AppSidebar } from "@/components/admin/management/app-sidebar"
-import ThemeToggle from "@/components/website/shared/ThemeToggle"
 import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import UserInfo from "@/components/admin/common/UserInfo"
+import ThemeToggle from "@/components/admin/common/ThemeToggle"
 
 export default function ManageMentLayout({ children }: { children: React.ReactNode }) {
     return (

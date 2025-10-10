@@ -1,5 +1,6 @@
 'use client';
 import {User} from '@/types/admin/User';
+import { LogOut } from 'lucide-react';
 import {useRouter} from 'next/navigation';
 import React, {useEffect, useState} from 'react';
 
@@ -41,9 +42,12 @@ export default function UserInfo() {
     }
 
     return (
-        <div>
-            <span>{user?.full_name}</span>
-            <button onClick={handleLogout}>Logout</button>
+        <div className="flex items-center space-x-2">
+            <span className="mr-2">{user?.full_name}</span>
+            <button className="flex items-center cursor-pointer" onClick={handleLogout}>
+                {/* Logout icon */}
+                <LogOut size={16} />
+            </button>
         </div>
     );
 }
