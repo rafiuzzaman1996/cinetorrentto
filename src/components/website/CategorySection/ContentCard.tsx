@@ -12,6 +12,7 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import ContentInfo from './ContentInfo'
 import { Loader2 } from 'lucide-react'
+import Link from 'next/link'
 
 export const ContentCard = ({ content }: { content: Content }) => {
   const [open, setOpen] = useState(false);
@@ -39,17 +40,27 @@ export const ContentCard = ({ content }: { content: Content }) => {
   return (
     <>
       <Card
-        onClick={() => handleOpenChange(true)}
+        // onClick={() => handleOpenChange(true)}
         className="bg-gray-800 p-0 gap-2 dark:bg-gray-900 overflow-hidden border-0 duration-500 hover:scale-105">
-        <Image
-          src={content.poster_image_url}
-          alt={content.title}
-          width={500}
-          height={500}  // increased height
-          className="h-75 object-cover object-center transition-transform cursor-pointer"
-        />
+        <Link
+          href={`/content/${content.slug}`}
+          className="cursor-pointer"
+        >
+          <Image
+            src={content.poster_image_url}
+            alt={content.title}
+            width={500}
+            height={500}  // increased height
+            className="h-75 object-cover object-center transition-transform cursor-pointer"
+          />
+        </Link>
         <CardContent className="p-2">
-          <CardTitle className="cursor-pointer text-white text-sm md:text-base truncate" title={content.title}>{content.title}</CardTitle>
+          <Link
+            href={`/content/${content.slug}`}
+            className="cursor-pointer"
+          >
+            <CardTitle className="cursor-pointer text-white text-sm md:text-base truncate" title={content.title}>{content.title}</CardTitle>
+          </Link>
           <CardDescription className="text-gray-400 text-xs truncate">{(content.genres ?? []).map(data => data.title).join(', ')}</CardDescription>
           <div className="flex items-center justify-between mt-1">
             <span className="text-gray-300 text-xs">{new Date(content.release_date).getFullYear()}</span>
