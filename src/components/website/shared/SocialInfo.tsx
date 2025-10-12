@@ -1,6 +1,5 @@
 "use client";
 
-import { Facebook, Twitter, Instagram, Linkedin, Github } from "lucide-react";
 import Link from "next/link";
 
 
@@ -110,7 +109,7 @@ export default function SocialInfo() {
     ];
 
     return (
-        <div className="fixed right-0 bg-gray-200 dark:bg-neutral-900 p-1 rounded-bl-md  rounded-tl-md top-1/2 -translate-y-1/2 flex flex-col items-center space-y-4">
+        <div className="fixed right-0 z-50 bg-gray-100/55 backdrop-blur supports-[backdrop-filter]:bg-gray-900/80 p-1 rounded-bl-md rounded-tl-md top-1/2 -translate-y-1/2 flex flex-col items-center space-y-4">
             {socials.map((social, index) => (
                 <Link
                     key={index}

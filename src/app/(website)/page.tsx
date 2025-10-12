@@ -2,6 +2,7 @@ import HomeAds from "@/components/website/Ad/HomeAd";
 import Categories from "@/components/website/CategorySection/Categories";
 import FeaturedContent from "@/components/website/FeaturedSection/FeaturedContent";
 
+export const dynamic = "force-dynamic";
 export default function Home() {
   return (
     <>

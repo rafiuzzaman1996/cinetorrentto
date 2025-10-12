@@ -63,13 +63,13 @@ const menuItems = [
 ]
 
 
-const Header = ({filterAds, menuAds}: {filterAds: Ads[], menuAds: Ads[]}) => {
+const Header = ({ filterAds, menuAds }: { filterAds: Ads[], menuAds: Ads[] }) => {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="px-2 flex h-16 items-center justify-between">
         <div className="flex">
           {/* Mobile Menu */}
           <div className="lg:hidden">
@@ -109,9 +109,11 @@ const Header = ({filterAds, menuAds}: {filterAds: Ads[], menuAds: Ads[]}) => {
 
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold">
-              <Logo />
-            </Link>
+            <div className="">
+              <Link href="/" className="font-bold">
+                <Logo />
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -173,7 +175,7 @@ const Header = ({filterAds, menuAds}: {filterAds: Ads[], menuAds: Ads[]}) => {
 
           <div className="flex items-center">
             {/* Advance Filter */}
-            <AdvanceFilter filterAds={filterAds}/>
+            <AdvanceFilter filterAds={filterAds} />
             {/* Theme Toggle */}
             <ThemeToggle />
           </div>

@@ -4,6 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --breakpoint-max-xs: 10rem;
+  --breakpoint-xs: 20rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -182,7 +184,8 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent; /* or theme color */
+  background: transparent;
+  /* or theme color */
 }
 
 ::-webkit-scrollbar-thumb {
@@ -204,6 +207,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
