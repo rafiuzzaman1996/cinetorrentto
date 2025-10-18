@@ -14,8 +14,8 @@ import { MultiSelect } from "@/components/ui/multi-select"
 import { Genre } from "@/types/website/Genre"
 import { getGenres } from "@/app/(website)/website-api/GenreApi"
 import { useRouter } from "next/navigation";
-import FilterAd from "../Ad/FilterAd";
 import { Ads } from "@/types/admin/Ads"
+import AdsBlock from "../Ad/Ads"
 
 export const AdvanceFilter = ({filterAds}: {filterAds: Ads[]}) => {
     const router = useRouter();
@@ -148,7 +148,7 @@ export const AdvanceFilter = ({filterAds}: {filterAds: Ads[]}) => {
 
                         {/* Ads Area */}
                         <div className="mt-4    ">
-                            <FilterAd ads={filterAds} />
+                            <AdsBlock ads={filterAds} />
                         </div>
                     </div>
                     <SheetFooter>

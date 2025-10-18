@@ -1,14 +1,14 @@
 'use client'
 import { cn } from '@/lib/utils';
 import React from 'react'
-import { FooterAd } from '../Ad/FooterAd';
 import { Ads } from '@/types/website/Ads';
+import AdsBlock from '../Ad/Ads';
 
 const Footer = ({ads}: {ads: Ads[]}) => {
     return (
         <div className="mt-4 bg-gradient-to-br bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white flex flex-col items-center justify-center p-4 text-center">
             {/* Ad section */}
-            <FooterAd ads={ads} />
+            <AdsBlock ads={ads} />
             <div className="w-full space-y-6">
                 {/* Title */}
                 <h1 className={cn(

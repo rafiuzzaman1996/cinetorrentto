@@ -23,9 +23,9 @@ import ThemeToggle from './ThemeToggle';
 import Logo from './Logo';
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MenuAd } from "../Ad/MenuAd";
 import { AdvanceFilter } from "./AdvanceFilter";
 import { Ads } from "@/types/admin/Ads";
+import AdsBlock from "../Ad/Ads";
 
 const menuItems = [
   {
@@ -102,7 +102,7 @@ const Header = ({ filterAds, menuAds }: { filterAds: Ads[], menuAds: Ads[] }) =>
                 </Accordion>
 
                 {/* Menu Ad */}
-                <MenuAd ads={menuAds} />
+                <AdsBlock ads={menuAds} />
               </SheetContent>
             </Sheet>
           </div>

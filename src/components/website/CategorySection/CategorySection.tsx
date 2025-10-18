@@ -19,7 +19,7 @@ export const CategorySection = ({ category }: { category: Category }) => {
                 >
                     <h2 className="text-xl font-bold text-orange-500 hover:text-orange-600">{category.title}</h2>
                 </Link>
-                <button onClick={() => handleClick(category.slug)} className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 cursor-pointer">
+                <button onClick={() => handleClick(category.slug)} className="bg-red-600 text-white p-2 py-1 rounded-md hover:bg-red-700 cursor-pointer">
                     SEE ALL
                 </button>
             </div>

@@ -10,6 +10,7 @@ export const getFeaturedContent = async () => {
             throw new Error(`Failed to fetch featured content: ${res.status}`);
         }
 
+
         const data = await res.json();
         return data.data || [];
     } catch (error) {
