@@ -4,8 +4,8 @@ import { ThemeProvider } from "@/components/website/shared/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
-  title: "Cinetorrento",
-  description: "Cinetorrento",
+  title: "Cinetorrentto",
+  description: "Cinetorrentto",
 };
 
 export default function RootLayout({

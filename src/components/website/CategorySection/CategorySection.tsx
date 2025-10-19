@@ -23,7 +23,7 @@ export const CategorySection = ({ category }: { category: Category }) => {
                     SEE ALL
                 </button>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 px-4 md:px-8">
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-4 px-4 md:px-8">
                 {category.contents.slice(0, 6).map((content, index) => (
                     <ContentCard key={index} content={content} />
                 ))}

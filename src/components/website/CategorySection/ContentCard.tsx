@@ -41,7 +41,7 @@ export const ContentCard = ({ content }: { content: Content }) => {
     <>
       <Card
         // onClick={() => handleOpenChange(true)}
-        className="bg-gray-800 p-0 gap-2 dark:bg-gray-900 overflow-hidden border-0 duration-500 hover:scale-105">
+        className="bg-gray-800 p-0 gap-2 dark:bg-gray-900 overflow-hidden border-0 duration-500 hover:scale-105 rounded-md">
         <Link
           href={`/content/${content.slug}`}
           className="cursor-pointer"
@@ -51,10 +51,10 @@ export const ContentCard = ({ content }: { content: Content }) => {
             alt={content.title}
             width={500}
             height={500}  // increased height
-            className="h-75 object-cover object-center transition-transform cursor-pointer"
+            className="h-50 md:h-75 object-cover object-center transition-transform cursor-pointer"
           />
         </Link>
-        <CardContent className="p-2">
+        <CardContent className="p-2 pt-0">
           <Link
             href={`/content/${content.slug}`}
             className="cursor-pointer"

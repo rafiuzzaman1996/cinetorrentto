@@ -8,7 +8,10 @@ import {
   GalleryVerticalEnd,
   Globe,
   Group,
+  Images,
   LayoutDashboard,
+  LayoutTemplate,
+  User,
 } from "lucide-react"
 
 import { NavMain } from "@/components/admin/management/nav-main"
@@ -31,7 +34,7 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   team: {
-      name: "CineTorrento",
+      name: "CineTorrentto",
       logo: GalleryVerticalEnd,
       plan: "",
     },
@@ -72,6 +75,11 @@ const data = {
       icon: Group,
     },
     {
+      name: "Gallery",
+      url: "/manage/gallery",
+      icon: Images,
+    },
+    {
       name: "Social Links",
       url: "/manage/social-link",
       icon: Globe,
@@ -80,6 +88,16 @@ const data = {
       name: "Ad Management",
       url: "/manage/ads",
       icon: BookA,
+    },
+    {
+      name: "Sections",
+      url: "/manage/sections",
+      icon: LayoutTemplate,
+    },
+    {
+      name: "Users",
+      url: "/manage/users",
+      icon: User,
     },
   ],
 }

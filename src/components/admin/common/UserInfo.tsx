@@ -1,6 +1,6 @@
 'use client';
 import {User} from '@/types/admin/User';
-import { LogOut } from 'lucide-react';
+import { Loader2, LogOut } from 'lucide-react';
 import {useRouter} from 'next/navigation';
 import React, {useEffect, useState} from 'react';
 
@@ -38,7 +38,7 @@ export default function UserInfo() {
     }, [handleLogout]);
 
     if (!user) {
-        return <span>Loading...</span>; // optional fallback
+        return <span><Loader2 className="animate-spin" /></span>; // optional fallback
     }
 
     return (
