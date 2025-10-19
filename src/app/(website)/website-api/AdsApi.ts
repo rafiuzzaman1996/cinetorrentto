@@ -4,7 +4,6 @@
 export const getAds = async ({page, limit, filters}: {page: number; limit: number; filters?: unknown}) => {
     try {
         const apiUrl = `${process.env.API_URL}/api/ads?page=${page}&limit=${limit}${filters ? `&${filters}` : ''}`
-        console.log('🩸🩸 ~ apiUrl:', apiUrl);
 
         const res = await fetch(apiUrl, {
             method: 'GET',
