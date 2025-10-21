@@ -5,6 +5,7 @@ import { getContents } from '../../admin-api/ContentApi'
 import { AddEditDialog } from './AddEditDialog'
 import { DataTableSkeleton } from '@/components/admin/management/data-table/data-table-skeleton'
 import { FilterSearch } from './FilterSearch'
+import { ImportDialog } from './ImportDialog'
 
 const AdminContentPage = async (props: { searchParams: Promise<{ page?: string; pageSize?: string, search?: string }> }) => {
 const searchParams = await props.searchParams
@@ -48,6 +49,7 @@ const searchParams = await props.searchParams
           columns={SocialLinkColumns}
           // schema={schema}
           filterSearch={<FilterSearch />}
+          importDialog={<ImportDialog />}
           addDialog={<AddEditDialog mode="add" />}
           data={data}
           pageSize={pageSize}

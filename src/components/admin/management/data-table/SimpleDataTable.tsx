@@ -45,6 +45,7 @@ interface DataTableProps<TData, TValue> {
   totalPages: number
   RowsPerPage: Array<number>
   addDialog: React.ReactNode
+  importDialog?: React.ReactNode
   filterSearch: React.ReactNode
 }
 
@@ -58,6 +59,7 @@ export function SimpleDataTable<TData, TValue>({
   totalPages,
   RowsPerPage,
   addDialog,
+  importDialog = <></>,
   filterSearch
 }: DataTableProps<TData, TValue>) {
    const router = useRouter()
@@ -86,6 +88,7 @@ export function SimpleDataTable<TData, TValue>({
         {filterSearch}
       </div>
       <div className="flex items-center justify-end gap-2 mb-2">
+        {importDialog}
         {addDialog}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
