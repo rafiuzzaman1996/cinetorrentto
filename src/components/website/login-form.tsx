@@ -60,7 +60,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       // Save user info to local storage or context if needed
       localStorage.setItem("user", JSON.stringify(userInfo.user));
       toast.success("Login successful!");
-      router.push("/manage/dashboard"); // use router to navigate
+
+
+      router.refresh();
+
+      // Redirect to callback URL or default page
+      const params = new URLSearchParams(window.location.search);
+      const callbackUrl = params.get("callbackUrl") || "/manage";
+      router.push(callbackUrl);
+
     } else {
       toast.error("Invalid credentials. Please try again.");
     }
