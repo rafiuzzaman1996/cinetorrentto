@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
-import { ClipboardCheck, Columns2, Columns3, Columns4, Copy, Grid3x3 } from 'lucide-react'; // Lucide icons
+import { ClipboardCheck, Columns2, Columns3, Columns4, Copy } from 'lucide-react'; // Lucide icons
 import { cn } from '@/lib/utils'; // shadcn utility for className merging
 import { ButtonGroup } from '@/components/ui/button-group';
 
@@ -68,7 +68,7 @@ const Gallery = () => {
       setImages(fetchedImages);
     };
     fetchImages();
-  }, []);
+  });
 
   // Handle file selection
   const handleFileChange = (files: FileList | null) => {
@@ -124,9 +124,6 @@ const Gallery = () => {
     (currentPage - 1) * imagesPerPage,
     currentPage * imagesPerPage
   );
-
-  // Calculate how many images to show based on selected rows and columns
-  const imagesToShow = images.slice(0, columns * 3);
 
   return (
     <div className="p-4">

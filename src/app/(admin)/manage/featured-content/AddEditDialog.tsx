@@ -1,5 +1,5 @@
 "use client"
-import React, { useCallback, useRef } from "react"
+import React from "react"
 
 import { useState, useId } from "react"
 import { Button } from "@/components/ui/button"
@@ -16,12 +16,9 @@ import { FeaturedContentForm, schema } from "./FeaturedContent.schema"
 import { submitFeaturedContents } from "../../admin-api/FeaturedContentApi"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { MultiSelectOption, MultiSelectWithSearch } from "@/components/ui/multi-select-search"
-import { useApiSearch } from "./api-search"
 import { getContents } from "../../admin-api/ContentApi"
 import { Content } from "@/types/admin/Content"
 import AsyncSelect from 'react-select/async';
-import { useTheme } from "next-themes"; // if you use next-themes for dark mode
 
 interface optionType {
     label: string;
@@ -48,7 +45,6 @@ export const AddEditDialog = ({
     data?: FeaturedContentForm
     onSubmit?: (values: FeaturedContentForm) => void
 }) => {
-    const { theme } = useTheme();
     const router = useRouter();
     const formId = useId()
     const [open, setOpen] = useState(false)

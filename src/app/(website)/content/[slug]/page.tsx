@@ -2,7 +2,6 @@ import React from 'react'
 import { Content } from '@/types/website/Content';
 import { getContentBySlug } from '../../website-api/contentApi';
 import ContentInfo from '@/components/website/CategorySection/ContentInfo';
-import Link from 'next/link';
 
 const ContentPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const { slug } = await params;

@@ -73,22 +73,6 @@ export function ImportDialog() {
         e.stopPropagation();
     }
 
-    function handleShowPreview2() {
-        if (!file) return;
-        // Here you would parse the file and set the sheet data accordingly.
-        file.text().then((text) => {
-            const rows = text.split("\n").map((row) =>
-                row.split(",").map((cell) => ({ value: cell.trim() }))
-            );
-
-            console.log('🩸🩸 ~ rows:', rows);
-            setSheetData(rows);
-        });
-
-        // setSheetData([[{ value: "Vanilla" }, { value: "Chocolate", readOnly: true }]]);
-        setShowPreview(true);
-    }
-
     function handleShowPreview() {
         if (file) {
             const reader = new FileReader();

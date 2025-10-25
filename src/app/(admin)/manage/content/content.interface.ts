@@ -1,4 +1,3 @@
-import { Genre } from '@/types/admin/Genre';
 import {z} from 'zod';
 
 // Define a TypeScript enum for content types
