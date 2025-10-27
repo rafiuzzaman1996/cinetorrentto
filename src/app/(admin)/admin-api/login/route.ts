@@ -10,6 +10,7 @@ export async function POST(req: Request) {
   const res = await fetch(`${process.env.API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: "include", // ensure browser accepts any Set-Cookie from the server
     body: JSON.stringify({ username, password }),
   });
 
