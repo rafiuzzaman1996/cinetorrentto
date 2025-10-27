@@ -19,7 +19,6 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Loader } from "lucide-react"
 
@@ -32,9 +31,8 @@ export const schema = z.object({
 export type LoginFormType = z.infer<typeof schema>
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-  const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(false);
-  const submittingRef = useRef(false); // prevent double-submit synchronously
+   const [loading, setLoading] = useState<boolean>(false);
+   const submittingRef = useRef(false); // prevent double-submit synchronously
 
 
   const form = useForm<LoginFormType>({
@@ -70,12 +68,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         const params = new URLSearchParams(window.location.search);
         const callbackUrl = params.get("callbackUrl") || "/manage";
 
-        // await navigation; only mark navigated true if it completes
+        // Force full page navigation so the browser begins unloading immediately.
+        // Keep `loading`/`submittingRef` true and return so the UI stays disabled.
         try {
-          await router.push(callbackUrl);
+          window.location.assign(callbackUrl);
           navigated = true;
+          return;
         } catch {
-          // If push fails for some reason, show error and allow re-enable below
           toast.error("Redirect failed. Please try again.");
         }
 
@@ -97,7 +96,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className, loading && "pointer-events-none")} {...props}>
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
