@@ -71,7 +71,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         // Force full page navigation so the browser begins unloading immediately.
         // Keep `loading`/`submittingRef` true and return so the UI stays disabled.
         try {
-          window.location.assign(callbackUrl);
+          window.location.assign('manage/dashboard');
           navigated = true;
           return;
         } catch {
