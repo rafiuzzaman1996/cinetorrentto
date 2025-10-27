@@ -59,6 +59,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       });
 
       const userInfo = await result.json();
+      console.log('🩸🩸 ~ userInfo:', userInfo);
 
       if (result?.ok) {
         // keep UI disabled during the navigation
@@ -73,6 +74,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         try {
           window.location.assign('manage/dashboard');
           navigated = true;
+          console.log('🩸🩸 ~ navigated:', navigated);
           return;
         } catch {
           toast.error("Redirect failed. Please try again.");
