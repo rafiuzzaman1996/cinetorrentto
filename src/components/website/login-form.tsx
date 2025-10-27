@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -34,6 +34,7 @@ export type LoginFormType = z.infer<typeof schema>
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
+  const submittingRef = useRef(false); // prevent double-submit synchronously
 
 
   const form = useForm<LoginFormType>({
@@ -44,35 +45,54 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   })
 
   async function onSubmit(data: LoginFormType) {
+    // Prevent double submission (handles fast double clicks before state updates)
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setLoading(true);
 
-    // Sign in using NextAuth.js
-    const result = await fetch("/admin-api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: data.username, password: data.password }),
-    });
+    let navigated = false;
 
-    const userInfo = await result.json();
+    try {
+      const result = await fetch("/admin-api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: data.username, password: data.password }),
+      });
 
-    // Handle errors
-    if (result?.ok) {
-      // Save user info to local storage or context if needed
-      localStorage.setItem("user", JSON.stringify(userInfo.user));
-      toast.success("Login successful!");
+      const userInfo = await result.json();
 
+      if (result?.ok) {
+        // keep UI disabled during the navigation
+        localStorage.setItem("user", JSON.stringify(userInfo.user));
+        toast.success("Login successful!");
 
-      router.refresh();
+        const params = new URLSearchParams(window.location.search);
+        const callbackUrl = params.get("callbackUrl") || "/manage";
 
-      // Redirect to callback URL or default page
-      const params = new URLSearchParams(window.location.search);
-      const callbackUrl = params.get("callbackUrl") || "/manage";
-      router.push(callbackUrl);
+        // await navigation; only mark navigated true if it completes
+        try {
+          await router.push(callbackUrl);
+          navigated = true;
+        } catch {
+          // If push fails for some reason, show error and allow re-enable below
+          toast.error("Redirect failed. Please try again.");
+        }
 
-    } else {
-      toast.error("Invalid credentials. Please try again.");
+        // If navigation succeeded, keep UI disabled (component will unmount on successful nav)
+        if (navigated) return;
+        // otherwise fall through to re-enable UI so user can try again
+      } else {
+        toast.error("Invalid credentials. Please try again.");
+      }
+    } catch (err) {
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      // Only re-enable if navigation did not succeed
+      if (!navigated) {
+        submittingRef.current = false;
+        setLoading(false);
+      }
     }
-    setLoading(false);
   }
 
   return (
@@ -84,53 +104,56 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="m@example.com"
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/* disable inputs while loading to prevent clicks */}
+              <fieldset disabled={loading} aria-busy={loading} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="m@example.com"
+                          type="text"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center">
-                      <FormLabel>Password</FormLabel>
-                      <a
-                        href="#"
-                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                      >
-                        Forgot your password?
-                      </a>
-                    </div>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center">
+                        <FormLabel>Password</FormLabel>
+                        <a
+                          href="#"
+                          className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                        >
+                          Forgot your password?
+                        </a>
+                      </div>
+                      <FormControl>
+                        <Input type="password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <Button disabled={loading} type="submit" className="w-full">
-                {loading ?
-                  <>
-                    <Loader className="mr-2 h-4 w-4 animate-spin" />
-                    <span>Loading...</span>
-                  </> : "Login"}
-              </Button>
+                <Button disabled={loading} type="submit" className="w-full">
+                  {loading ?
+                    <>
+                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      <span>Loading...</span>
+                    </> : "Login"}
+                </Button>
+              </fieldset>
 
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}

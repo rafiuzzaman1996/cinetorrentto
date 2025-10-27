@@ -11,7 +11,7 @@ export default function UserInfo() {
     const handleLogout = React.useCallback(async () => {
         localStorage.removeItem('user');
         try {
-            await fetch('/api/logout', {method: 'POST'});
+            await fetch('/admin-api/logout', {method: 'POST'});
         } catch (error) {
             console.error('Logout failed', error);
         }
