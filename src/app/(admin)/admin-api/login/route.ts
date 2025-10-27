@@ -22,11 +22,8 @@ export async function POST(req: Request) {
 
   if (user.access_token) {
     const token = user.access_token;
-    console.log('🩸🩸 ~r token:', token);
 
     const response = NextResponse.json({ success: true, user });
-    console.log('🩸🩸 ~ response:', response);
-    console.log('🩸🩸 ~ process.env.NODE_ENV:', process.env.NODE_ENV);
 
     // Set HttpOnly cookie on response so browser receives it
     response.cookies.set('token', token, {

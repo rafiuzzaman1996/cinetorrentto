@@ -103,7 +103,10 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
             </Card>
 
             <Dialog open={open} onOpenChange={(isOpen) => handleOpenChange(isOpen, item.content.slug)}>
-              <DialogContent className="sm:max-w-4xl w-full h-[85vh] flex flex-col rounded-2xl py-6 px-0">
+              <DialogContent
+                aria-describedby={`dialog-desc-${item.content.slug}`}
+                className="sm:max-w-4xl w-full h-[85vh] flex flex-col rounded-2xl py-6 px-0"
+              >
                 <VisuallyHidden>
                   <DialogTitle>{item.content.title}</DialogTitle>
                 </VisuallyHidden>
@@ -113,7 +116,10 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
                     <Loader2 className="h-12 w-12 animate-spin text-gray-900 dark:text-gray-100" />
                   </div>
                 ) : details ? (
-                  <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500">
+                  <div
+                    id={`dialog-desc-${item.content.slug}`}
+                    className="flex-1 overflow-y-auto px-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500"
+                  >
                     <ContentInfo content={details} />
                   </div>
                 ) : null}

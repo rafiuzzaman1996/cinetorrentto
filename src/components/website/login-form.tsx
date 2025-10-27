@@ -59,7 +59,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       });
 
       const userInfo = await result.json();
-      console.log('🩸🩸 ~ userInfo:', userInfo);
 
       if (result?.ok) {
         // keep UI disabled during the navigation
@@ -67,14 +66,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         toast.success("Login successful!");
 
         const params = new URLSearchParams(window.location.search);
-        const callbackUrl = params.get("callbackUrl") || "/manage";
+        const callbackUrl = params.get("callbackUrl") || "'manage/dashboard'";
 
         // Force full page navigation so the browser begins unloading immediately.
         // Keep `loading`/`submittingRef` true and return so the UI stays disabled.
         try {
-          window.location.assign('manage/dashboard');
+          window.location.assign(callbackUrl);
           navigated = true;
-          console.log('🩸🩸 ~ navigated:', navigated);
           return;
         } catch {
           toast.error("Redirect failed. Please try again.");
