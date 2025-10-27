@@ -2,6 +2,7 @@ import { LoginForm } from "@/components/website/login-form"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
+export const dynamic = "force-dynamic";
 export default function LoginPage() {
   return (
     <>
