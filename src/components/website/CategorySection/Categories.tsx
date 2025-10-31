@@ -7,9 +7,13 @@ const Categories = async () => {
   const categories = await getCategoryWiseContent()
   return (
     <>
-      {categories.map((category: Category, i: number) => (
+      {categories.length > 0 ? (categories.map((category: Category, i: number) => (
         <CategorySection key={i} category={category} />
-      ))}
+      ))) : (
+        <div className="flex items-center justify-center h-48">
+          <p className="text-gray-500">No Movie found</p>
+        </div>
+      )}
     </>
   )
 }

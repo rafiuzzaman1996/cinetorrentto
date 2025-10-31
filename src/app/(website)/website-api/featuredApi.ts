@@ -7,7 +7,7 @@ export const getFeaturedContent = async () => {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch featured content: ${res.status}`);
+            throw (`Failed to fetch featured content: ${res.status}`);
         }
 
 

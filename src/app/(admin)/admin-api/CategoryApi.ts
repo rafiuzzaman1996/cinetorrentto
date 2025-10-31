@@ -33,7 +33,7 @@ export const getCategories = async (searchParams: {page: number; limit: number; 
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch categories: ${res.status}`);
+            throw (`Failed to fetch categories: ${res.status}`);
         }
 
         const data = await res.json();
@@ -56,7 +56,7 @@ export const getCategory = async (id: number) => {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch category: ${res.status}`);
+            throw (`Failed to fetch category: ${res.status}`);
         }
 
         const data = await res.json();
@@ -84,7 +84,7 @@ export const getAllCategories = async () => {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch categories: ${res.status}`);
+            throw (`Failed to fetch categories: ${res.status}`);
         }
 
         const data = await res.json();
@@ -111,12 +111,12 @@ export const submitCategory = async (data: CategoryForm, mode: 'add' | 'edit' | 
                 method = 'POST';
                 break;
             case 'edit':
-                if (!data.id) throw new Error('ID is required for edit');
+                if (!data.id) throw ('ID is required for edit');
                 method = 'PUT';
                 url += `/${data.id}`;
                 break;
             case 'delete':
-                if (!data.id) throw new Error('ID is required for delete');
+                if (!data.id) throw ('ID is required for delete');
                 method = 'DELETE';
                 url += `/${data.id}`;
                 break;

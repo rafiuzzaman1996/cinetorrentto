@@ -31,7 +31,7 @@ export const getAds = async (searchParams: {page: number; limit: number; filter?
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch ads: ${res.status}`);
+            throw (`Failed to fetch ads: ${res.status}`);
         }
 
         const data = await res.json();
@@ -55,7 +55,7 @@ export const getAd = async (id: number) => {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch Ad: ${res.status}`);
+            throw (`Failed to fetch Ad: ${res.status}`);
         }
 
         const data = await res.json();
@@ -83,7 +83,7 @@ export const getAllAds = async () => {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch Ads: ${res.status}`);
+            throw (`Failed to fetch Ads: ${res.status}`);
         }
 
         const data = await res.json();
@@ -110,12 +110,12 @@ export const submitAds = async (data: AdsForm, mode: 'add' | 'edit' | 'view' | '
                 method = 'POST';
                 break;
             case 'edit':
-                if (!data.id) throw new Error('ID is required for edit');
+                if (!data.id) throw ('ID is required for edit');
                 method = 'PUT';
                 url += `/${data.id}`;
                 break;
             case 'delete':
-                if (!data.id) throw new Error('ID is required for delete');
+                if (!data.id) throw ('ID is required for delete');
                 method = 'DELETE';
                 url += `/${data.id}`;
                 break;

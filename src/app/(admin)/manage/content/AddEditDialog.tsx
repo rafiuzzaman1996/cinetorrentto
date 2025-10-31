@@ -192,7 +192,7 @@ const fields: FieldConfig<typeof schema>[] = [
 async function getContentInfo(id: number): Promise<Content | null> {
     try {
         const content = await getContent(id);
-        if (!content) throw new Error("Failed to fetch content");
+        if (!content) throw ("Failed to fetch content");
         return content;
     } catch (error) {
         console.error("Error fetching content info:", error);
@@ -320,7 +320,7 @@ export const AddEditDialog = ({
     async function handleSubmitForm(values: ContentSchema) {
         try {
             const result = await submitContent(values, mode)
-            if (!result) throw new Error("Submission failed")
+            if (!result) throw ("Submission failed")
             toast.success(`Content ${mode === 'add' ? 'Added' : 'Updated'} successfully`)
             setOpen(false)
             onSubmit?.(values)

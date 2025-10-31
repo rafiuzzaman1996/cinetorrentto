@@ -31,7 +31,7 @@ export const getGenres = async (searchParams: {page: number; limit: number; filt
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch genres: ${res.status}`);
+            throw (`Failed to fetch genres: ${res.status}`);
         }
 
         const data = await res.json();
@@ -55,7 +55,7 @@ export const getGenre = async (id: number) => {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch genre: ${res.status}`);
+            throw (`Failed to fetch genre: ${res.status}`);
         }
 
         const data = await res.json();
@@ -83,7 +83,7 @@ export const getAllGenres = async () => {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch genres: ${res.status}`);
+            throw (`Failed to fetch genres: ${res.status}`);
         }
 
         const data = await res.json();
@@ -110,12 +110,12 @@ export const submitGenre = async (data: GenreForm, mode: 'add' | 'edit' | 'view'
                 method = 'POST';
                 break;
             case 'edit':
-                if (!data.id) throw new Error('ID is required for edit');
+                if (!data.id) throw ('ID is required for edit');
                 method = 'PUT';
                 url += `/${data.id}`;
                 break;
             case 'delete':
-                if (!data.id) throw new Error('ID is required for delete');
+                if (!data.id) throw ('ID is required for delete');
                 method = 'DELETE';
                 url += `/${data.id}`;
                 break;

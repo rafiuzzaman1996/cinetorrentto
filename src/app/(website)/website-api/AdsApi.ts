@@ -14,7 +14,7 @@ export const getAds = async ({page, limit, filters}: {page: number; limit: numbe
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch Ads: ${res.status}`);
+            throw (`Failed to fetch Ads: ${res.status}`);
         }
 
         const data = await res.json();

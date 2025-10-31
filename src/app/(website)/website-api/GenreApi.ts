@@ -10,7 +10,7 @@ export const getGenres = async () => {
 
 
       if (!res.ok) {
-        throw new Error(`Failed to fetch Genre: ${res.status}`);
+        throw (`Failed to fetch Genre: ${res.status}`);
       }
 
       const data = await res.json();

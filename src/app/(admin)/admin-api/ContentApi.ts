@@ -31,7 +31,7 @@ export const getContents = async (searchParams: {page: number; limit: number; fi
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch contents: ${res.status}`);
+            throw (`Failed to fetch contents: ${res.status}`);
         }
 
         const data = await res.json();
@@ -54,7 +54,7 @@ export const getContent = async (id: number) => {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch content: ${res.status}`);
+            throw (`Failed to fetch content: ${res.status}`);
         }
 
         const data = await res.json();
@@ -79,12 +79,12 @@ export const submitContent = async (data: ContentSchema, mode: 'add' | 'edit' | 
                 method = 'POST';
                 break;
             case 'edit':
-                if (!data.id) throw new Error('ID is required for edit');
+                if (!data.id) throw ('ID is required for edit');
                 method = 'PUT';
                 url += `/${data.id}`;
                 break;
             case 'delete':
-                if (!data.id) throw new Error('ID is required for delete');
+                if (!data.id) throw ('ID is required for delete');
                 method = 'DELETE';
                 url += `/${data.id}`;
                 break;
@@ -104,7 +104,7 @@ export const submitContent = async (data: ContentSchema, mode: 'add' | 'edit' | 
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to ${mode} content: ${res.status}`);
+            throw (`Failed to ${mode} content: ${res.status}`);
         }
 
         // GET may return JSON or empty
@@ -114,3 +114,34 @@ export const submitContent = async (data: ContentSchema, mode: 'add' | 'edit' | 
         return error;
     }
 };
+
+export const importContents = async (file: File) => {
+    try {
+        const apiUrl = process.env.API_URL;
+        // get accessToken from cookies
+        const cookieStore = await cookies();
+        const token = cookieStore.get('token')?.value;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch(`${apiUrl}/content/bulk`, {
+            method: 'POST',
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : '',
+            },
+            body: formData,
+        });
+
+        console.log('🩸🩸 ~ res:', res);
+        if (!res.ok) {
+            throw (`Failed to import contents. ${await res.text()}`);
+        }
+
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

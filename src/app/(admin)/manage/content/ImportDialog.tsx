@@ -13,22 +13,21 @@ import { Button } from "@/components/ui/button";
 import Spreadsheet from "react-spreadsheet";
 import * as XLSX from "xlsx";
 import { useTheme } from "next-themes";
+import { importContents } from "../../admin-api/ContentApi";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface SheetData {
     value: string; readOnly?: boolean
 }
 export function ImportDialog() {
+    const router = useRouter();
     const { theme } = useTheme();
     const [open, onOpenChange] = React.useState(false);
     const [file, setFile] = React.useState<File | null>(null);
     const [sheetData, setSheetData] = React.useState<SheetData[][] | null>(null);
     const [showPreview, setShowPreview] = React.useState(false);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
-
-    function onImport(f: File) {
-        // Implement the import logic here
-        console.log("Importing file:", f);
-    }
 
     function isAccepted(f: File) {
         const allowedTypes = [
@@ -112,12 +111,31 @@ export function ImportDialog() {
         setShowPreview(false);
     }
 
-    function handleImport() {
-        if (file) onImport(file);
-        setFile(null);
-        setSheetData(null);
-        setShowPreview(false);
-        onOpenChange(false);
+    async function handleImport() {
+        if (file) {
+            try {
+
+                const result = await importContents(file);
+                console.log('🩸🩸 ~ result:', result);
+
+                if (!result) {
+                    toast.error("Import failed");
+                    return;
+                }
+                router.refresh();
+                toast.success("Import initiated successfully");
+                setFile(null);
+                setSheetData(null);
+                setShowPreview(false);
+                onOpenChange(false);
+            } catch (error) {
+                toast.error(String(error));
+            }
+        } else {
+            toast.error("No file selected");
+            console.error("No file selected");
+        }
+
     }
 
     function handleClose() {

@@ -9,7 +9,7 @@ export const getCategoryWiseContent = async () => {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch category: ${res.status}`);
+            throw (`Failed to fetch category: ${res.status}`);
         }
 
         const data = await res.json();
@@ -25,7 +25,7 @@ export const getContentBySlug = async (slug: string) => {
         const res = await fetch(`${apiUrl}/api/contents/${slug}`, {});
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch Content: ${res.status}`);
+            throw (`Failed to fetch Content: ${res.status}`);
         }
 
         const data = await res.json();
@@ -47,7 +47,7 @@ export const getContentsBySearch = async (q: string, page: number, genre?: strin
         const res = await fetch(`${apiUrl}/api/contents?search=${q}&page=${page}${filterParams}`, {});
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch Content: ${res.status}`);
+            throw (`Failed to fetch Content: ${res.status}`);
         }
 
         const data = await res.json();

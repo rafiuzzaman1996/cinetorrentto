@@ -10,7 +10,7 @@ export const getContentsByCategory = async (searchParams: { slug: string | strin
 
 
       if (!res.ok) {
-        throw new Error(`Failed to fetch category: ${res.status}`);
+        throw (`Failed to fetch category: ${res.status}`);
       }
 
       const data = await res.json();

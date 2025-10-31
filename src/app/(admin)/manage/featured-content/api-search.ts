@@ -29,7 +29,7 @@ export function useApiSearch({
       try {
         const response = await fetch(`${apiUrl}?q=${encodeURIComponent(query)}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch");
+          throw ("Failed to fetch");
         }
         const data = await response.json();
         setOptions(data.items || data);

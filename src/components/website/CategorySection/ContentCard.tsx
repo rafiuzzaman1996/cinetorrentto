@@ -13,6 +13,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import ContentInfo from './ContentInfo'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import ImageWithFallback from '../shared/ImageWithFallback'
 
 export const ContentCard = ({ content }: { content: Content }) => {
   const [open, setOpen] = useState(false);
@@ -46,11 +47,19 @@ export const ContentCard = ({ content }: { content: Content }) => {
           href={`/content/${content.slug}`}
           className="cursor-pointer"
         >
-          <Image
-            src={content.poster_image_url}
+          {/* <Image
+            src={process.env.NEXT_PUBLIC_IMG_URL + content.poster_image_url}
             alt={content.title}
             width={500}
             height={500}  // increased height
+            className="h-50 md:h-75 object-cover object-center transition-transform cursor-pointer"
+            /> */}
+          <ImageWithFallback
+            src={process.env.NEXT_PUBLIC_IMG_URL + content.poster_image_url}
+            fallbackSrc="/cinetorrentto-placeholder.webp"
+            width={500}
+            height={500}
+            alt={content.title}
             className="h-50 md:h-75 object-cover object-center transition-transform cursor-pointer"
           />
         </Link>

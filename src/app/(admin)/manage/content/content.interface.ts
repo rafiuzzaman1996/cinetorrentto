@@ -29,7 +29,7 @@ export const schema = z.object({
 
     release_date: z.iso.date().nullable().optional(),
 
-    poster_image_url: z.url().nullable().optional(),
+    poster_image_url: z.string().nullable().optional(),
     trailer_url: z.url().nullable().optional(),
     backdrop_image_url: z.url().nullable().optional(),
     stream_url: z.url().nullable().optional(),

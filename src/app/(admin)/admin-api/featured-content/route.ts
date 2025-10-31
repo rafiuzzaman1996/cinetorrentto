@@ -6,7 +6,7 @@ export async function GET(req: Request) {
 
     //   check  username and password
     if (!username || !password) {
-        throw new Error('Missing username or password');
+        throw ('Missing username or password');
     }
 
     const res = await fetch(process.env.API_URL + '/auth/login', {
@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     });
 
     if (!res.ok) {
-        throw new Error('Login failed');
+        throw ('Login failed');
     }
     const user = await res.json();
 

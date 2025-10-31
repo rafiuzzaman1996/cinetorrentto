@@ -37,7 +37,7 @@ export const getSocialLinks = async (searchParams: {page: number; limit: number;
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch social-link: ${res.status}`);
+            throw (`Failed to fetch social-link: ${res.status}`);
         }
 
         const data = await res.json();
@@ -64,12 +64,12 @@ export const submitSocialLink = async (data: SocialLinkInterface, mode: 'add' | 
                 method = 'POST';
                 break;
             case 'edit':
-                if (!data.id) throw new Error('ID is required for edit');
+                if (!data.id) throw ('ID is required for edit');
                 method = 'PUT';
                 url += `/${data.id}`;
                 break;
             case 'delete':
-                if (!data.id) throw new Error('ID is required for delete');
+                if (!data.id) throw ('ID is required for delete');
                 method = 'DELETE';
                 url += `/${data.id}`;
                 break;
@@ -89,7 +89,7 @@ export const submitSocialLink = async (data: SocialLinkInterface, mode: 'add' | 
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to ${mode} social-link: ${res.status}`);
+            throw (`Failed to ${mode} social-link: ${res.status}`);
         }
 
         // GET may return JSON or empty

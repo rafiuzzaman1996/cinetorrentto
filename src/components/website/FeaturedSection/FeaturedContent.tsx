@@ -14,7 +14,9 @@ const FeaturedContent = async () => {
 
   return (
     <div className="w-full px-4 md:px-8 my-4">
-      <FeaturedCarousel featuredContent={featuredContent} />
+      {featuredContent.length > 0 ? (
+        <FeaturedCarousel featuredContent={featuredContent} />
+      ) : null}
     </div>
   )
 }
