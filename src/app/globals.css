@@ -212,3 +212,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+.text_small {
+  font-size: 5px !important;
+}
+
+/* for safari  .text_small*/
+@media not all and (min-resolution:.001dpcm) { 
+  @supports (-webkit-appearance:none) {
+    .text_small {
+      font-size: 9px !important;
+    }
+  }
+}

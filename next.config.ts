@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
         remotePatterns: [new URL('https://lh3.googleusercontent.com/**'),
             new URL('https://image.tmdb.org/**'),
             new URL('http://localhost:5000/**'),
+            new URL('http://192.168.0.106:5000/**'),
             new URL('https://94.25.201.166:5000/**'),
             new URL('https://unsplash.com/**'),
             new URL('https://placehold.co/**')],

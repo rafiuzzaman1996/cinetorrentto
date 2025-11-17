@@ -19,7 +19,7 @@ export const StreamDialog = ({ streamUrl }: { streamUrl: string }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <button className="flex bg-green-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-700 cursor-pointer"
+                <button className="flex text-xs md:text-sm bg-green-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-700 cursor-pointer items-center"
                 >
                     <CirclePlay className="h-5 w-5 me-2" />
                     Stream Now

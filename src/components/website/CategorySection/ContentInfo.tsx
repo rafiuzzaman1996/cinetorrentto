@@ -1,21 +1,50 @@
 'use client';
-import React from 'react';
-import Image from 'next/image';
+import React, { useState } from 'react';
+// import Image from 'next/image';
 import { Download } from 'lucide-react';
 import { Content } from '@/types/website/Content';
 import { TrailerDialog } from './TrailerDialog';
 import { StreamDialog } from './StreamDialog';
+import ImageWithFallback from '../shared/ImageWithFallback';
 
 export default function ContentInfo({ content }: { content: Content }) {
+    // State to track which button indices have been clicked
+  const [clickedIndexes, setClickedIndexes] = useState<{ [key: number]: boolean }>({});
 
+  const adUrl = "https://google.com"; // REPLACE THIS with your actual Ad Link
+
+  const handleDownloadClick = (index: number, downloadUrl: string) => {
+    // Check if this specific button index has been clicked before
+    if (clickedIndexes[index]) {
+      // 2nd click (or later): Open the actual download link
+      window.open(downloadUrl, '_blank');
+    } else {
+      // 1st click: Open Ad and mark this index as clicked
+      window.open(adUrl, '_blank');
+
+      setClickedIndexes((prev) => ({
+        ...prev,
+        [index]: true // Mark this specific index as true
+      }));
+    }
+  };
     return (
         <>
             {/* Row 1: 2 columns */}
-            <div className="max-w-4xl grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="max-w-4xl grid grid-cols-2 gap-4 md:grid-cols-3">
                 <div className="rounded-lg p-2">
+                    {/* Image */}
                     <div className="details-poster-wrapper rounded-lg shadow-lg overflow-hidden">
-                        <Image src={content.poster_image_url} alt={content.title} width={400} height={500} className="object-cover object-center transition-transform" />
+                        <ImageWithFallback
+                            src={process.env.NEXT_PUBLIC_IMG_URL + content.poster_image_url}
+                            fallbackSrc="/cinetorrentto-placeholder.webp"
+                            width={400}
+                            height={500}
+                            alt={content.title}
+                            className="w-50 h-60 md:w-[300px] md:h-[400px] object-cover object-center transition-transform"
+                        />
                     </div>
+                    {/* Director, Running Time, Budget, Cast */}
                     <div className="hidden md:block mt-4 space-y-2 text-sm movie-details-info">
                         <p>
                             <strong className="text-orange-500">Director:</strong> {content.director || 'N/A'}
@@ -31,8 +60,36 @@ export default function ContentInfo({ content }: { content: Content }) {
                         </p>
                     </div>
                 </div>
+                {/* Title, Genres, Rating, Release Date for Mobile */}
+                <div className="block md:hidden">
+
+                    <div className="flex justify-between items-start">
+                        <h2 className="text-xl text-orange-500 font-bold mb-2">
+                            {content.title} <span className="text-lg md:text-2xl font-normal text-gray-400">({new Date(content.release_date).getFullYear()})</span>
+                        </h2>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mb-1">
+                        {(content?.genres ?? []).map((genre, i) => (
+                            <span key={i} className="bg-neutral-700 text-gray-300 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
+                                {genre.title}
+                            </span>
+                        ))}
+                    </div>
+                    <div className="grid items-center gap-1 mb-1 text-gray-400">
+                        <span>
+                            Rating:{' '}
+                            <span className="font-bold text-lg text-orange-500">★ {content?.rating?.toFixed(1)}</span>
+                        </span>
+                        <p><span className='text-orange-500'>
+                            Release:{' '}
+                        </span>
+                            {new Date(content.release_date).toLocaleDateString()}</p>
+                    </div>
+                </div>
                 <div className="col-span-2 rounded-lg p-4">
-                    <div className="md:w-3/3">
+                    <div className="hidden md:block">
+
+                        {/* Title, Genres, Rating, Release Date for Desktop */}
                         <div className="flex justify-between items-start">
                             <h2 className="text-3xl text-orange-500 font-bold mb-2">
                                 {content.title} <span className="text-2xl font-normal text-gray-400">({new Date(content.release_date).getFullYear()})</span>
@@ -47,27 +104,31 @@ export default function ContentInfo({ content }: { content: Content }) {
                         </div>
                         <div className="flex items-center gap-4 mb-4 text-gray-400">
                             <span>
-                                Rating: <span className="font-bold text-lg text-orange-500">★ {content?.rating?.toFixed(1)}</span> / 10
+                                Rating:{' '}<span className="font-bold text-lg text-orange-500">★ {content?.rating?.toFixed(1)}</span>
                             </span>
-                            <p>Release: {new Date(content.release_date).toLocaleDateString()}</p>
+                            <p>Release:{' '}{new Date(content.release_date).toLocaleDateString()}</p>
                         </div>
+                    </div>
+                    <div className="md:w-3/3">
                         <h3 className="text-lg text-orange-500 font-semibold mb-2">Overview</h3>
                         <p className="leading-relaxed text-sm mb-2">{content.description}</p>
-                        <div className="block md:hidden mt-4 space-y-2 text-sm movie-details-info">
+                        {/* Director, Running Time, Budget, Cast For Mobile */}
+                        <div className="block md:hidden mt-4 mb-2 space-y-2 text-sm movie-details-info">
                             <p>
-                                <strong>Director:</strong> {content.director || 'N/A'}
+                                <strong className='text-orange-500'>Director:</strong> {content.director || 'N/A'}
                             </p>
                             <p>
-                                <strong>Running Time:</strong> {content.running_time || 'N/A'}
+                                <strong className='text-orange-500'>Running Time:</strong> {content.running_time || 'N/A'}
                             </p>
                             <p>
-                                <strong>Budget:</strong> {content.budget || 'N/A'}
+                                <strong className='text-orange-500'>Budget:</strong> {content.budget || 'N/A'}
                             </p>
                             <p>
-                                <strong>Cast:</strong> {content.cast || 'N/A'}
+                                <strong className='text-orange-500'>Cast:</strong> {content.cast || 'N/A'}
                             </p>
                         </div>
 
+                        {/* Stream and Trailer */}
                         <div className="flex gap-2">
                             {content.stream_url && (
                                 <StreamDialog streamUrl={content.stream_url} />
@@ -76,7 +137,7 @@ export default function ContentInfo({ content }: { content: Content }) {
                                 <TrailerDialog trailerUrl={content.trailer_url} />
                             )}
                         </div>
-
+                        {/* Download Links */}
                         <div className="mt-6">
                             <h3 className="text-lg font-semibold mb-2 text-orange-500">Download Options</h3>
                             <div className="grid grid-cols-2 gap-2">
@@ -84,16 +145,20 @@ export default function ContentInfo({ content }: { content: Content }) {
                                     <button
                                         key={i}
                                         // open download links in new tab
-                                        onClick={() => window.open(link.url, '_blank')}
-                                        className="flex items-center bg-gray-500 text-white font-semibold px-3 py-2 rounded-lg hover:bg-orange-500 text-sm truncate cursor-pointer"
+                                        onClick={() => handleDownloadClick(i, link.url)}
+                                        // onClick={() => window.open(link.url, '_blank')}
+                                        className="flex items-center bg-gray-500 text-white font-semibold px-3 py-2 rounded-lg hover:bg-orange-500 text-sm cursor-pointer"
                                     >
                                         <Download className="h-3 w-3 me-2" />
-                                        {link.name} {link.size ? `(${link.size})` : ''}
+                                        <span className='text-xs md:text-sm whitespace-normal break-words leading-tight flex-1 min-w-0'>
+                                            {link.name} {link.size ? `(${link.size})` : ''}
+                                        </span>
                                     </button>
                                 ))}
                             </div>
                         </div>
 
+                        {/* Share Buttons */}
                         <div className="mt-6">
                             <h3 className="text-lg font-semibold mb-3 details-label">Share this Movie</h3>
                             <div className="flex gap-2" id="mobile-share-buttons">

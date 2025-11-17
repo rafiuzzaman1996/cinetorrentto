@@ -40,7 +40,7 @@ export const TrailerDialog = ({ trailerUrl }: { trailerUrl: string }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <button className="flex bg-gray-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-gray-700 cursor-pointer">
+                <button className="flex text-xs md:text-sm items-center bg-gray-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-gray-700 cursor-pointer">
                     <CirclePlay className="h-5 w-5 me-2" />
                     Watch Trailer
                 </button>

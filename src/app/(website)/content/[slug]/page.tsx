@@ -2,11 +2,20 @@ import React from 'react'
 import { Content } from '@/types/website/Content';
 import { getContentBySlug } from '../../website-api/contentApi';
 import ContentInfo from '@/components/website/CategorySection/ContentInfo';
+import { getAds } from '../../website-api/AdsApi';
+import { Ads } from '@/types/website/Ads';
+export const dynamic = "force-dynamic";
 
 const ContentPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const { slug } = await params;
 
     const content: Content = await getContentBySlug(slug)
+    // const getAdsData = await getAds({
+    //     page: 1,
+    //     limit: 100,
+    //     filters: 'filter.placement=$eq:download-ads',
+    // });
+    // const downloadAds: Ads[] = getAdsData?.data || [];
 
     return (
         <div className="my-8">
