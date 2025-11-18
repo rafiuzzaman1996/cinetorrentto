@@ -104,14 +104,14 @@ export const submitContent = async (data: ContentSchema, mode: 'add' | 'edit' | 
         });
 
         if (!res.ok) {
-            throw (`Failed to ${mode} content: ${res.status}`);
+            throw (`Failed to ${mode} content: ${await res.text()}`);
         }
 
         // GET may return JSON or empty
         return method === 'DELETE' ? null : await res.json();
     } catch (error) {
         console.error(`Failed to ${mode} content:`, error);
-        return error;
+        throw error;
     }
 };
 
@@ -133,7 +133,6 @@ export const importContents = async (file: File) => {
             body: formData,
         });
 
-        console.log('🩸🩸 ~ res:', res);
         if (!res.ok) {
             throw (`Failed to import contents. ${await res.text()}`);
         }

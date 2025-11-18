@@ -13,6 +13,12 @@ export enum ContentType {
 // Use z.enum for schema validation
 export const contentTypeSchema = z.enum([ContentType.MOVIE, ContentType.TV_SHOW, ContentType.DOCUMENTARY, ContentType.ANIME, ContentType.MUSIC_VIDEO, ContentType.OTHER]);
 
+const customDateSchema = z.string().regex(/^\d{4}\/\d{2}\/\d{2}$/, "Invalid date format, expected YYYY/MM/DD")
+  .transform((str) => {
+    // Optional: You can further validate if the date is a real date here if needed
+    // For example, using a library like date-fns or a custom function
+    return str; // Returns the string in the desired YYYY/MM/DD format
+  });
 // Common validators
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

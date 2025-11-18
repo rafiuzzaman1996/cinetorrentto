@@ -3,6 +3,7 @@ import { getContentsByCategory } from '@/app/(website)/website-api/categoryApi'
 import { ContentCard } from '@/components/website/CategorySection/ContentCard';
 import { Content } from '@/types/website/Content';
 import Pagination from '@/components/website/shared/Pagination';
+export const dynamic = "force-dynamic";
 
 const CategoryPage = async ({ params, searchParams }: { params: Promise<{ slug: string }>, searchParams: Promise<{ page?: string }> }) => {
     const { slug } = await params   // ✅ await params

@@ -319,6 +319,7 @@ export const AddEditDialog = ({
 
     async function handleSubmitForm(values: ContentSchema) {
         try {
+            values.release_date = values.release_date ? new Date(values.release_date).toLocaleDateString('en-CA') : null;
             const result = await submitContent(values, mode)
             if (!result) throw ("Submission failed")
             toast.success(`Content ${mode === 'add' ? 'Added' : 'Updated'} successfully`)
@@ -327,7 +328,7 @@ export const AddEditDialog = ({
             router.refresh()
 
         } catch (err) {
-            toast.error("Submission failed ❌")
+            toast.error("Submission failed ❌" + err)
             console.error("Submission failed:", err)
         }
     }

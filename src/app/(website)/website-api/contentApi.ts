@@ -29,10 +29,10 @@ export const getContentBySlug = async (slug: string) => {
         }
 
         const data = await res.json();
-        return data || [];
+        return data || null;
     } catch (error) {
         console.error('Failed to fetch Content:', error);
-        return [];
+        return null;
     }
 };
 export const getContentsBySearch = async (q: string, page: number, genre?: string, year?: string, alphabet?: string, rating?: string) => {

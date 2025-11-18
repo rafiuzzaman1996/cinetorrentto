@@ -25,7 +25,7 @@ export default function ImageWithFallback({
         src={imgSrc}
         alt={alt}
         onError={() => setImgSrc(fallbackSrc)}
-        onLoadingComplete={() => setIsLoading(false)}
+        onLoad={() => setIsLoading(false)}
         className={clsx(
           className,
           'transition-all duration-700 ease-in-out',
