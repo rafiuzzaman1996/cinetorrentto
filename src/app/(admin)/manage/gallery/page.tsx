@@ -15,7 +15,6 @@ const searchParams = await props.searchParams
     // : undefined
     search: searchParams?.search ?? ''
   });
-  console.log('🩸🩸 ~ getSocialLinksData:', getSocialLinksData);
   const data = getSocialLinksData?.data ?? [];
   const total = getSocialLinksData?.meta?.totalItems ?? 0;
   const totalPages = getSocialLinksData?.meta?.totalPages ?? 1;

@@ -116,7 +116,6 @@ export function ImportDialog() {
             try {
 
                 const result = await importContents(file);
-                console.log('🩸🩸 ~ result:', result);
 
                 if (!result) {
                     toast.error("Import failed");
