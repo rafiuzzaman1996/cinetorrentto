@@ -12,7 +12,7 @@ export default function ContentInfo({ content }: { content: Content }) {
     // State to track which button indices have been clicked
     const [clickedIndexes, setClickedIndexes] = useState<{ [key: number]: boolean }>({});
     const { ads } = useAdsStore((state) => state);
-    const adUrl = ads.find((ad: Ads) => ad.placement === 'footer')?.url || process.env.NEXT_PUBLIC_DEFAULT_AD_URL || '#';
+    const adUrl = ads.find((ad: Ads) => ad.placement === 'download-btn')?.url || process.env.NEXT_PUBLIC_DEFAULT_AD_URL || '#';
     //   "https://google.com"; // REPLACE THIS with your actual Ad Link
 
     const handleDownloadClick = (index: number, downloadUrl: string) => {
