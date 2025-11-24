@@ -10,13 +10,10 @@ const searchParams = await props.searchParams
   const getSocialLinksData = await getAttachments({
     page: pageIndex,
     limit: pageSize,
-    // search: searchParams?.search
-    // ? { title: searchParams.search, url: searchParams.search, icon_url: searchParams.search }  // only send filter if search is present
-    // : undefined
     search: searchParams?.search ?? ''
   });
   const data = getSocialLinksData?.data ?? [];
-  const total = getSocialLinksData?.meta?.totalItems ?? 0;
+  // const total = getSocialLinksData?.meta?.totalItems ?? 0;
   const totalPages = getSocialLinksData?.meta?.totalPages ?? 1;
   const currentPage = getSocialLinksData?.meta?.currentPage ?? 1;
   return (
@@ -27,7 +24,7 @@ const searchParams = await props.searchParams
         }
       >
         <div>
-          <Images data={data} total={total} totalPages={totalPages} currentPage={currentPage} />
+          <Images data={data} totalPages={totalPages} pageSize={pageSize} currentPage={currentPage} />
         </div>
       </React.Suspense>
     </div>

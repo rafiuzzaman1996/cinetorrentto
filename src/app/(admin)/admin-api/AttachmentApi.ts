@@ -61,13 +61,14 @@ export const uploadAttachments = async (files: File[]) => {
         });
 
         if (!res.ok) {
-            throw (`Failed to upload attachments: ${res.status}`);
+            throw (`Failed to import contents. ${await res.text()}`);
+
         }
 
         const data = await res.json();
         return data || [];
     } catch (error) {
         console.error('Failed to upload attachments:', error);
-        return [];
+        throw error;
     }
 };

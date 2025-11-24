@@ -5,26 +5,30 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Image from 'next/image';
 import React, { useRef, useState } from 'react';
-import { ClipboardCheck, Columns2, Columns3, Columns4, Copy } from 'lucide-react'; // Lucide icons
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ClipboardCheck, Columns2, Columns3, Columns4, Copy } from 'lucide-react'; // Lucide icons
 import { cn } from '@/lib/utils'; // shadcn utility for className merging
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Attachment } from '@/types/admin/Attachments';
 import { uploadAttachments } from '../../admin-api/AttachmentApi';
+import { useRouter } from "next/navigation"
+import { toast } from "sonner";
 
-const MAX_FILE_SIZE_MB = 2; // Maximum file size in MB
 interface ImagesProps {
-    data: Attachment[];
-    total: number;
-    totalPages: number;
-    currentPage: number;
+  data: Attachment[];
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
 }
 
 const Images = ({
-    data,
-    total,
-    totalPages,
-    currentPage,
+  data,
+  totalPages,
+  currentPage,
+  pageSize
 }: ImagesProps) => {
+
+  const router = useRouter()
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -36,51 +40,40 @@ const Images = ({
     src: '',
   });
 
-  const handleCopy = (src: string, index: number) => {
-    navigator.clipboard.writeText(src);
+const handleCopy = async (src: string, index: number) => {
+  try {
+    // Modern clipboard API (works on Chrome, Edge, Firefox, Android)
+    if (navigator?.clipboard?.writeText) {
+      await navigator.clipboard.writeText(src);
+    } else {
+      // Safari / iOS fallback
+      const textarea = document.createElement("textarea");
+      textarea.value = src;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+
+    // Set UI copied state
     setCopied({ index, src });
-    setTimeout(() => setCopied({ index: -1, src: '' }), 1000); // reset after 1s
-  };
+
+    setTimeout(() => {
+      setCopied({ index: -1, src: "" });
+    }, 1000);
+  } catch (err) {
+    console.error("Copy failed:", err);
+  }
+};
+
 
   const fileInputRef = useRef<HTMLInputElement>(null); // Reference to the file input
 
   const handleDialogOpenChange = (open: boolean) => {
     setDialogOpen(open);
   };
-  // Simulated API endpoints
-  const API = {
-
-    getImages: async () => {
-      // Simulate fetching images from an API
-      return Promise.resolve([
-        'https://placehold.co/600x400/png',
-        // 'https://placehold.co/300x200/png',
-        // 'https://placehold.co/600x400/png',
-        // 'https://placehold.co/300x200/png',
-        // 'https://placehold.co/600x400/png',
-        // 'https://placehold.co/300x200/png',
-        // 'https://placehold.co/600x400/png',
-        // 'https://placehold.co/300x200/png',
-        // 'https://placehold.co/600x400/png',
-        // 'https://placehold.co/300x200/png',
-        // 'https://placehold.co/600x400/png',
-        // 'https://placehold.co/300x200/png',
-      ]);
-    },
-    uploadImages: async (files: File[]) => {
-      // Simulate uploading images to an API
-      return Promise.resolve(files.map((file) => URL.createObjectURL(file)));
-    },
-  };
-
-  // Fetch images on component mount
-//   useEffect(() => {
-//     const fetchImages = async () => {
-//       const fetchedImages = await API.getImages();
-//       setImages(fetchedImages);
-//     };
-//     fetchImages();
-//   });
 
   // Handle file selection
   const handleFileChange = (files: FileList | null) => {
@@ -92,8 +85,8 @@ const Images = ({
 
     fileArray.forEach((file) => {
       const fileSizeMB = file.size / (1024 * 1024);
-      if (fileSizeMB > MAX_FILE_SIZE_MB) {
-        setError(`File "${file.name}" exceeds ${MAX_FILE_SIZE_MB} MB.`);
+      if (fileSizeMB > parseInt(process.env.NEXT_PUBLIC_MAX_FILE_SIZE_MB || '2')) {
+        setError(`File "${file.name}" exceeds ${parseInt(process.env.NEXT_PUBLIC_MAX_FILE_SIZE_MB || '2')} MB.`);
       } else if (!file.type.startsWith('image/')) {
         setError(`File "${file.name}" is not a valid image.`);
       } else {
@@ -115,10 +108,20 @@ const Images = ({
   // Handle file upload
   const handleUpload = async () => {
     if (selectedFiles.length > 0) {
-    //   const uploadedImageUrls = await API.uploadImages(selectedFiles);
-      const uploadedImageUrls = await uploadAttachments(selectedFiles);
+      try {
 
-    //   setImages((prev) => [...prev, ...uploadedImageUrls]);
+        const uploadedImageUrls = await uploadAttachments(selectedFiles);
+        if (!uploadedImageUrls) {
+          toast.error("Import failed");
+          return;
+        }
+      } catch (error) {
+        toast.error('Upload Failed:' + error);
+        console.error(error)
+      } finally {
+        router.refresh()
+      }
+
       setSelectedFiles([]); // Clear the selected files
       setPreviews([]); // Clear the previews
     }
@@ -131,12 +134,6 @@ const Images = ({
       fileInputRef.current.click();
     }
   };
-
-  // Pagination logic
-//   const paginatedImages = images.slice(
-//     (currentPage - 1) * imagesPerPage,
-//     currentPage * imagesPerPage
-//   );
 
   return (
     <div className="p-4">
@@ -189,7 +186,7 @@ const Images = ({
                 className="border-2 border-dashed border-gray-300 p-4 rounded-md text-center cursor-pointer hover:border-gray-500"
               >
                 <p className="text-gray-500">Drag & drop images here, or click to select files</p>
-                <p className="text-sm text-gray-400">Maximum file size: {MAX_FILE_SIZE_MB} MB</p>
+                <p className="text-sm text-gray-400">Maximum file size: {parseInt(process.env.NEXT_PUBLIC_MAX_FILE_SIZE_MB || '2')} MB</p>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -245,12 +242,12 @@ const Images = ({
       >
         {data.map((image, index) => (
           <Card
-            key={index + (currentPage - 1) * imagesPerPage}
-            className="relative group p-0 overflow-hidden"
+          key={index + (currentPage - 1) * imagesPerPage}
+          className="relative group p-0 overflow-hidden"
           >
             <Image
-              src={process.env.NEXT_PUBLIC_IMG_URL + image.fileName320}
-              alt={image.fileName320 || 'Image'}
+              src={process.env.NEXT_PUBLIC_IMG_URL + image.fileName1280}
+              alt={image.fileName1280 || 'Image'}
               className="w-full h-50"
               loading="lazy"
               sizes="(width: 600px) 600px, (width: 1200px) 50vw, 33vw"
@@ -261,7 +258,7 @@ const Images = ({
 
             {/* Hover Copy Button */}
             <button
-              onClick={() => handleCopy(image.fileName320 ?? '', index)}
+              onClick={() => handleCopy(image.fileName1280 ?? '', index)}
               className={cn(
                 "absolute top-2 right-2 flex items-center justify-center p-2 rounded-full bg-black/60 text-white transition-all duration-200 hover:bg-black cursor-pointer",
                 "opacity-100 sm:opacity-0 sm:group-hover:opacity-100" // visible by default on mobile, hover on sm+
@@ -277,26 +274,51 @@ const Images = ({
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center items-center gap-2 mt-4">
-        {/* <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </Button>
-        <span>
+      <div className="my-1">
+        <div className="flex items-center justify-center mb-1 text-sm font-medium">
           Page {currentPage} of {totalPages}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </Button> */}
+        </div>
+        <div className="ml-auto flex items-center justify-center gap-2 lg:ml-0">
+          <Button
+            variant="outline"
+            className="hidden h-8 w-8 p-0 lg:flex"
+            onClick={() => router.push(`?page=1&pageSize=${pageSize}`)}
+            disabled={currentPage <= 1}
+          >
+            <span className="sr-only">Go to first page</span>
+            <ChevronsLeft />
+          </Button>
+          <Button
+            variant="outline"
+            className="size-8"
+            size="icon"
+            onClick={() => router.push(`?page=${currentPage - 1}&pageSize=${pageSize}`)}
+            disabled={currentPage <= 1}
+          >
+            <span className="sr-only">Go to previous page</span>
+            <ChevronLeft />
+          </Button>
+          <Button
+            variant="outline"
+            className="size-8"
+            size="icon"
+            onClick={() => router.push(`?page=${currentPage + 1}&pageSize=${pageSize}`)}
+            disabled={currentPage >= totalPages}
+          >
+            <span className="sr-only">Go to next page</span>
+            <ChevronRight />
+          </Button>
+          <Button
+            variant="outline"
+            className="hidden size-8 lg:flex"
+            size="icon"
+            onClick={() => router.push(`?page=${totalPages}&pageSize=${pageSize}`)}
+            disabled={currentPage >= totalPages}
+          >
+            <span className="sr-only">Go to last page</span>
+            <ChevronsRight />
+          </Button>
+        </div>
       </div>
     </div>
   );
