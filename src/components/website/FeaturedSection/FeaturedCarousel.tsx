@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import Autoplay from "embla-carousel-autoplay"
-import Image from "next/image"
 import {
   Carousel,
   CarouselContent,
@@ -21,6 +20,7 @@ import { Content } from "@/types/website/Content"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import ContentInfo from "../CategorySection/ContentInfo"
 import { Loader2 } from "lucide-react"
+import ImageWithFallback from "../shared/ImageWithFallback"
 
 interface FeaturedCarouselProps {
   featuredContent: FeaturedContentItem[];
@@ -75,14 +75,15 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
             >
               {/* Background image */}
               <div className="absolute inset-0">
-                <Image
-                  src={item.content.poster_image_url}
-                  alt={`FeaturedContent ${item.id}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                <ImageWithFallback
+                  src={process.env.NEXT_PUBLIC_IMG_URL + item.content.poster_image_url}
+                  fallbackSrc="/cinetorrentto-placeholder.webp"
                   quality={90}
                   priority={true}
-                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  width={400}
+                  height={400}
+                  alt={item.content.title}
+                  className="w-[100vw] h-60 md:w-[25vw] md:h-[400px] object-cover object-center transition-transform"
                 />
 
                 {/* Scrim + gradient for text contrast */}
