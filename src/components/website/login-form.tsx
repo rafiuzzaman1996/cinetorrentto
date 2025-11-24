@@ -85,7 +85,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         toast.error("Invalid credentials. Please try again.");
       }
     } catch (err) {
-      toast.error("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again."+ err);
     } finally {
       // Only re-enable if navigation did not succeed
       if (!navigated) {
