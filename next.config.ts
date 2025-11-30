@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
             new URL('http://94.250.201.166:5000/**'),
             new URL('https://94.250.201.166:5000/**'),
             new URL('https://unsplash.com/**'),
+ 	    new URL('https://api.cinetorrentto.site/**'),
             new URL('https://placehold.co/**')],
     },
 };
