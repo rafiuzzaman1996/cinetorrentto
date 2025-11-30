@@ -13,6 +13,12 @@ const AdsBlock = ({ads}: {ads: Ads[]}) => {
                             {/* <div className=" font-medium tracking-wide">
                                 {ad.title}
                             </div> */}
+                            {ad.code && ad.code != 'code' ? (
+                                <div
+                                    className="w-full"
+                                    dangerouslySetInnerHTML={{ __html: ad.code }}
+                                />
+                            ) :
                             <Image
                                 src={ad.url}
                                 alt={ad.title}
@@ -21,7 +27,7 @@ const AdsBlock = ({ads}: {ads: Ads[]}) => {
                                 // className="object-contain"
                                 className="object-cover object-center transition-transform cursor-pointer"
 
-                            />
+                            /> }
                         </div>
                     </a>
                 </div>

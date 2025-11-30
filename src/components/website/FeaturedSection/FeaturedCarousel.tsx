@@ -76,7 +76,7 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
               {/* Background image */}
               <div className="absolute inset-0">
                 <ImageWithFallback
-                  src={process.env.NEXT_PUBLIC_IMG_URL + item.content.poster_image_url}
+                  src={process.env.NEXT_PUBLIC_IMG_URL + item.content?.poster_image_url}
                   fallbackSrc="/cinetorrentto-placeholder.webp"
                   quality={90}
                   priority={true}
