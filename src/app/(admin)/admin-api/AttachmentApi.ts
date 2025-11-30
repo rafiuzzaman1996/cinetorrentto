@@ -49,7 +49,7 @@ export const uploadAttachments = async (files: File[]) => {
 
         const formData = new FormData();
         files.forEach((file) => {
-            formData.append('file', file);
+            formData.append('files', file);
         });
 
         const res = await fetch(`${apiUrl}/attachment/upload`, {
