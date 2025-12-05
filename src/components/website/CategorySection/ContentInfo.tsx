@@ -30,10 +30,27 @@ export default function ContentInfo({ content }: { content: Content }) {
             }));
         }
     };
+
+    const ContentInfoComponent = (
+        <>
+            <p>
+                <strong className="text-orange-500">Director:</strong> {content.director || 'N/A'}
+            </p>
+            <p>
+                <strong className="text-orange-500">Running Time:</strong> {content.running_time || 'N/A'}
+            </p>
+            <p>
+                <strong className="text-orange-500">Budget:</strong> {content.budget || 'N/A'}
+            </p>
+            <p>
+                <strong className="text-orange-500">Cast:</strong> {content.cast || 'N/A'}
+            </p>
+        </>
+    )
     return (
         <>
             {content ?
-                <div className="max-w-4xl grid grid-cols-2 gap-4 md:grid-cols-3">
+                <div className="mx-4 grid grid-cols-2 gap-4 md:grid-cols-3">
                     <div className="rounded-lg p-2">
                         {/* Image */}
                         <div className="details-poster-wrapper rounded-lg shadow-lg overflow-hidden">
@@ -43,28 +60,12 @@ export default function ContentInfo({ content }: { content: Content }) {
                                 width={400}
                                 height={500}
                                 alt={content.title}
-                                className="w-50 h-60 md:w-[300px] md:h-[400px] object-cover object-center transition-transform"
+                                className="w-50 h-60 md:w-[500px] md:h-[auto] object-cover object-center transition-transform"
                             />
-                        </div>
-                        {/* Director, Running Time, Budget, Cast */}
-                        <div className="hidden md:block mt-4 space-y-2 text-sm movie-details-info">
-                            <p>
-                                <strong className="text-orange-500">Director:</strong> {content.director || 'N/A'}
-                            </p>
-                            <p>
-                                <strong className="text-orange-500">Running Time:</strong> {content.running_time || 'N/A'}
-                            </p>
-                            <p>
-                                <strong className="text-orange-500">Budget:</strong> {content.budget || 'N/A'}
-                            </p>
-                            <p>
-                                <strong className="text-orange-500">Cast:</strong> {content.cast || 'N/A'}
-                            </p>
                         </div>
                     </div>
                     {/* Title, Genres, Rating, Release Date for Mobile */}
                     <div className="block md:hidden">
-
                         <div className="flex justify-between items-start">
                             <h2 className="text-xl text-orange-500 font-bold mb-2">
                                 {content.title} <span className="text-lg md:text-2xl font-normal text-gray-400">({new Date(content.release_date).getFullYear()})</span>
@@ -88,7 +89,11 @@ export default function ContentInfo({ content }: { content: Content }) {
                                 {new Date(content.release_date).toLocaleDateString()}</p>
                         </div>
                     </div>
-                    <div className="col-span-2 rounded-lg p-4">
+                    {/* Director, Running Time, Budget, Cast */}
+                    <div className="block md:hidden col-span-2">
+                        {ContentInfoComponent}
+                    </div>
+                    <div className="col-span-2 rounded-lg">
                         <div className="hidden md:block">
 
                             {/* Title, Genres, Rating, Release Date for Desktop */}
@@ -115,19 +120,8 @@ export default function ContentInfo({ content }: { content: Content }) {
                             <h3 className="text-lg text-orange-500 font-semibold mb-2">Overview</h3>
                             <p className="leading-relaxed text-sm mb-2">{content.description}</p>
                             {/* Director, Running Time, Budget, Cast For Mobile */}
-                            <div className="block md:hidden mt-4 mb-2 space-y-2 text-sm movie-details-info">
-                                <p>
-                                    <strong className='text-orange-500'>Director:</strong> {content.director || 'N/A'}
-                                </p>
-                                <p>
-                                    <strong className='text-orange-500'>Running Time:</strong> {content.running_time || 'N/A'}
-                                </p>
-                                <p>
-                                    <strong className='text-orange-500'>Budget:</strong> {content.budget || 'N/A'}
-                                </p>
-                                <p>
-                                    <strong className='text-orange-500'>Cast:</strong> {content.cast || 'N/A'}
-                                </p>
+                            <div className="hidden md:block mt-4 mb-2 space-y-2 text-sm movie-details-info">
+                                {ContentInfoComponent}
                             </div>
 
                             {/* Stream and Trailer */}
@@ -140,9 +134,9 @@ export default function ContentInfo({ content }: { content: Content }) {
                                 )}
                             </div>
                             {/* Download Links */}
-                            <div className="mt-6">
-                                <h3 className="text-lg font-semibold mb-2 text-orange-500">Download Options</h3>
-                                <div className="grid grid-cols-2 gap-2">
+                            <div className="mt-6 grid grid-cols-1 md:grid-cols-3">
+                                <h3 className="col-span-3 text-lg font-semibold mb-2 text-orange-500">Download Options</h3>
+                                <div className="col-span-2 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-3">
                                     {(content.downloadLinks ?? []).map((link, i) => (
                                         <button
                                             key={i}

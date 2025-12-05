@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import Autoplay from "embla-carousel-autoplay"
 import {
   Carousel,
@@ -11,43 +10,14 @@ import {
 } from "@/components/ui/carousel"
 import { Card, CardContent } from "../../ui/card"
 import { FeaturedContentItem } from "./FeaturedContent"
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Content } from "@/types/website/Content"
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
-import ContentInfo from "../CategorySection/ContentInfo"
-import { Loader2 } from "lucide-react"
 import ImageWithFallback from "../shared/ImageWithFallback"
+import Link from "next/link"
 
 interface FeaturedCarouselProps {
   featuredContent: FeaturedContentItem[];
 }
 
 const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) => {
-  const [open, setOpen] = useState(false);
-  const [details, setDetails] = useState<Content | null>(null);
-  const [loading, setLoading] = useState(false);
-  const fetchMovieDetails = async (contentSlug: string) => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/website-api/content/${contentSlug}`);
-      const data = await res.json();
-      setDetails(data);
-    } catch (error) {
-      console.error('Error fetching Content:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const handleOpenChange = (isOpen: boolean, contentSlug: string) => {
-    setOpen(isOpen);
-    if (isOpen) {
-      fetchMovieDetails(contentSlug);
-    }
-  };
   return (
     <Carousel
       className="w-full"
@@ -68,65 +38,42 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ featuredContent }) 
             className="flex-none w-full sm:w-1/2 md:w-1/4" // 4 items on md+, 2 on sm, 1 on mobile
           >
             <Card
-              onClick={() => handleOpenChange(true, item.content.slug)}
-
               role="region"
               className="group relative overflow-hidden rounded-2xl border-0 shadow-md transition-all duration-500 hover:scale-105"
             >
-              {/* Background image */}
-              <div className="absolute inset-0">
-                <ImageWithFallback
-                  src={process.env.NEXT_PUBLIC_IMG_URL + item.content?.poster_image_url}
-                  fallbackSrc="/cinetorrentto-placeholder.webp"
-                  quality={90}
-                  priority={true}
-                  width={400}
-                  height={400}
-                  alt={item.content.title}
-                  className="w-[100vw] h-60 md:w-[25vw] md:h-[400px] object-cover object-center transition-transform"
-                />
+              <Link
+                href={`/content/${item.content.slug}`}
+                className="cursor-pointer"
+              >
+                {/* Background image */}
+                <div className="absolute inset-0">
+                  <ImageWithFallback
+                    src={process.env.NEXT_PUBLIC_IMG_URL + item.content?.poster_image_url}
+                    fallbackSrc="/cinetorrentto-placeholder.webp"
+                    quality={90}
+                    priority={true}
+                    width={400}
+                    height={400}
+                    alt={item.content.title}
+                    className="w-[100vw] h-60 md:w-[25vw] md:h-[400px] object-cover object-center transition-transform"
+                  />
 
-                {/* Scrim + gradient for text contrast */}
-                <div className="absolute inset-0 bg-black/20" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              </div>
+                  {/* Scrim + gradient for text contrast */}
+                  <div className="absolute inset-0 bg-black/20" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                </div>
 
-              {/* Foreground content */}
-              <CardContent className="relative z-10 flex h-30 flex-col justify-end p-6 pb-0 text-white md:h-45">
-                <h3 className="text-2xl font-semibold leading-tight md:text-lg">
-                  {item.content.title}
-                </h3>
-                <p>{item.content.genres?.map(data => data.title).join(',')}</p>
-              </CardContent>
-
+                {/* Foreground content */}
+                <CardContent className="relative z-10 flex h-30 flex-col justify-end p-6 pb-0 text-white md:h-45">
+                  <h3 className="text-gray-300 mix-blend-difference text-lg font-semibold leading-tight md:text-lg">
+                    {item.content.title}
+                  </h3>
+                  <p className="text-gray-300 mix-blend-difference text-xs leading-tight text-ellipsis">{item.content.genres?.map(data => data.title).join(',')}</p>
+                </CardContent>
+              </Link>
               {/* Decorative focus ring on hover */}
               <div className="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-white/0 transition-all duration-300 group-hover:ring-4 group-hover:ring-white/10" />
             </Card>
-
-            <Dialog open={open} onOpenChange={(isOpen) => handleOpenChange(isOpen, item.content.slug)}>
-              <DialogContent
-                aria-describedby={`dialog-desc-${item.content.slug}`}
-                className="sm:max-w-4xl w-full h-[85vh] flex flex-col rounded-2xl py-6 px-0"
-              >
-                <VisuallyHidden>
-                  <DialogTitle>{item.content.title}</DialogTitle>
-                </VisuallyHidden>
-
-                {loading ? (
-                  <div className="flex justify-center items-center py-12">
-                    <Loader2 className="h-12 w-12 animate-spin text-gray-900 dark:text-gray-100" />
-                  </div>
-                ) : details ? (
-                  <div
-                    id={`dialog-desc-${item.content.slug}`}
-                    className="flex-1 overflow-y-auto px-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500"
-                  >
-                    <ContentInfo content={details} />
-                  </div>
-                ) : null}
-              </DialogContent>
-            </Dialog>
-
           </CarouselItem>
         ))}
       </CarouselContent>
