@@ -44,7 +44,7 @@ export const getContentsBySearch = async (q: string, page: number, genre?: strin
         if (alphabet) filterParams += `&filter.alphabet=$in:${alphabet}`;
         if (rating) filterParams += `&filter.rating=$in:${rating}`;
         const apiUrl = process.env.API_URL;
-        const res = await fetch(`${apiUrl}/api/contents?search=${q}&page=${page}${filterParams}`, {});
+        const res = await fetch(`${apiUrl}/api/contents?search=${q}&limit=24&page=${page}${filterParams}`, {});
 
         if (!res.ok) {
             throw (`Failed to fetch Content: ${res.status}`);
