@@ -38,14 +38,14 @@ const layout = async ({ children }: Readonly<LayoutProps>) => {
             src="https://momrollback.com/a2/b3/8d/a2b38d5daec68607c06ce6b05a29268a.js"
             strategy="afterInteractive"
           />
-          <Script
+          {/* <Script
             id="native-banner-script"
             async
             data-cfasync="false"
             src="https://momrollback.com/bf77290a294c5212fed193224e21a949/invoke.js"
             crossOrigin="anonymous"
             strategy="afterInteractive"
-          />
+          /> */}
         </>
       )}
       {/* Ads Scripts End */}
