@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { AdvanceFilter } from "./AdvanceFilter";
 import { Ads } from "@/types/admin/Ads";
 import AdsBlock from "../Ad/Ads";
+import HelperService from "@/services/helper.service";
 
 const menuItems = [
   {
@@ -202,6 +203,27 @@ const SearchBar = ({ query, setQuery, router }: SearchBarProps) => {
     setQuery("");
   };
 
+
+  const onInputType = useMemo(
+  () =>
+    HelperService.debounce((value: string) => {
+      if (!value) {
+        router.push('/search');
+      } else {
+        router.push(`/search?q=${encodeURIComponent(value)}`);
+      }
+    }, 300),
+  [router]
+);
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value.trim();
+  setQuery(value);
+  onInputType(value);
+};
+
+
+
   return (
     <form onSubmit={handleSubmit} className="flex w-full max-w-lg items-center px-4">
       <div className="relative w-full">
@@ -210,7 +232,7 @@ const SearchBar = ({ query, setQuery, router }: SearchBarProps) => {
           placeholder="Search movies..."
           className="w-full pr-10"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => { setQuery(e.target.value); handleChange(e); }}
         />
         <button
           type="submit"
