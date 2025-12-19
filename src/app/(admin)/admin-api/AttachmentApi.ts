@@ -72,3 +72,27 @@ export const uploadAttachments = async (files: File[]) => {
         throw error;
     }
 };
+
+ export const deleteAttachment = async (id: string) => {
+        try {
+            const apiUrl = process.env.API_URL;
+        const cookieStore = await cookies();
+        const token = cookieStore.get('token')?.value;
+
+        const res = await fetch(`${apiUrl}/attachment/${id}`, {
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : '',
+            },
+            method: 'DELETE',
+        });
+
+        if (!res.ok) {
+            throw (`Failed to delete Attachment. ${await res.text()}`);
+        }
+
+        const data = await res.json();
+            return data || true
+        } catch (error) {
+            throw error
+        }
+    };

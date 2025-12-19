@@ -5,11 +5,11 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Image from 'next/image';
 import React, { useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ClipboardCheck, Columns2, Columns3, Columns4, Copy } from 'lucide-react'; // Lucide icons
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ClipboardCheck, Columns2, Columns3, Columns4, Copy, Trash } from 'lucide-react'; // Lucide icons
 import { cn } from '@/lib/utils'; // shadcn utility for className merging
 import { ButtonGroup } from '@/components/ui/button-group';
-import { Attachment } from '@/types/admin/Attachments';
-import { uploadAttachments } from '../../admin-api/AttachmentApi';
+import { Attachment } from '@/types/admin/Attachment';
+import { deleteAttachment, uploadAttachments } from '../../admin-api/AttachmentApi';
 import { useRouter } from "next/navigation"
 import { toast } from "sonner";
 
@@ -109,7 +109,6 @@ const handleCopy = async (src: string, index: number) => {
   const handleUpload = async () => {
     if (selectedFiles.length > 0) {
       try {
-
         const uploadedImageUrls = await uploadAttachments(selectedFiles);
         if (!uploadedImageUrls) {
           toast.error("Import failed");
@@ -134,6 +133,24 @@ const handleCopy = async (src: string, index: number) => {
       fileInputRef.current.click();
     }
   };
+
+  const handleDelete = async (id: string) => {
+    // confirmation Dialog
+    const result = confirm("Are you sure you want to delete this image?");
+    if (!result) return;
+    try {
+        const result = await deleteAttachment(id);
+        if (!result) {
+          toast.error("Import failed");
+          return;
+        }
+      } catch (error) {
+        toast.error('Upload Failed:' + error);
+        console.error(error)
+      } finally {
+        router.refresh()
+      }
+    }
 
   return (
     <div className="p-4">
@@ -268,6 +285,17 @@ const handleCopy = async (src: string, index: number) => {
               {copied.index === index ? <ClipboardCheck className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
               <span className="text-xs">{copied.index === index ? "Copied!" : ""}</span>
             </button>
+            {/* Hover Delete Button */}
+            <button
+              onClick={() => handleDelete(image.id)}
+              className={cn(
+                "absolute top-2 left-2 flex items-center justify-center p-2 rounded-full bg-red-500 text-white transition-all duration-200 hover:bg-red-700 cursor-pointer",
+                "opacity-100 sm:opacity-0 sm:group-hover:opacity-100" // visible by default on mobile, hover on sm+
+              )}
+              title="Delete Image"
+            >
+              <Trash className='h-4 w-4 text-red' />
+            </button>S
           </Card>
         ))}
 
